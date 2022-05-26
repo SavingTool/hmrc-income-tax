@@ -5,13 +5,22 @@
   "author": "Sam Brown (https://github.com/sgb-io)",
   "dependencies": {},
   "devDependencies": {
+    "@babel/core": "^7.18.2",
+    "@babel/preset-env": "^7.18.2",
+    "@babel/preset-typescript": "^7.17.12",
+    "@types/jest": "^27.5.1",
+    "babel-jest": "^28.1.0",
     "eslint": "^8.16.0",
+    "jest": "^28.1.0",
     "prettier": "^2.6.2",
     "typescript": "^4.7.2"
   },
   "scripts": {
     "build:watch": "tsc --watch",
-    "build": "tsc"
+    "build": "tsc",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
   "repository": {
     "type": "git",
