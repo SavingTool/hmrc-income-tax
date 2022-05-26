@@ -15,7 +15,6 @@ interface TaxRates {
   // See https://www.gov.uk/repaying-your-student-loan/what-you-pay
   STUDENT_LOAN_PLAN_1_WEEKLY_THRESHOLD: number;
   STUDENT_LOAN_PLAN_2_WEEKLY_THRESHOLD: number;
-  // People on plans 1 or 2 repay 9% of the amount you earn over the threshold
   STUDENT_LOAN_REPAYMENT_AMOUNT: number;
 
   // National Insurance
@@ -39,7 +38,7 @@ const taxRates: Record<TaxYear, TaxRates> = {
     // Student loan repayments
     STUDENT_LOAN_PLAN_1_WEEKLY_THRESHOLD: 382,
     STUDENT_LOAN_PLAN_2_WEEKLY_THRESHOLD: 524,
-    STUDENT_LOAN_REPAYMENT_AMOUNT: 0.09,
+    STUDENT_LOAN_REPAYMENT_AMOUNT: 0.09, // People on plans 1 or 2 repay 9% of the amount you earn over the threshold
     // National Insurance
     NI_MIDDLE_RATE: 0.1325,
     NI_UPPER_RATE: 0.0325,

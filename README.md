@@ -4,55 +4,92 @@ A TypeScript implementation of UK Income Tax & National Insurance calculations. 
 
 Multiple versions of the HMRC rates can be supported, although only 2022/23 has been implemented (see `src/hmrc.ts`).
 
+Works in all modern browsers and Node.js (v14+ LTS recommended).
+
 ## Installation
 
-`yarn add @saving-tool/hmrc-income-tax` (or `npm install @saving-tool/hmrc-income-tax`)
+Run: `yarn add @saving-tool/hmrc-income-tax` (or `npm install @saving-tool/hmrc-income-tax`)
 
 ## Usage
 
 There are 4 functions exposed:
 
-- `calculatePersonalAllowance`: calculates an individual's personal allowance for a tax year, single amount.
-- `calculateIncomeTax`: calculates the income tax due in a tax year on an individual's taxable income, broken down into the 3 bands (basic, higher, additional)
-- `calculateEmployeeNationalInsurance`: calculates the national insurance contributions due in a tax year on an individual's taxable income, single amount. Note: only supports class 1, category A
-- `calculateStudentLoanRepayments`: calculates the student loan repayments due in a tax year on an individual's taxable income, single amount.
+- `calculatePersonalAllowance({ taxYear?: TaxYear, taxableAnnualIncome: number })`: calculates an individual's personal allowance for a tax year, single amount.
+- `calculateIncomeTax({ taxYear?: TaxYear, personalAllowance: number, taxableAnnualIncome: number })`: calculates the income tax due in a tax year on an individual's taxable income, broken down into the 3 bands (basic, higher, additional)
+- `calculateEmployeeNationalInsurance({ taxYear?: TaxYear, taxableAnnualIncome: number })`: calculates the national insurance contributions due in a tax year on an individual's taxable income, single amount. Note: only supports class 1, category A
+- `calculateStudentLoanRepayments({ taxYear?: TaxYear, taxableAnnualIncome: number, studentLoanPlanNo: number })`: calculates the student loan repayments due in a tax year on an individual's taxable income, single amount. `studentLoanPlanNo` can be `1` or `2`.
 
 All APIs return raw amounts and there is no formatting or display functionality.
+
+Note that `taxYear` is an optional input to select which tax year rates should be used (default is "2022/23").
 
 ## Examples (2022/23 HMRC Rates)
 
 Mark S. of MDR earns £55,000. His employer contributes 6% to his pension, but also matches up to another 2%. Mark contributes 2% via salary sacrafice to get the matching. Therefore, Mark's taxable income is £53,900. He has £19,000 of outstanding student loan debt, and is on Plan 1.
 
 ```javascript
+import {
+  calculatePersonalAllowance,
+  calculateIncomeTax,
+  calculateEmployeeNationalInsurance,
+  calculateStudentLoanRepayments,
+} from '@saving-tool/hmrc-income-tax';
+
 // Mark S.
 const taxableAnnualIncome = 53_900
-const personalAllowance = calculatePersonalAllowance({ taxableAnnualIncome }); // => 12570
+
+const personalAllowance = calculatePersonalAllowance({ taxableAnnualIncome });
+// => 12570
+
 const incomeTax = calculateIncomeTax({ personalAllowance, taxableAnnualIncome });
 const { basicRateTax, higherRateTax, additionalRateTax } = incomeTax;
-const totalIncomeTax = basicRateTax + higherRateTax + additionalRateTax; // => 8992
-const nationalInsuranceContributions = calculateEmployeeNationalInsurance({ taxableAnnualIncome }); // => 5471
-const studentLoanRepayments = calculateStudentLoanRepayments({ taxableAnnualIncome, studentLoanPlanNo: 1 }); // => 3162
+const totalIncomeTax = basicRateTax + higherRateTax + additionalRateTax;
+// => 8992
+
+const nationalInsuranceContributions = calculateEmployeeNationalInsurance({ taxableAnnualIncome });
+// => 5471
+
+const studentLoanRepayments = calculateStudentLoanRepayments({ taxableAnnualIncome, studentLoanPlanNo: 1 });
+// => 3162
 
 // Do whatever you want, e.g. calculate the take-home pay
-const takeHome = taxableAnnualIncome - totalIncomeTax - nationalInsuranceContributions - studentLoanRepayments; // => 36275
+const takeHome = taxableAnnualIncome
+ - totalIncomeTax
+ - nationalInsuranceContributions
+ - studentLoanRepayments;
+// => 36275
 ```
 
 
 Irv B. of MDR earns £160,000. His employer contributes some amount to his pension, but he contributes nothing. He has no student loan.
 
 ```javascript
+import {
+  calculatePersonalAllowance,
+  calculateIncomeTax,
+  calculateEmployeeNationalInsurance,
+} from '@saving-tool/hmrc-income-tax';
+
 // Irv B.
 const taxableAnnualIncome = 160_000
-const personalAllowance = calculatePersonalAllowance({ taxableAnnualIncome }); // => 0
+
+const personalAllowance = calculatePersonalAllowance({ taxableAnnualIncome });
+// => 0
+
 const incomeTax = calculateIncomeTax({ personalAllowance, taxableAnnualIncome });
 const { basicRateTax, higherRateTax, additionalRateTax } = incomeTax;
-const totalIncomeTax = basicRateTax + higherRateTax + additionalRateTax; // => 57589
-const nationalInsuranceContributions = calculateEmployeeNationalInsurance({ taxableAnnualIncome }); // => 8919
+const totalIncomeTax = basicRateTax + higherRateTax + additionalRateTax;
+// => 57589
+
+const nationalInsuranceContributions = calculateEmployeeNationalInsurance({ taxableAnnualIncome });
+// => 8919
 
 // Do whatever you want, e.g. calculate the take-home pay
-const takeHome = taxableAnnualIncome - totalIncomeTax - nationalInsuranceContributions; // => 93492
+const takeHome = taxableAnnualIncome
+ - totalIncomeTax
+ - nationalInsuranceContributions;
+// => 93492
 ```
-
 
 It's important to understand that in most cases this library is expecting *taxable* income (appropriate API naming aims to make this clear). Any salary sacrafice mechanisms should be applied before these calculations, and the appropriate taxable amount used when calling this library.
 
