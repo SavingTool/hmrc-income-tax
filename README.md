@@ -1,6 +1,6 @@
 # HMRC Income Tax
 
-A TypeScript implementation of UK Income Tax & National Insurance calculations. See it in action on [SavingTool.co.uk](https://savingtool.co.uk).
+An ultra-fast, tiny TypeScript implementation of UK Income Tax & National Insurance calculations. See it in action on [SavingTool.co.uk](https://savingtool.co.uk).
 
 Multiple versions of the HMRC rates can be supported, although only 2022/23 has been implemented (see `src/hmrc.ts`).
 
