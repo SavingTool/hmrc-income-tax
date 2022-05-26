@@ -23,7 +23,10 @@
     "test:coverage": "jest --coverage",
     "lint": "eslint",
     "prettier": "prettier --check src",
-    "prettier:fix": "prettier --write src"
+    "prettier:fix": "prettier --write src",
+    "tag:patch": "np patch --no-publish",
+    "tag:minor": "np minor --no-publish",
+    "tag:major": "np major --no-publish"
   },
   "repository": {
     "type": "git",
