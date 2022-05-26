@@ -12,12 +12,13 @@ Run: `yarn add @saving-tool/hmrc-income-tax` (or `npm install @saving-tool/hmrc-
 
 ## Usage
 
-There are 4 functions exposed:
+There are 5 main APIs:
 
 - `calculatePersonalAllowance({ taxYear?: TaxYear, taxableAnnualIncome: number })`: calculates an individual's personal allowance for a tax year, single amount.
 - `calculateIncomeTax({ taxYear?: TaxYear, personalAllowance: number, taxableAnnualIncome: number })`: calculates the income tax due in a tax year on an individual's taxable income, broken down into the 3 bands (basic, higher, additional)
 - `calculateEmployeeNationalInsurance({ taxYear?: TaxYear, taxableAnnualIncome: number })`: calculates the national insurance contributions due in a tax year on an individual's taxable income, single amount. Note: only supports class 1, category A
 - `calculateStudentLoanRepayments({ taxYear?: TaxYear, taxableAnnualIncome: number, studentLoanPlanNo: number })`: calculates the student loan repayments due in a tax year on an individual's taxable income, single amount. `studentLoanPlanNo` can be `1` or `2`.
+- `getHmrcRates({ taxYear?: TaxYear })`: returns an underlying static set of HMRC rates for a given tax year. This is useful for doing your own arbitrary calculations.
 
 All APIs return raw amounts and there is no formatting or display functionality.
 
