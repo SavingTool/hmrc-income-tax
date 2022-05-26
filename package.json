@@ -28,6 +28,8 @@
     "tag:minor": "np minor --no-publish",
     "tag:major": "np major --no-publish"
   },
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/sgb-io/hmrc-income-tax.git"
