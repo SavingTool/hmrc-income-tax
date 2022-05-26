@@ -20,7 +20,10 @@
     "build": "tsc",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "lint": "eslint",
+    "prettier": "prettier --check src",
+    "prettier:fix": "prettier --write src"
   },
   "repository": {
     "type": "git",
