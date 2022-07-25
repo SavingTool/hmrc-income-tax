@@ -27,6 +27,8 @@ interface TaxRates {
 }
 
 const taxRates: Record<TaxYear, TaxRates> = {
+  // As of 6th July 2022 (NICs change applied)
+  // Change described here: https://www.gov.uk/guidance/estimate-how-the-national-insurance-contributions-changes-will-affect-you
   "2022/23": {
     // Income tax
     DEFAULT_PERSONAL_ALLOWANCE: 12_570,
@@ -43,7 +45,7 @@ const taxRates: Record<TaxYear, TaxRates> = {
     // National Insurance
     NI_MIDDLE_RATE: 0.1325,
     NI_UPPER_RATE: 0.0325,
-    NI_MIDDLE_BRACKET: 190,
+    NI_MIDDLE_BRACKET: 242,
     NI_UPPER_BRACKET: 967,
   },
 };
