@@ -6,7 +6,7 @@ Please note that the project aims to provide "low level" calculation utilities a
 
 ## Getting Started
 
-Codehawk-cli is a pure Node.JS program. All you need to develop the project is
+`@saving-tool/hmrc-income-tax` is a pure TypeScript library. All you need to develop the project is
 
 - Git (no specific version required but v2+ is recommended)
 - Node.js (v14+ or latest LTS is recommended)
