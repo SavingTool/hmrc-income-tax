@@ -59,7 +59,7 @@ const taxRates: Record<TaxYear, TaxRates> = {
     ADDITIONAL_RATE: 0.45,
     PERSONAL_ALLOWANCE_DROPOFF: 100_000,
     // Student loan repayments
-    STUDENT_LOAN_PLAN_1_WEEKLY_THRESHOLD: 388,
+    STUDENT_LOAN_PLAN_1_WEEKLY_THRESHOLD: 423,
     STUDENT_LOAN_PLAN_2_WEEKLY_THRESHOLD: 524,
     STUDENT_LOAN_REPAYMENT_AMOUNT: 0.09, // People on plans 1 or 2 repay 9% of the amount you earn over the threshold
     // National Insurance
