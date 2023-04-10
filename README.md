@@ -2,9 +2,12 @@
 
 An ultra-fast, tiny TypeScript implementation of UK Income Tax & National Insurance calculations. See it in action on [SavingTool.co.uk](https://savingtool.co.uk).
 
-Multiple versions of the HMRC rates can be supported, although only 2022/23 has been implemented (see `src/hmrc.ts`).
+Multiple versions of the HMRC rates can be supported, although only the follwing years have been implemented:
 
-Works in all modern browsers and Node.js (v14+ LTS recommended).
+- 2022/23
+- 2023/24
+
+Works in all modern browsers and Node.js (v18+ LTS recommended).
 
 ## Installation
 
@@ -22,7 +25,7 @@ There are 5 main APIs:
 
 All APIs return raw amounts and there is no formatting or display functionality.
 
-Note that `taxYear` is an optional input to select which tax year rates should be used (default is "2022/23").
+Note that `taxYear` is an optional input to select which tax year rates should be used (default is "2023/24").
 
 ## Examples (2022/23 HMRC Rates)
 
