@@ -6,4 +6,4 @@ export interface IncomeTax {
 
 export type StudentLoanPlan = 1 | 2;
 
-export type TaxYear = "2022/23";
+export type TaxYear = "2022/23" | "2023/24";

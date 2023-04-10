@@ -26,7 +26,10 @@ describe("calculateEmployeeNationalInsurance", () => {
     const { taxableAnnualIncome, nics } = expectation;
     test(taxableAnnualIncome.toString(), () => {
       expect(
-        calculateEmployeeNationalInsurance({ taxableAnnualIncome })
+        calculateEmployeeNationalInsurance({
+          taxYear: "2022/23",
+          taxableAnnualIncome,
+        })
       ).toEqual(nics);
     });
   });
