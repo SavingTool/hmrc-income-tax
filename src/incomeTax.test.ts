@@ -63,10 +63,15 @@ describe("calculateIncomeTax", () => {
     const { taxableAnnualIncome, basic, higher, additional } = expectation;
     test(taxableAnnualIncome.toString(), () => {
       const personalAllowance = calculatePersonalAllowance({
+        taxYear: "2022/23",
         taxableAnnualIncome,
       });
       expect(
-        calculateIncomeTax({ taxableAnnualIncome, personalAllowance })
+        calculateIncomeTax({
+          taxYear: "2022/23",
+          taxableAnnualIncome,
+          personalAllowance,
+        })
       ).toEqual({
         basicRateTax: basic,
         higherRateTax: higher,

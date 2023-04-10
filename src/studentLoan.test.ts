@@ -32,6 +32,7 @@ describe("calculateStudentLoanRepayments", () => {
       test(taxableAnnualIncome.toString(), () => {
         expect(
           calculateStudentLoanRepayments({
+            taxYear: "2022/23",
             taxableAnnualIncome,
             studentLoanPlanNo: 1,
           })

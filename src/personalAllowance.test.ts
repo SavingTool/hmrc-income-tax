@@ -29,9 +29,9 @@ describe("calculatePersonalAllowance", () => {
   expectations.forEach((expectation) => {
     const { taxableAnnualIncome, allowance } = expectation;
     test(taxableAnnualIncome.toString(), () => {
-      expect(calculatePersonalAllowance({ taxableAnnualIncome })).toEqual(
-        allowance
-      );
+      expect(
+        calculatePersonalAllowance({ taxYear: "2022/23", taxableAnnualIncome })
+      ).toEqual(allowance);
     });
   });
 });
