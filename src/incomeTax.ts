@@ -20,13 +20,6 @@ export const calculateIncomeTax = ({
     HIGHER_BRACKET,
     HIGHER_RATE,
   } = getHmrcRates(taxYear);
-  const afterPersonalAllowance =
-    taxableAnnualIncome - personalAllowance > 0
-      ? taxableAnnualIncome - personalAllowance
-      : 0;
-  let basicRateTax = 0;
-  let higherRateTax = 0;
-  let additionalRateTax = 0;
 
   // Income over £100k: the brackets need to move in accordance with personal allowance changes
   const personalAllowanceDeduction =
@@ -34,47 +27,63 @@ export const calculateIncomeTax = ({
   const higherBracket = HIGHER_BRACKET - personalAllowanceDeduction;
   const additionalBracket = ADDITIONAL_BRACKET - personalAllowanceDeduction;
 
-  // Over £150k
+  // Taxable income between 0/PA and the higher bracket
+  const basicSection = HIGHER_BRACKET - personalAllowance;
+
+  // Additional Rate taxpayers (3 bands)
   if (taxableAnnualIncome > additionalBracket) {
-    // 3 rates apply (basic, higher, additional)
-    const additionalSection = taxableAnnualIncome - additionalBracket;
-    const higherSection =
-      taxableAnnualIncome - higherBracket - additionalSection;
-    const basicSection =
-      taxableAnnualIncome -
-      personalAllowance -
-      additionalSection -
-      higherSection;
-    basicRateTax = basicSection * BASIC_RATE;
-    higherRateTax = higherSection * HIGHER_RATE;
-    additionalRateTax = additionalSection * ADDITIONAL_RATE;
+    // Taxable income between the higher bracket and additional bracket
+    const higherSection = ADDITIONAL_BRACKET - HIGHER_BRACKET;
+    // Taxable income over the additional bracket
+    const additionalSection = taxableAnnualIncome - ADDITIONAL_BRACKET;
+
+    // Calculate amounts against sections
+    const basicRateTax = basicSection * BASIC_RATE;
+    const higherRateTax = higherSection * HIGHER_RATE;
+    const additionalRateTax = additionalSection * ADDITIONAL_RATE;
+
+    return {
+      basicRateTax,
+      higherRateTax,
+      additionalRateTax,
+    };
   }
 
-  // Over £50k
+  // Higher Rate taxpayers (2 bands)
   if (
     taxableAnnualIncome <= additionalBracket &&
     taxableAnnualIncome > higherBracket
   ) {
-    // 2 bands apply (basic, higher)
-    const higherSection = taxableAnnualIncome - higherBracket;
-    const basicSection =
-      taxableAnnualIncome - personalAllowance - higherSection;
-    basicRateTax = basicSection * BASIC_RATE;
-    higherRateTax = higherSection * HIGHER_RATE;
+    // Taxable income between the higher bracket and additional bracket
+    const higherSection = taxableAnnualIncome - HIGHER_BRACKET;
+    const basicRateTax = basicSection * BASIC_RATE;
+    const higherRateTax = higherSection * HIGHER_RATE;
+
+    return {
+      basicRateTax,
+      higherRateTax,
+      additionalRateTax: 0,
+    };
   }
 
-  // All salaries under £50k
+  // Basic Rate taxpayers (1 band)
   if (
     taxableAnnualIncome <= higherBracket &&
     taxableAnnualIncome > personalAllowance
   ) {
     // 1 band applies (basic)
-    basicRateTax = afterPersonalAllowance * BASIC_RATE;
+    const afterPersonalAllowance =
+      taxableAnnualIncome - personalAllowance > 0
+        ? taxableAnnualIncome - personalAllowance
+        : 0;
+    const basicRateTax = afterPersonalAllowance * BASIC_RATE;
+
+    return {
+      basicRateTax,
+      higherRateTax: 0,
+      additionalRateTax: 0,
+    };
   }
 
-  return {
-    basicRateTax,
-    higherRateTax,
-    additionalRateTax,
-  };
+  throw new Error("Unexpected Input");
 };
