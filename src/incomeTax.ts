@@ -85,5 +85,10 @@ export const calculateIncomeTax = ({
     };
   }
 
-  throw new Error("Unexpected Input");
+  // Income is lower than the personal allowance - no income tax
+  return {
+    basicRateTax: 0,
+    higherRateTax: 0,
+    additionalRateTax: 0,
+  };
 };
