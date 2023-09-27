@@ -2,6 +2,8 @@ import { calculateIncomeTax } from "./incomeTax";
 import { calculatePersonalAllowance } from "./personalAllowance";
 
 const expectations = [
+  { taxableAnnualIncome: 0, basic: 0, higher: 0, additional: 0 },
+  { taxableAnnualIncome: 5_000, basic: 0, higher: 0, additional: 0 },
   { taxableAnnualIncome: 15_000, basic: 486, higher: 0, additional: 0 },
   { taxableAnnualIncome: 17_500, basic: 986, higher: 0, additional: 0 },
   { taxableAnnualIncome: 20_000, basic: 1486, higher: 0, additional: 0 },
