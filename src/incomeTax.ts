@@ -37,7 +37,7 @@ export const calculateIncomeTax = ({
     // Taxable income over the additional bracket
     const additionalSection = taxableAnnualIncome - ADDITIONAL_BRACKET;
 
-    // Calculat amounts against sections
+    // Calculate amounts against sections
     const basicRateTax = basicSection * BASIC_RATE;
     const higherRateTax = higherSection * HIGHER_RATE;
     const additionalRateTax = additionalSection * ADDITIONAL_RATE;
