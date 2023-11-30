@@ -20,7 +20,7 @@ There are 5 main APIs:
 - `calculatePersonalAllowance({ taxYear?: TaxYear, taxableAnnualIncome: number })`: calculates an individual's personal allowance for a tax year, single amount.
 - `calculateIncomeTax({ taxYear?: TaxYear, personalAllowance: number, taxableAnnualIncome: number })`: calculates the income tax due in a tax year on an individual's taxable income, broken down into the 3 bands (basic, higher, additional)
 - `calculateEmployeeNationalInsurance({ taxYear?: TaxYear, taxableAnnualIncome: number })`: calculates the national insurance contributions due in a tax year on an individual's taxable income, single amount. Note: only supports class 1, category A
-- `calculateStudentLoanRepayments({ taxYear?: TaxYear, taxableAnnualIncome: number, studentLoanPlanNo: number })`: calculates the student loan repayments due in a tax year on an individual's taxable income, single amount. `studentLoanPlanNo` can be `1` or `2`.
+- `calculateStudentLoanRepayments({ taxYear?: TaxYear, taxableAnnualIncome: number, studentLoanPlanNo: number })`: calculates the student loan repayments due in a tax year on an individual's taxable income, single amount. `studentLoanPlanNo` can be `1`, `2`, `4`, `5` or `postgrad`.
 - `getHmrcRates({ taxYear?: TaxYear })`: returns an underlying static set of HMRC rates for a given tax year. This is useful for doing your own arbitrary calculations.
 
 All APIs return raw amounts and there is no formatting or display functionality.
@@ -37,33 +37,41 @@ import {
   calculateIncomeTax,
   calculateEmployeeNationalInsurance,
   calculateStudentLoanRepayments,
-} from '@saving-tool/hmrc-income-tax';
+} from "@saving-tool/hmrc-income-tax";
 
 // Mark S.
-const taxableAnnualIncome = 53_900
+const taxableAnnualIncome = 53_900;
 
 const personalAllowance = calculatePersonalAllowance({ taxableAnnualIncome });
 // => 12570
 
-const incomeTax = calculateIncomeTax({ personalAllowance, taxableAnnualIncome });
+const incomeTax = calculateIncomeTax({
+  personalAllowance,
+  taxableAnnualIncome,
+});
 const { basicRateTax, higherRateTax, additionalRateTax } = incomeTax;
 const totalIncomeTax = basicRateTax + higherRateTax + additionalRateTax;
 // => 8992
 
-const nationalInsuranceContributions = calculateEmployeeNationalInsurance({ taxableAnnualIncome });
+const nationalInsuranceContributions = calculateEmployeeNationalInsurance({
+  taxableAnnualIncome,
+});
 // => 5471
 
-const studentLoanRepayments = calculateStudentLoanRepayments({ taxableAnnualIncome, studentLoanPlanNo: 1 });
+const studentLoanRepayments = calculateStudentLoanRepayments({
+  taxableAnnualIncome,
+  studentLoanPlanNo: 1,
+});
 // => 3162
 
 // Do whatever you want, e.g. calculate the take-home pay
-const takeHome = taxableAnnualIncome
- - totalIncomeTax
- - nationalInsuranceContributions
- - studentLoanRepayments;
+const takeHome =
+  taxableAnnualIncome -
+  totalIncomeTax -
+  nationalInsuranceContributions -
+  studentLoanRepayments;
 // => 36275
 ```
-
 
 Irv B. of MDR earns £160,000. His employer contributes some amount to his pension, but he contributes nothing. He has no student loan.
 
@@ -72,31 +80,34 @@ import {
   calculatePersonalAllowance,
   calculateIncomeTax,
   calculateEmployeeNationalInsurance,
-} from '@saving-tool/hmrc-income-tax';
+} from "@saving-tool/hmrc-income-tax";
 
 // Irv B.
-const taxableAnnualIncome = 160_000
+const taxableAnnualIncome = 160_000;
 
 const personalAllowance = calculatePersonalAllowance({ taxableAnnualIncome });
 // => 0
 
-const incomeTax = calculateIncomeTax({ personalAllowance, taxableAnnualIncome });
+const incomeTax = calculateIncomeTax({
+  personalAllowance,
+  taxableAnnualIncome,
+});
 const { basicRateTax, higherRateTax, additionalRateTax } = incomeTax;
 const totalIncomeTax = basicRateTax + higherRateTax + additionalRateTax;
 // => 57589
 
-const nationalInsuranceContributions = calculateEmployeeNationalInsurance({ taxableAnnualIncome });
+const nationalInsuranceContributions = calculateEmployeeNationalInsurance({
+  taxableAnnualIncome,
+});
 // => 8919
 
 // Do whatever you want, e.g. calculate the take-home pay
-const takeHome = taxableAnnualIncome
- - totalIncomeTax
- - nationalInsuranceContributions;
+const takeHome =
+  taxableAnnualIncome - totalIncomeTax - nationalInsuranceContributions;
 // => 93492
 ```
 
-It's important to understand that in most cases this library is expecting *taxable* income (appropriate API naming aims to make this clear). Any salary sacrafice mechanisms should be applied before these calculations, and the appropriate taxable amount used when calling this library.
-
+It's important to understand that in most cases this library is expecting _taxable_ income (appropriate API naming aims to make this clear). Any salary sacrafice mechanisms should be applied before these calculations, and the appropriate taxable amount used when calling this library.
 
 ## Formatting and rounding output
 
@@ -117,5 +128,4 @@ const gbpFormatter = new Intl.NumberFormat("en-GB", {
 export const roundAndFormatGbp = (amount: number) => {
   return formatGbp(Math.round(amount));
 };
-
 ```
