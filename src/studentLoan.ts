@@ -15,20 +15,55 @@ export const calculateStudentLoanRepayments = ({
   const {
     STUDENT_LOAN_PLAN_1_WEEKLY_THRESHOLD,
     STUDENT_LOAN_PLAN_2_WEEKLY_THRESHOLD,
+    STUDENT_LOAN_PLAN_4_WEEKLY_THRESHOLD,
+    STUDENT_LOAN_PLAN_5_WEEKLY_THRESHOLD,
+    STUDENT_LOAN_POSTGRAD_WEEKLY_THRESHOLD,
     STUDENT_LOAN_REPAYMENT_AMOUNT,
+    STUDENT_LOAN_REPAYMENT_AMOUNT_POSTGRAD,
   } = getHmrcRates(taxYear);
   let studentLoanAnnualRepayments = 0;
 
   // Repayments are a % of income over HMRC-specified thresholds (threshold amount depends on plan number)
-  const threshold =
-    studentLoanPlanNo === 1
-      ? STUDENT_LOAN_PLAN_1_WEEKLY_THRESHOLD
-      : STUDENT_LOAN_PLAN_2_WEEKLY_THRESHOLD;
+
+  let threshold: number | undefined;
+
+  switch (studentLoanPlanNo) {
+    case 1: {
+      threshold = STUDENT_LOAN_PLAN_1_WEEKLY_THRESHOLD;
+      break;
+    }
+    case 2: {
+      threshold = STUDENT_LOAN_PLAN_2_WEEKLY_THRESHOLD;
+      break;
+    }
+    case 4: {
+      threshold = STUDENT_LOAN_PLAN_4_WEEKLY_THRESHOLD;
+      break;
+    }
+    case 5: {
+      threshold = STUDENT_LOAN_PLAN_5_WEEKLY_THRESHOLD;
+      break;
+    }
+    case "postgrad": {
+      threshold = STUDENT_LOAN_POSTGRAD_WEEKLY_THRESHOLD;
+      break;
+    }
+    default: {
+      throw new Error(
+        `Student loan plan must be one of: 1, 2, 4, 5 or 'postgrad' (was: ${studentLoanPlanNo})`
+      );
+    }
+  }
+
   const weeklySalary = taxableAnnualIncome / 52;
+  const repaymentAmount =
+    studentLoanPlanNo === "postgrad"
+      ? STUDENT_LOAN_REPAYMENT_AMOUNT_POSTGRAD
+      : STUDENT_LOAN_REPAYMENT_AMOUNT;
 
   if (weeklySalary > threshold) {
     studentLoanAnnualRepayments =
-      (weeklySalary - threshold) * STUDENT_LOAN_REPAYMENT_AMOUNT * 52;
+      (weeklySalary - threshold) * repaymentAmount * 52;
   }
 
   return studentLoanAnnualRepayments;

@@ -16,7 +16,11 @@ interface TaxRates {
   // Previous rates: https://www.gov.uk/guidance/previous-annual-repayment-thresholds
   STUDENT_LOAN_PLAN_1_WEEKLY_THRESHOLD: number;
   STUDENT_LOAN_PLAN_2_WEEKLY_THRESHOLD: number;
+  STUDENT_LOAN_PLAN_4_WEEKLY_THRESHOLD: number;
+  STUDENT_LOAN_PLAN_5_WEEKLY_THRESHOLD: number;
+  STUDENT_LOAN_POSTGRAD_WEEKLY_THRESHOLD: number;
   STUDENT_LOAN_REPAYMENT_AMOUNT: number;
+  STUDENT_LOAN_REPAYMENT_AMOUNT_POSTGRAD: number;
 
   // National Insurance
   // See https://www.gov.uk/guidance/rates-and-thresholds-for-employers-2022-to-2023 for current and previous rates
@@ -41,7 +45,11 @@ const taxRates: Record<TaxYear, TaxRates> = {
     // Student loan repayments
     STUDENT_LOAN_PLAN_1_WEEKLY_THRESHOLD: 388,
     STUDENT_LOAN_PLAN_2_WEEKLY_THRESHOLD: 524,
+    STUDENT_LOAN_PLAN_4_WEEKLY_THRESHOLD: 487.98,
+    STUDENT_LOAN_PLAN_5_WEEKLY_THRESHOLD: 480, // Note: this was only introduced in 2023/24, so technically isn't relevant to 22/23
+    STUDENT_LOAN_POSTGRAD_WEEKLY_THRESHOLD: 403.84,
     STUDENT_LOAN_REPAYMENT_AMOUNT: 0.09, // People on plans 1 or 2 repay 9% of the amount you earn over the threshold
+    STUDENT_LOAN_REPAYMENT_AMOUNT_POSTGRAD: 0.06, // People on postgrad plans repay 6% of the amount you earn over the threshold
     // National Insurance
     NI_MIDDLE_RATE: 0.1325,
     NI_UPPER_RATE: 0.0325,
@@ -61,7 +69,11 @@ const taxRates: Record<TaxYear, TaxRates> = {
     // Student loan repayments
     STUDENT_LOAN_PLAN_1_WEEKLY_THRESHOLD: 423,
     STUDENT_LOAN_PLAN_2_WEEKLY_THRESHOLD: 524,
-    STUDENT_LOAN_REPAYMENT_AMOUNT: 0.09, // People on plans 1 or 2 repay 9% of the amount you earn over the threshold
+    STUDENT_LOAN_PLAN_4_WEEKLY_THRESHOLD: 532,
+    STUDENT_LOAN_PLAN_5_WEEKLY_THRESHOLD: 480,
+    STUDENT_LOAN_POSTGRAD_WEEKLY_THRESHOLD: 403,
+    STUDENT_LOAN_REPAYMENT_AMOUNT: 0.09, // People on plans 1, 2, 4 + 5 repay 9% of the amount you earn over the threshold
+    STUDENT_LOAN_REPAYMENT_AMOUNT_POSTGRAD: 0.06, // People on postgrad plans repay 6% of the amount you earn over the threshold
     // National Insurance
     NI_MIDDLE_RATE: 0.12,
     NI_UPPER_RATE: 0.02,
