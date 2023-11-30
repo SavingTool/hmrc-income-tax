@@ -7,7 +7,7 @@ Multiple versions of the HMRC rates can be supported, although only the follwing
 - 2022/23
 - 2023/24
 
-Works in all modern browsers and Node.js (v18+ LTS recommended).
+Works in all modern browsers and Node.js (LTS recommended).
 
 ## Installation
 
