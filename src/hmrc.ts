@@ -75,7 +75,7 @@ const taxRates: Record<TaxYear, TaxRates> = {
     STUDENT_LOAN_REPAYMENT_AMOUNT: 0.09, // People on plans 1, 2, 4 + 5 repay 9% of the amount you earn over the threshold
     STUDENT_LOAN_REPAYMENT_AMOUNT_POSTGRAD: 0.06, // People on postgrad plans repay 6% of the amount you earn over the threshold
     // National Insurance
-    NI_MIDDLE_RATE: 0.12,
+    NI_MIDDLE_RATE: 0.1, // Changed from 12% to 10% on 6th Jan 2024 (out of normal cycle)
     NI_UPPER_RATE: 0.02,
     NI_MIDDLE_BRACKET: 242,
     NI_UPPER_BRACKET: 967,
