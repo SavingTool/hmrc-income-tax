@@ -61,7 +61,7 @@ const taxRates: Record<TaxYear, TaxRates> = {
     // Income tax
     DEFAULT_PERSONAL_ALLOWANCE: 12_570,
     HIGHER_BRACKET: 50_270,
-    ADDITIONAL_BRACKET: 124_140,
+    ADDITIONAL_BRACKET: 125_140,
     BASIC_RATE: 0.2,
     HIGHER_RATE: 0.4,
     ADDITIONAL_RATE: 0.45,
