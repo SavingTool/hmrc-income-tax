@@ -23,8 +23,6 @@ export const calculateIncomeTax = ({
 
   const adjustedTaxableIncome = taxableAnnualIncome - personalAllowance;
   const adjustedHigherBracket = HIGHER_BRACKET - DEFAULT_PERSONAL_ALLOWANCE;
-  const adjustedAdditionalBracket =
-    ADDITIONAL_BRACKET - DEFAULT_PERSONAL_ALLOWANCE;
 
   let basicRateTax = 0;
   let higherRateTax = 0;
@@ -40,16 +38,16 @@ export const calculateIncomeTax = ({
 
   if (adjustedTaxableIncome > adjustedHigherBracket) {
     const amountOverToDiscard =
-      adjustedTaxableIncome > adjustedAdditionalBracket
-        ? adjustedTaxableIncome - adjustedAdditionalBracket
+      adjustedTaxableIncome > ADDITIONAL_BRACKET
+        ? adjustedTaxableIncome - ADDITIONAL_BRACKET
         : 0;
     const higherAmount =
       adjustedTaxableIncome - adjustedHigherBracket - amountOverToDiscard;
     higherRateTax = higherAmount * HIGHER_RATE;
   }
 
-  if (adjustedTaxableIncome > adjustedAdditionalBracket) {
-    const additionalAmount = adjustedTaxableIncome - adjustedAdditionalBracket;
+  if (adjustedTaxableIncome > ADDITIONAL_BRACKET) {
+    const additionalAmount = adjustedTaxableIncome - ADDITIONAL_BRACKET;
     additionalRateTax = additionalAmount * ADDITIONAL_RATE;
   }
 
