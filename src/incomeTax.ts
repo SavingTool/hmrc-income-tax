@@ -21,74 +21,42 @@ export const calculateIncomeTax = ({
     HIGHER_RATE,
   } = getHmrcRates(taxYear);
 
-  // Income over £100k: the brackets need to move in accordance with personal allowance changes
-  const personalAllowanceDeduction =
-    DEFAULT_PERSONAL_ALLOWANCE - personalAllowance;
-  const higherBracket = HIGHER_BRACKET - personalAllowanceDeduction;
-  const additionalBracket = ADDITIONAL_BRACKET - personalAllowanceDeduction;
+  const adjustedTaxableIncome = taxableAnnualIncome - personalAllowance;
+  const adjustedHigherBracket = HIGHER_BRACKET - DEFAULT_PERSONAL_ALLOWANCE;
+  const adjustedAdditionalBracket =
+    ADDITIONAL_BRACKET - DEFAULT_PERSONAL_ALLOWANCE;
 
-  // Taxable income between 0/PA and the higher bracket
-  const basicSection = HIGHER_BRACKET - personalAllowance;
+  let basicRateTax = 0;
+  let higherRateTax = 0;
+  let additionalRateTax = 0;
 
-  // Additional Rate taxpayers (3 bands)
-  if (taxableAnnualIncome > additionalBracket) {
-    // Taxable income between the higher bracket and additional bracket
-    const higherSection = ADDITIONAL_BRACKET - HIGHER_BRACKET;
-    // Taxable income over the additional bracket
-    const additionalSection = taxableAnnualIncome - ADDITIONAL_BRACKET;
-
-    // Calculate amounts against sections
-    const basicRateTax = basicSection * BASIC_RATE;
-    const higherRateTax = higherSection * HIGHER_RATE;
-    const additionalRateTax = additionalSection * ADDITIONAL_RATE;
-
-    return {
-      basicRateTax,
-      higherRateTax,
-      additionalRateTax,
-    };
+  if (adjustedTaxableIncome > 0) {
+    const basicAmount =
+      adjustedTaxableIncome < adjustedHigherBracket
+        ? adjustedTaxableIncome
+        : adjustedHigherBracket;
+    basicRateTax = basicAmount * BASIC_RATE;
   }
 
-  // Higher Rate taxpayers (2 bands)
-  if (
-    taxableAnnualIncome <= additionalBracket &&
-    taxableAnnualIncome > higherBracket
-  ) {
-    // Taxable income between the higher bracket and additional bracket
-    const higherSection = taxableAnnualIncome - HIGHER_BRACKET;
-    const basicRateTax = basicSection * BASIC_RATE;
-    const higherRateTax = higherSection * HIGHER_RATE;
-
-    return {
-      basicRateTax,
-      higherRateTax,
-      additionalRateTax: 0,
-    };
-  }
-
-  // Basic Rate taxpayers (1 band)
-  if (
-    taxableAnnualIncome <= higherBracket &&
-    taxableAnnualIncome > personalAllowance
-  ) {
-    // 1 band applies (basic)
-    const afterPersonalAllowance =
-      taxableAnnualIncome - personalAllowance > 0
-        ? taxableAnnualIncome - personalAllowance
+  if (adjustedTaxableIncome > adjustedHigherBracket) {
+    const amountOverToDiscard =
+      adjustedTaxableIncome > adjustedAdditionalBracket
+        ? adjustedTaxableIncome - adjustedAdditionalBracket
         : 0;
-    const basicRateTax = afterPersonalAllowance * BASIC_RATE;
+    const higherAmount =
+      adjustedTaxableIncome - adjustedHigherBracket - amountOverToDiscard;
+    higherRateTax = higherAmount * HIGHER_RATE;
+  }
 
-    return {
-      basicRateTax,
-      higherRateTax: 0,
-      additionalRateTax: 0,
-    };
+  if (adjustedTaxableIncome > adjustedAdditionalBracket) {
+    const additionalAmount = adjustedTaxableIncome - adjustedAdditionalBracket;
+    additionalRateTax = additionalAmount * ADDITIONAL_RATE;
   }
 
   // Income is lower than the personal allowance - no income tax
   return {
-    basicRateTax: 0,
-    higherRateTax: 0,
-    additionalRateTax: 0,
+    basicRateTax,
+    higherRateTax,
+    additionalRateTax,
   };
 };
