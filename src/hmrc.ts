@@ -106,7 +106,7 @@ const taxRates: Record<TaxYear, TaxRates> = {
 
 export const getHmrcRates = (taxYear?: TaxYear) => {
   if (!taxYear) {
-    return taxRates["2023/24"];
+    return taxRates["2024/25"];
   }
 
   return taxRates[taxYear];

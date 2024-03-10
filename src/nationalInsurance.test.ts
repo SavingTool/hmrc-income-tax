@@ -69,3 +69,38 @@ describe("calculateEmployeeNationalInsurance (23/24)", () => {
     });
   });
 });
+
+const expectationsC = [
+  { taxableAnnualIncome: 15_000, nics: 193.28 },
+  { taxableAnnualIncome: 17_500, nics: 393.28 },
+  { taxableAnnualIncome: 20_000, nics: 593.28 },
+  { taxableAnnualIncome: 22_500, nics: 793.28 },
+  { taxableAnnualIncome: 25_000, nics: 993.28 },
+  { taxableAnnualIncome: 50_000, nics: 2993.28 },
+  { taxableAnnualIncome: 55_000, nics: 3110.32 },
+  { taxableAnnualIncome: 60_000, nics: 3210.32 },
+  { taxableAnnualIncome: 75_000, nics: 3510.32 },
+  { taxableAnnualIncome: 90_000, nics: 3810.32 },
+  { taxableAnnualIncome: 110_000, nics: 4210.32 },
+  { taxableAnnualIncome: 130_000, nics: 4610.32 },
+  { taxableAnnualIncome: 150_000, nics: 5010.32 },
+  { taxableAnnualIncome: 175_000, nics: 5510.32 },
+  { taxableAnnualIncome: 200_000, nics: 6010.32 },
+  { taxableAnnualIncome: 250_000, nics: 7010.32 },
+  { taxableAnnualIncome: 500_000, nics: 12010.32 },
+  { taxableAnnualIncome: 1_000_000, nics: 22010.32 },
+];
+
+describe("calculateEmployeeNationalInsurance (24/25)", () => {
+  expectationsC.forEach((expectation) => {
+    const { taxableAnnualIncome, nics } = expectation;
+    test(taxableAnnualIncome.toString(), () => {
+      expect(
+        calculateEmployeeNationalInsurance({
+          taxYear: "2024/25",
+          taxableAnnualIncome,
+        })
+      ).toBeCloseTo(nics, 1);
+    });
+  });
+});

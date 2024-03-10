@@ -11,8 +11,8 @@ This library makes it easy to calculate, based on a PAYE taxable salary:
 
 Multiple versions of the HMRC rates can be supported, although only the follwing years have been implemented:
 
-- 2024/25
-- 2023/24 (default)
+- 2024/25 (default)
+- 2023/24
 - 2022/23
 
 Works in all modern browsers and Node.js (LTS recommended).
