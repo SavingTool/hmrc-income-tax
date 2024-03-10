@@ -1,11 +1,19 @@
 # HMRC Income Tax
 
-An ultra-fast, tiny TypeScript implementation of UK Income Tax & National Insurance calculations. See it in action on [SavingTool.co.uk](https://savingtool.co.uk).
+An ultra-fast, tiny TypeScript implementation of common UK Income Tax & National Insurance calculations. See it in action on [SavingTool.co.uk](https://savingtool.co.uk).
+
+This library makes it easy to calculate, based on a PAYE taxable salary:
+
+- Personal Allowance
+- Income Tax
+- Employee National Insurance Contributions (Class 1, Category A only)
+- Student Loan Repayments (Plans 1, 2, 4, 5 or postgrad)
 
 Multiple versions of the HMRC rates can be supported, although only the follwing years have been implemented:
 
+- 2024/25
+- 2023/24 (default)
 - 2022/23
-- 2023/24
 
 Works in all modern browsers and Node.js (LTS recommended).
 
@@ -39,15 +47,21 @@ import {
   calculateStudentLoanRepayments,
 } from "@saving-tool/hmrc-income-tax";
 
+const taxYear = "2022/23";
+
 // Mark S.
 const taxableAnnualIncome = 53_900;
 
-const personalAllowance = calculatePersonalAllowance({ taxableAnnualIncome });
+const personalAllowance = calculatePersonalAllowance({
+  taxableAnnualIncome,
+  taxYear,
+});
 // => 12570
 
 const incomeTax = calculateIncomeTax({
   personalAllowance,
   taxableAnnualIncome,
+  taxYear,
 });
 const { basicRateTax, higherRateTax, additionalRateTax } = incomeTax;
 const totalIncomeTax = basicRateTax + higherRateTax + additionalRateTax;
@@ -55,12 +69,14 @@ const totalIncomeTax = basicRateTax + higherRateTax + additionalRateTax;
 
 const nationalInsuranceContributions = calculateEmployeeNationalInsurance({
   taxableAnnualIncome,
+  taxYear,
 });
 // => 5471
 
 const studentLoanRepayments = calculateStudentLoanRepayments({
   taxableAnnualIncome,
   studentLoanPlanNo: 1,
+  taxYear,
 });
 // => 3162
 
@@ -82,15 +98,21 @@ import {
   calculateEmployeeNationalInsurance,
 } from "@saving-tool/hmrc-income-tax";
 
+const taxYear = "2022/23";
+
 // Irv B.
 const taxableAnnualIncome = 160_000;
 
-const personalAllowance = calculatePersonalAllowance({ taxableAnnualIncome });
+const personalAllowance = calculatePersonalAllowance({
+  taxableAnnualIncome,
+  taxYear,
+});
 // => 0
 
 const incomeTax = calculateIncomeTax({
   personalAllowance,
   taxableAnnualIncome,
+  taxYear,
 });
 const { basicRateTax, higherRateTax, additionalRateTax } = incomeTax;
 const totalIncomeTax = basicRateTax + higherRateTax + additionalRateTax;
@@ -98,6 +120,7 @@ const totalIncomeTax = basicRateTax + higherRateTax + additionalRateTax;
 
 const nationalInsuranceContributions = calculateEmployeeNationalInsurance({
   taxableAnnualIncome,
+  taxYear,
 });
 // => 8919
 
