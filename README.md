@@ -32,7 +32,7 @@ Run: `yarn add @saving-tool/hmrc-income-tax` (or `npm install @saving-tool/hmrc-
 There are 5 main APIs:
 
 - `calculatePersonalAllowance({ taxYear?: TaxYear, country?: Country, taxableAnnualIncome: number })`: calculates an individual's personal allowance for a tax year, single amount.
-- `calculateIncomeTax({ taxYear?: TaxYear, country?: Country, personalAllowance: number, taxableAnnualIncome: number })`: calculates the income tax due in a tax year on an individual's taxable income, broken down into the 3 bands (basic, higher, additional)
+- `calculateIncomeTax({ taxYear?: TaxYear, country?: Country, personalAllowance: number, taxableAnnualIncome: number })`: calculates the income tax due in a tax year on an individual's taxable income
 - `calculateEmployeeNationalInsurance({ taxYear?: TaxYear, country?: Country, taxableAnnualIncome: number })`: calculates the national insurance contributions due in a tax year on an individual's taxable income, single amount. Note: only supports class 1, category A
 - `calculateStudentLoanRepayments({ taxYear?: TaxYear, country?: Country, taxableAnnualIncome: number, studentLoanPlanNo: number })`: calculates the student loan repayments due in a tax year on an individual's taxable income, single amount. `studentLoanPlanNo` can be `1`, `2`, `4`, `5` or `postgrad`.
 - `getHmrcRates({ taxYear?: TaxYear, country?: Country })`: returns an underlying static set of HMRC rates for a given tax year. This is useful for doing your own arbitrary calculations.
@@ -71,8 +71,7 @@ const incomeTax = calculateIncomeTax({
   taxableAnnualIncome,
   taxYear,
 });
-const { basicRateTax, higherRateTax, additionalRateTax } = incomeTax;
-const totalIncomeTax = basicRateTax + higherRateTax + additionalRateTax;
+const { total } = incomeTax;
 // => 8992
 
 const nationalInsuranceContributions = calculateEmployeeNationalInsurance({
@@ -122,8 +121,7 @@ const incomeTax = calculateIncomeTax({
   taxableAnnualIncome,
   taxYear,
 });
-const { basicRateTax, higherRateTax, additionalRateTax } = incomeTax;
-const totalIncomeTax = basicRateTax + higherRateTax + additionalRateTax;
+const { total } = incomeTax;
 // => 57589
 
 const nationalInsuranceContributions = calculateEmployeeNationalInsurance({
