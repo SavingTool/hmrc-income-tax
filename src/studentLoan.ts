@@ -1,14 +1,17 @@
-import type { StudentLoanPlan, TaxYear } from "./types";
 import { getHmrcRates } from "./hmrc";
+
+import type { StudentLoanPlan, TaxYear, Country } from "./types";
 
 // Calculates an individual's annual student loan repayments
 // Note that student loan repayments do not take into account the personal allowance in any way, it's a simple threshold system
 export const calculateStudentLoanRepayments = ({
   taxYear,
+  country,
   taxableAnnualIncome,
   studentLoanPlanNo,
 }: {
   taxYear?: TaxYear;
+  country?: Country;
   taxableAnnualIncome: number;
   studentLoanPlanNo: StudentLoanPlan;
 }): number => {
@@ -20,7 +23,7 @@ export const calculateStudentLoanRepayments = ({
     STUDENT_LOAN_POSTGRAD_WEEKLY_THRESHOLD,
     STUDENT_LOAN_REPAYMENT_AMOUNT,
     STUDENT_LOAN_REPAYMENT_AMOUNT_POSTGRAD,
-  } = getHmrcRates(taxYear);
+  } = getHmrcRates({ taxYear, country });
   let studentLoanAnnualRepayments = 0;
 
   // Repayments are a % of income over HMRC-specified thresholds (threshold amount depends on plan number)

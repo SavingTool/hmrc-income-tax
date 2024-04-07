@@ -11,9 +11,15 @@ This library makes it easy to calculate, based on a PAYE taxable salary:
 
 Multiple versions of the HMRC rates can be supported, although only the follwing years have been implemented:
 
+England/NI/Wales:
+
 - 2024/25 (default)
 - 2023/24
 - 2022/23
+
+Scotland:
+
+- 2024/25 (default)
 
 Works in all modern browsers and Node.js (LTS recommended).
 
@@ -25,13 +31,15 @@ Run: `yarn add @saving-tool/hmrc-income-tax` (or `npm install @saving-tool/hmrc-
 
 There are 5 main APIs:
 
-- `calculatePersonalAllowance({ taxYear?: TaxYear, taxableAnnualIncome: number })`: calculates an individual's personal allowance for a tax year, single amount.
-- `calculateIncomeTax({ taxYear?: TaxYear, personalAllowance: number, taxableAnnualIncome: number })`: calculates the income tax due in a tax year on an individual's taxable income, broken down into the 3 bands (basic, higher, additional)
-- `calculateEmployeeNationalInsurance({ taxYear?: TaxYear, taxableAnnualIncome: number })`: calculates the national insurance contributions due in a tax year on an individual's taxable income, single amount. Note: only supports class 1, category A
-- `calculateStudentLoanRepayments({ taxYear?: TaxYear, taxableAnnualIncome: number, studentLoanPlanNo: number })`: calculates the student loan repayments due in a tax year on an individual's taxable income, single amount. `studentLoanPlanNo` can be `1`, `2`, `4`, `5` or `postgrad`.
-- `getHmrcRates({ taxYear?: TaxYear })`: returns an underlying static set of HMRC rates for a given tax year. This is useful for doing your own arbitrary calculations.
+- `calculatePersonalAllowance({ taxYear?: TaxYear, country?: Country, taxableAnnualIncome: number })`: calculates an individual's personal allowance for a tax year, single amount.
+- `calculateIncomeTax({ taxYear?: TaxYear, country?: Country, personalAllowance: number, taxableAnnualIncome: number })`: calculates the income tax due in a tax year on an individual's taxable income, broken down into the 3 bands (basic, higher, additional)
+- `calculateEmployeeNationalInsurance({ taxYear?: TaxYear, country?: Country, taxableAnnualIncome: number })`: calculates the national insurance contributions due in a tax year on an individual's taxable income, single amount. Note: only supports class 1, category A
+- `calculateStudentLoanRepayments({ taxYear?: TaxYear, country?: Country, taxableAnnualIncome: number, studentLoanPlanNo: number })`: calculates the student loan repayments due in a tax year on an individual's taxable income, single amount. `studentLoanPlanNo` can be `1`, `2`, `4`, `5` or `postgrad`.
+- `getHmrcRates({ taxYear?: TaxYear, country?: Country })`: returns an underlying static set of HMRC rates for a given tax year. This is useful for doing your own arbitrary calculations.
 
 All APIs return raw amounts and there is no formatting or display functionality.
+
+`country` is an optional input for all APIs: `"England/NI/Wales" | "Scotland"`. If not provided, the default is `"England/NI/Wales"`.
 
 Note that `taxYear` is an optional input to select which tax year rates should be used (default is "2023/24").
 

@@ -1,17 +1,20 @@
-import type { TaxYear } from "./types";
 import { getHmrcRates } from "./hmrc";
+
+import type { TaxYear, Country } from "./types";
 
 // Calculates an individual's annual personal allowance, based on taxable annual income.
 // Not yet supported: marriage allowance, blind person's allowance
 export const calculatePersonalAllowance = ({
   taxYear,
+  country,
   taxableAnnualIncome,
 }: {
   taxYear?: TaxYear;
+  country?: Country;
   taxableAnnualIncome: number;
 }): number => {
   const { PERSONAL_ALLOWANCE_DROPOFF, DEFAULT_PERSONAL_ALLOWANCE } =
-    getHmrcRates(taxYear);
+    getHmrcRates({ taxYear, country });
 
   // £1 of personal allowance is reduced for every £2 of Income over £100,000
   let personalAllowanceDeduction =

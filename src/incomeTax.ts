@@ -1,14 +1,17 @@
-import type { IncomeTax, TaxYear } from "./types";
 import { getHmrcRates } from "./hmrc";
+
+import type { IncomeTax, TaxYear, Country } from "./types";
 
 // Calculates an indivudals income tax against annual taxable income
 // Note: National Insurance contributions are not included here, see `calculateEmployeeNationalInsurance` instead
 export const calculateIncomeTax = ({
   taxYear,
+  country,
   taxableAnnualIncome,
   personalAllowance,
 }: {
   taxYear?: TaxYear;
+  country?: Country;
   taxableAnnualIncome: number; // Pre-tax income (before any taxes or NI contributions)
   personalAllowance: number; // The individual's personal allowance
 }): IncomeTax => {
@@ -19,7 +22,7 @@ export const calculateIncomeTax = ({
     DEFAULT_PERSONAL_ALLOWANCE,
     HIGHER_BRACKET,
     HIGHER_RATE,
-  } = getHmrcRates(taxYear);
+  } = getHmrcRates({ taxYear, country });
 
   const adjustedTaxableIncome = taxableAnnualIncome - personalAllowance;
   const adjustedHigherBracket = HIGHER_BRACKET - DEFAULT_PERSONAL_ALLOWANCE;

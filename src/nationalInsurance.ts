@@ -1,5 +1,6 @@
 import { getHmrcRates } from "./hmrc";
-import type { TaxYear } from "./types";
+
+import type { TaxYear, Country } from "./types";
 
 // Calculates an individual's national insurance contributions based on taxable income
 // Note: This is employee contributions only. Supports class 1, category A national insurance only.
@@ -7,14 +8,16 @@ import type { TaxYear } from "./types";
 // See https://www.gov.uk/national-insurance-rates-letters/category-letters for other categories
 export const calculateEmployeeNationalInsurance = ({
   taxYear,
+  country,
   taxableAnnualIncome,
 }: {
   taxYear?: TaxYear;
+  country?: Country;
   taxableAnnualIncome: number;
 }) => {
   const weeklySalary = taxableAnnualIncome / 52;
   const { NI_MIDDLE_RATE, NI_UPPER_RATE, NI_MIDDLE_BRACKET, NI_UPPER_BRACKET } =
-    getHmrcRates(taxYear);
+    getHmrcRates({ taxYear, country });
   const afterFreeSection = weeklySalary - NI_MIDDLE_BRACKET;
   let middleBracket = 0;
   let upperBracket = 0;
