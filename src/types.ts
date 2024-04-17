@@ -1,12 +1,33 @@
-export interface IncomeTax {
-  basicRateTax: number;
-  higherRateTax: number;
-  additionalRateTax: number;
+export interface EnglishIncomeTax {
+  incomeTaxType: "England/NI/Wales";
+  total: number;
+  breakdown: {
+    basicRateTax: number;
+    higherRateTax: number;
+    additionalRateTax: number;
+  };
+}
+
+export interface ScottishIncomeTax {
+  incomeTaxType: "Scotland";
+  total: number;
+  breakdown: {
+    starterRateTax: number;
+    basicRateTax: number;
+    intermediateRateTax: number;
+    higherRateTax: number;
+    advancedRateTax: number;
+    topRateTax: number;
+  };
 }
 
 export type StudentLoanPlan = 1 | 2 | 4 | 5 | "postgrad";
 
-export type TaxYear = "2022/23" | "2023/24" | "2024/25";
+export type SupportedEnglishTaxYear = "2022/23" | "2023/24" | "2024/25";
+
+export type SupportedScottishTaxYear = "2024/25";
+
+export type TaxYear = SupportedEnglishTaxYear | SupportedScottishTaxYear;
 
 // There are two sets of rates for income tax for the UK
 export type Country = "England/NI/Wales" | "Scotland";
