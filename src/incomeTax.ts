@@ -73,12 +73,10 @@ function calculateEnglishTaxes({
 
 function calculateScottishTaxes({
   taxRates,
-  taxYear,
   taxableAnnualIncome,
   personalAllowance,
 }: {
   taxRates: ScottishTaxRates;
-  taxYear?: TaxYear;
   taxableAnnualIncome: number;
   personalAllowance: number;
 }): ScottishIncomeTax {
@@ -97,7 +95,10 @@ function calculateScottishTaxes({
     TOP_RATE,
   } = taxRates;
 
-  const adjustedTaxableIncome = taxableAnnualIncome - personalAllowance;
+  const adjustedTaxableIncome =
+    taxableAnnualIncome <= DEFAULT_PERSONAL_ALLOWANCE
+      ? 0
+      : taxableAnnualIncome - DEFAULT_PERSONAL_ALLOWANCE;
 
   const bracket1 = BASIC_BRACKET - DEFAULT_PERSONAL_ALLOWANCE;
   const bracket2 = INTERMEDIATE_BRACKET - DEFAULT_PERSONAL_ALLOWANCE;
@@ -122,48 +123,48 @@ function calculateScottishTaxes({
 
   // 2. Basic rate tax
   if (adjustedTaxableIncome > bracket1) {
-    const amountOverToDiscard =
-      adjustedTaxableIncome > BASIC_BRACKET
-        ? adjustedTaxableIncome - BASIC_BRACKET
-        : 0;
-    const amt = adjustedTaxableIncome - bracket1 - amountOverToDiscard;
-    basicRateTax = amt * BASIC_RATE;
+    const taxableSection =
+      adjustedTaxableIncome > bracket2
+        ? bracket2 - bracket1
+        : adjustedTaxableIncome - bracket1;
+
+    basicRateTax = taxableSection * BASIC_RATE;
   }
 
   // 3. Intermediate rate tax
   if (adjustedTaxableIncome > bracket2) {
-    const amountOverToDiscard =
-      adjustedTaxableIncome > INTERMEDIATE_BRACKET
-        ? adjustedTaxableIncome - INTERMEDIATE_BRACKET
-        : 0;
-    const amt = adjustedTaxableIncome - bracket2 - amountOverToDiscard;
-    intermediateRateTax = amt * INTERMEDIATE_RATE;
+    const taxableSection =
+      adjustedTaxableIncome > bracket3
+        ? bracket3 - bracket2
+        : adjustedTaxableIncome - bracket2;
+
+    intermediateRateTax = taxableSection * INTERMEDIATE_RATE;
   }
 
   // 4. Higher rate tax
   if (adjustedTaxableIncome > bracket3) {
-    const amountOverToDiscard =
-      adjustedTaxableIncome > HIGHER_BRACKET
-        ? adjustedTaxableIncome - HIGHER_BRACKET
-        : 0;
-    const amt = adjustedTaxableIncome - bracket3 - amountOverToDiscard;
-    higherRateTax = amt * HIGHER_RATE;
+    const taxableSection =
+      adjustedTaxableIncome > bracket4
+        ? bracket4 - bracket3
+        : adjustedTaxableIncome - bracket3;
+
+    higherRateTax = taxableSection * HIGHER_RATE;
   }
 
   // 5. Advanced rate tax
   if (adjustedTaxableIncome > bracket4) {
-    const amountOverToDiscard =
-      adjustedTaxableIncome > ADVANCED_BRACKET
-        ? adjustedTaxableIncome - ADVANCED_BRACKET
-        : 0;
-    const amt = adjustedTaxableIncome - bracket4 - amountOverToDiscard;
-    advancedRateTax = amt * ADVANCED_RATE;
+    const taxableSection =
+      adjustedTaxableIncome > bracket5
+        ? bracket5 - bracket4
+        : adjustedTaxableIncome - bracket4;
+
+    advancedRateTax = taxableSection * ADVANCED_RATE;
   }
 
   // 6. Top rate tax
   if (adjustedTaxableIncome > bracket5) {
     const amt = adjustedTaxableIncome - bracket5;
-    topRateTax = amt * ADVANCED_RATE;
+    topRateTax = amt * TOP_RATE;
   }
 
   const total =
@@ -206,7 +207,6 @@ export const calculateIncomeTax = ({
   if (isScottishTaxRates(taxRates)) {
     return calculateScottishTaxes({
       taxRates,
-      taxYear,
       taxableAnnualIncome,
       personalAllowance,
     });
