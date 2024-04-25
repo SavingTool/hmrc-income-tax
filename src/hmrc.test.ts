@@ -8,14 +8,23 @@ describe("getHmrcRates", () => {
   });
 
   test("It uses explicit 2022/23 rates", () => {
-    expect(getHmrcRates("2022/23").DEFAULT_PERSONAL_ALLOWANCE).toEqual(12570);
+    expect(
+      getHmrcRates({ taxYear: "2022/23", country: "England/NI/Wales" })
+        .DEFAULT_PERSONAL_ALLOWANCE
+    ).toEqual(12570);
   });
 
   test("It uses explicit 2023/24 rates", () => {
-    expect(getHmrcRates("2023/24").DEFAULT_PERSONAL_ALLOWANCE).toEqual(12570);
+    expect(
+      getHmrcRates({ taxYear: "2023/24", country: "England/NI/Wales" })
+        .DEFAULT_PERSONAL_ALLOWANCE
+    ).toEqual(12570);
   });
 
   test("It uses explicit 2024/25 rates", () => {
-    expect(getHmrcRates("2024/25").DEFAULT_PERSONAL_ALLOWANCE).toEqual(12570);
+    expect(
+      getHmrcRates({ taxYear: "2024/25", country: "England/NI/Wales" })
+        .DEFAULT_PERSONAL_ALLOWANCE
+    ).toEqual(12570);
   });
 });
