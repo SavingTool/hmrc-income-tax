@@ -126,7 +126,9 @@ interface Options {
   country?: Country | undefined;
 }
 
-export const getHmrcRates = (options?: Options) => {
+export const getHmrcRates = (
+  options?: Options
+): EnglishTaxRates | ScottishTaxRates => {
   const taxRates =
     options?.country === "Scotland" ? scottishTaxRates : englandNiWalesTaxRates;
   const taxYearToUse = options?.taxYear ?? "2024/25";
@@ -138,8 +140,6 @@ export const getHmrcRates = (options?: Options) => {
       }`
     );
   }
-
-  const taxRatesToUse = taxRates[taxYearToUse];
 
   return taxRates[taxYearToUse];
 };

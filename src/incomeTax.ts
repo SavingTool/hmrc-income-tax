@@ -4,8 +4,6 @@ import type {
   EnglishIncomeTax,
   ScottishIncomeTax,
   TaxYear,
-  SupportedEnglishTaxYear,
-  SupportedScottishTaxYear,
   Country,
   EnglishTaxRates,
   ScottishTaxRates,

@@ -29,21 +29,78 @@ Run: `yarn add @saving-tool/hmrc-income-tax` (or `npm install @saving-tool/hmrc-
 
 ## Usage
 
-There are 5 main APIs:
+There are 5 functions exposed by the library:
 
-- `calculatePersonalAllowance({ taxYear?: TaxYear, country?: Country, taxableAnnualIncome: number })`: calculates an individual's personal allowance for a tax year, single amount.
-- `calculateIncomeTax({ taxYear?: TaxYear, country?: Country, personalAllowance: number, taxableAnnualIncome: number })`: calculates the income tax due in a tax year on an individual's taxable income
-- `calculateEmployeeNationalInsurance({ taxYear?: TaxYear, country?: Country, taxableAnnualIncome: number })`: calculates the national insurance contributions due in a tax year on an individual's taxable income, single amount. Note: only supports class 1, category A
-- `calculateStudentLoanRepayments({ taxYear?: TaxYear, country?: Country, taxableAnnualIncome: number, studentLoanPlanNo: number })`: calculates the student loan repayments due in a tax year on an individual's taxable income, single amount. `studentLoanPlanNo` can be `1`, `2`, `4`, `5` or `postgrad`.
-- `getHmrcRates({ taxYear?: TaxYear, country?: Country })`: returns an underlying static set of HMRC rates for a given tax year. This is useful for doing your own arbitrary calculations.
+### `calculatePersonalAllowance`
+
+Calculates an individual's personal allowance for a tax year, single amount.
+
+```
+calculatePersonalAllowance({
+  taxYear?: TaxYear,
+  country?: Country,
+  taxableAnnualIncome: number
+}) => number;
+```
+
+### `calculateIncomeTax`
+
+Calculates the income tax due in a tax year on an individual's taxable income
+
+```
+calculateIncomeTax({
+  taxYear?: TaxYear;
+  country?: Country,
+  personalAllowance: number,
+  taxableAnnualIncome: number
+}) => EnglishIncomeTax | ScottishIncomeTax;
+```
+
+### `calculateEmployeeNationalInsurance`
+
+Calculates the National Insurance contributions due in a tax year on an individual's taxable income, single amount. Note: only supports class 1, category A.
+
+```
+calculateEmployeeNationalInsurance({
+  taxYear?: TaxYear,
+  country?: Country,
+  taxableAnnualIncome: number
+}) => number;
+```
+
+### `calculateStudentLoanRepayments`
+
+Calculates the student loan repayments due in a tax year on an individual's taxable income, single amount.
+
+```
+calculateStudentLoanRepayments({
+  taxYear?: TaxYear,
+  country?: Country,
+  taxableAnnualIncome: number,
+  studentLoanPlanNo: 1 | 2 | 4 | 5 | 'postgrad'
+}) => number;
+```
+
+### `getHmrcRates`
+
+Returns an underlying static set of HMRC rates for a given tax year. This is useful for doing your own arbitrary calculations.
+
+```
+getHmrcRates({
+  taxYear?: TaxYear,
+  country?: Country
+}) => EnglishTaxRates | ScottishTaxRates;
+```
 
 All APIs return raw amounts and there is no formatting or display functionality.
 
 `country` is an optional input for all APIs: `"England/NI/Wales" | "Scotland"`. If not provided, the default is `"England/NI/Wales"`.
 
-Note that `taxYear` is an optional input to select which tax year rates should be used (default is "2023/24").
+Note that `taxYear` is an optional input to select which tax year rates should be used (default is "2024/25").
 
 ## Examples (2022/23 HMRC Rates)
+
+**DISCLAIMER:** These examples were written against the 2022/23 England/Wales/NI HMRC rates, hence will output different results vs today's HMRC rates.
 
 Mark S. of MDR earns £55,000. His employer contributes 6% to his pension, but also matches up to another 2%. Mark contributes 2% via salary sacrafice to get the matching. Therefore, Mark's taxable income is £53,900. He has £19,000 of outstanding student loan debt, and is on Plan 1.
 
