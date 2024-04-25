@@ -98,7 +98,7 @@ function calculateScottishTaxes({
   const adjustedTaxableIncome =
     taxableAnnualIncome <= DEFAULT_PERSONAL_ALLOWANCE
       ? 0
-      : taxableAnnualIncome - DEFAULT_PERSONAL_ALLOWANCE;
+      : taxableAnnualIncome - personalAllowance;
 
   const bracket1 = BASIC_BRACKET - DEFAULT_PERSONAL_ALLOWANCE;
   const bracket2 = INTERMEDIATE_BRACKET - DEFAULT_PERSONAL_ALLOWANCE;
@@ -151,19 +151,21 @@ function calculateScottishTaxes({
     higherRateTax = taxableSection * HIGHER_RATE;
   }
 
+  // Calculations slightly change from here, because personal allowance is being reduced
+
   // 5. Advanced rate tax
   if (adjustedTaxableIncome > bracket4) {
     const taxableSection =
-      adjustedTaxableIncome > bracket5
-        ? bracket5 - bracket4
+      adjustedTaxableIncome > TOP_BRACKET
+        ? TOP_BRACKET - bracket4
         : adjustedTaxableIncome - bracket4;
 
     advancedRateTax = taxableSection * ADVANCED_RATE;
   }
 
   // 6. Top rate tax
-  if (adjustedTaxableIncome > bracket5) {
-    const amt = adjustedTaxableIncome - bracket5;
+  if (adjustedTaxableIncome > TOP_BRACKET) {
+    const amt = adjustedTaxableIncome - TOP_BRACKET;
     topRateTax = amt * TOP_RATE;
   }
 
