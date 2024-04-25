@@ -1,6 +1,6 @@
 {
   "name": "@saving-tool/hmrc-income-tax",
-  "version": "0.12.0",
+  "version": "1.0.0",
   "description": "An ultra-fast, tiny TypeScript implementation of UK Income Tax & National Insurance calculations",
   "author": "Sam Brown (https://github.com/sgb-io)",
   "dependencies": {},
