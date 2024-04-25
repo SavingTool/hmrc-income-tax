@@ -35,7 +35,7 @@ There are 5 functions exposed by the library:
 
 Calculates an individual's personal allowance for a tax year, single amount.
 
-```
+```typescript
 calculatePersonalAllowance({
   taxYear?: TaxYear,
   country?: Country,
@@ -47,7 +47,7 @@ calculatePersonalAllowance({
 
 Calculates the income tax due in a tax year on an individual's taxable income
 
-```
+```typescript
 calculateIncomeTax({
   taxYear?: TaxYear;
   country?: Country,
@@ -60,7 +60,7 @@ calculateIncomeTax({
 
 Calculates the National Insurance contributions due in a tax year on an individual's taxable income, single amount. Note: only supports class 1, category A.
 
-```
+```typescript
 calculateEmployeeNationalInsurance({
   taxYear?: TaxYear,
   country?: Country,
@@ -72,7 +72,7 @@ calculateEmployeeNationalInsurance({
 
 Calculates the student loan repayments due in a tax year on an individual's taxable income, single amount.
 
-```
+```typescript
 calculateStudentLoanRepayments({
   taxYear?: TaxYear,
   country?: Country,
@@ -85,7 +85,7 @@ calculateStudentLoanRepayments({
 
 Returns an underlying static set of HMRC rates for a given tax year. This is useful for doing your own arbitrary calculations.
 
-```
+```typescript
 getHmrcRates({
   taxYear?: TaxYear,
   country?: Country
