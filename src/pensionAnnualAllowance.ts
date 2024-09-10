@@ -15,6 +15,10 @@ interface Args {
 // UNSUPPORTED: DB Pensions
 // UNSUPPORTED: Carry forward allowances from previous years
 // UNSUPPORTED: Paying into overseas pension schemes
+// Tips:
+// Use `retrospectivePensionPaymentsTaxRelief` for personal contributions (or any other form of relief at source contribution)
+// Use `employeeDcPensionContributions` for post-2015 Salary Sacrifice schemes
+// Use `retrospectivePensionPaymentsTaxRelief` for pre-2015 Salary Sacrifice schemes
 export const calculatePensionAnnualAllowance = ({
   taxYear,
   taxableAnnualIncome,
@@ -28,7 +32,6 @@ export const calculatePensionAnnualAllowance = ({
     PENSION_MINIMUM_ANNUAL_ALLOWANCE, // 10k
     PENSION_ADJUSTED_LIMIT, // 260k
   } = getHmrcRates({ taxYear });
-  const netIncome = taxableAnnualIncome;
 
   const pensionSavings =
     (employeeDcPensionContributions ?? 0) +
@@ -36,13 +39,13 @@ export const calculatePensionAnnualAllowance = ({
     (retrospectivePensionPaymentsTaxRelief ?? 0);
 
   const adjustedIncome =
-    netIncome +
+    taxableAnnualIncome +
     pensionSavings -
     (retrospectivePensionPaymentsTaxRelief ?? 0) -
     (lumpSumDeathBenefits ?? 0);
 
   const thresholdIncome =
-    netIncome +
+    taxableAnnualIncome +
     (employeeDcPensionContributions ?? 0) -
     (retrospectivePensionPaymentsTaxRelief ?? 0) -
     (lumpSumDeathBenefits ?? 0);
