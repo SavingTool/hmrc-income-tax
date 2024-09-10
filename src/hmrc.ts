@@ -33,6 +33,10 @@ const englandNiWalesTaxRates: Record<SupportedEnglishTaxYear, EnglishTaxRates> =
       NI_UPPER_RATE: 0.0325,
       NI_MIDDLE_BRACKET: 242,
       NI_UPPER_BRACKET: 967,
+      // Pension allowances
+      PENSION_ANNUAL_ALLOWANCE: 40_000,
+      PENSION_MINIMUM_ANNUAL_ALLOWANCE: 4_000,
+      PENSION_ADJUSTED_LIMIT: 240_000,
     },
     "2023/24": {
       COUNTRY: "England/NI/Wales",
@@ -57,6 +61,10 @@ const englandNiWalesTaxRates: Record<SupportedEnglishTaxYear, EnglishTaxRates> =
       NI_UPPER_RATE: 0.02,
       NI_MIDDLE_BRACKET: 242,
       NI_UPPER_BRACKET: 967,
+      // Pension allowances
+      PENSION_ANNUAL_ALLOWANCE: 60_000,
+      PENSION_MINIMUM_ANNUAL_ALLOWANCE: 10_000,
+      PENSION_ADJUSTED_LIMIT: 260_000,
     },
     "2024/25": {
       COUNTRY: "England/NI/Wales",
@@ -81,6 +89,10 @@ const englandNiWalesTaxRates: Record<SupportedEnglishTaxYear, EnglishTaxRates> =
       NI_UPPER_RATE: 0.02,
       NI_MIDDLE_BRACKET: 242,
       NI_UPPER_BRACKET: 967,
+      // Pension allowances
+      PENSION_ANNUAL_ALLOWANCE: 60_000,
+      PENSION_MINIMUM_ANNUAL_ALLOWANCE: 10_000,
+      PENSION_ADJUSTED_LIMIT: 260_000,
     },
   };
 
@@ -118,6 +130,10 @@ const scottishTaxRates: Record<SupportedScottishTaxYear, ScottishTaxRates> = {
     NI_UPPER_RATE: 0.02,
     NI_MIDDLE_BRACKET: 242,
     NI_UPPER_BRACKET: 967,
+    // Pension allowances
+    PENSION_ANNUAL_ALLOWANCE: 60_000,
+    PENSION_MINIMUM_ANNUAL_ALLOWANCE: 10_000,
+    PENSION_ADJUSTED_LIMIT: 260_000,
   },
 };
 
@@ -136,7 +152,7 @@ export const getHmrcRates = (
   if (!taxRates.hasOwnProperty(taxYearToUse)) {
     throw new Error(
       `Tax Year ${taxYearToUse} is not currently supported for ${
-        options.country ?? "England/NI/Wales"
+        options?.country ?? "England/NI/Wales"
       }`
     );
   }
