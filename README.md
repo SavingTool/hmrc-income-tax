@@ -8,6 +8,7 @@ This library makes it easy to calculate, based on a PAYE taxable salary:
 - Income Tax
 - Employee National Insurance Contributions (Class 1, Category A only)
 - Student Loan Repayments (Plans 1, 2, 4, 5 or postgrad)
+- Pension annual allowance, including pension tapering
 
 Multiple versions of the HMRC rates can be supported, although only the follwing years have been implemented:
 
