@@ -3,7 +3,7 @@ import { calculatePensionAnnualAllowance } from "./pensionAnnualAllowance";
 describe("calculatePensionAnnualAllowance (24/25)", () => {
   test("Fidelity Example 1", () => {
     const result = calculatePensionAnnualAllowance({
-      taxableAnnualIncome: 210_000,
+      totalAnnualIncome: 210_000,
       employeeDcPensionContributions: 0,
       employerDcPensionContributions: 20_000,
     });
@@ -18,7 +18,7 @@ describe("calculatePensionAnnualAllowance (24/25)", () => {
 
   test("Fidelity Example 2", () => {
     const result = calculatePensionAnnualAllowance({
-      taxableAnnualIncome: 235_000,
+      totalAnnualIncome: 235_000,
       employeeDcPensionContributions: 0,
       employerDcPensionContributions: 60_000,
     });
@@ -33,7 +33,7 @@ describe("calculatePensionAnnualAllowance (24/25)", () => {
 
   test("AJ Bell Example 1", () => {
     const result = calculatePensionAnnualAllowance({
-      taxableAnnualIncome: 200_000,
+      totalAnnualIncome: 200_000,
       retrospectivePensionPaymentsTaxRelief: 20_000,
       employeeDcPensionContributions: 0,
       employerDcPensionContributions: 20_000,
@@ -49,7 +49,7 @@ describe("calculatePensionAnnualAllowance (24/25)", () => {
 
   test("AJ Bell Example 2", () => {
     const result = calculatePensionAnnualAllowance({
-      taxableAnnualIncome: 230_000,
+      totalAnnualIncome: 230_000,
       retrospectivePensionPaymentsTaxRelief: 10_000,
       employeeDcPensionContributions: 0,
       employerDcPensionContributions: 50_000,
@@ -66,7 +66,7 @@ describe("calculatePensionAnnualAllowance (24/25)", () => {
   describe("Quilter Examples", () => {
     test("Example A", () => {
       const result = calculatePensionAnnualAllowance({
-        taxableAnnualIncome: 265_000,
+        totalAnnualIncome: 265_000,
         retrospectivePensionPaymentsTaxRelief: 0,
         employeeDcPensionContributions: 0,
         employerDcPensionContributions: 0,
@@ -82,7 +82,7 @@ describe("calculatePensionAnnualAllowance (24/25)", () => {
 
     test("Example B", () => {
       const result = calculatePensionAnnualAllowance({
-        taxableAnnualIncome: 330_000,
+        totalAnnualIncome: 330_000,
         retrospectivePensionPaymentsTaxRelief: 20_000,
         employeeDcPensionContributions: 0,
         employerDcPensionContributions: 0,
@@ -98,7 +98,7 @@ describe("calculatePensionAnnualAllowance (24/25)", () => {
 
     test("Example C", () => {
       const result = calculatePensionAnnualAllowance({
-        taxableAnnualIncome: 245_000,
+        totalAnnualIncome: 245_000,
         retrospectivePensionPaymentsTaxRelief: 0,
         employeeDcPensionContributions: 20_000,
         employerDcPensionContributions: 0,
@@ -117,7 +117,7 @@ describe("calculatePensionAnnualAllowance (24/25)", () => {
     // Examples that use carry forward or DB pensions are not included
     test("Example 1", () => {
       const result = calculatePensionAnnualAllowance({
-        taxableAnnualIncome: 284_000,
+        totalAnnualIncome: 284_000,
         retrospectivePensionPaymentsTaxRelief: 15_000,
         employeeDcPensionContributions: 0,
         employerDcPensionContributions: 30_000,
@@ -133,7 +133,7 @@ describe("calculatePensionAnnualAllowance (24/25)", () => {
 
     test("Example 5", () => {
       const result = calculatePensionAnnualAllowance({
-        taxableAnnualIncome: 270_000,
+        totalAnnualIncome: 270_000,
         retrospectivePensionPaymentsTaxRelief: 0,
         employeeDcPensionContributions: 20_000,
         employerDcPensionContributions: 20_000,
@@ -150,7 +150,7 @@ describe("calculatePensionAnnualAllowance (24/25)", () => {
 
   test("HL example", () => {
     const result = calculatePensionAnnualAllowance({
-      taxableAnnualIncome: 250_000,
+      totalAnnualIncome: 250_000,
       retrospectivePensionPaymentsTaxRelief: 24_000,
       employeeDcPensionContributions: 0,
       employerDcPensionContributions: 36_000,

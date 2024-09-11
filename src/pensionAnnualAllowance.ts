@@ -4,7 +4,7 @@ import type { TaxYear } from "./types";
 
 interface Args {
   taxYear?: TaxYear;
-  taxableAnnualIncome: number;
+  totalAnnualIncome: number;
   retrospectivePensionPaymentsTaxRelief?: number;
   employeeDcPensionContributions?: number;
   employerDcPensionContributions?: number;
@@ -21,7 +21,7 @@ interface Args {
 // Use `retrospectivePensionPaymentsTaxRelief` for pre-2015 Salary Sacrifice schemes
 export const calculatePensionAnnualAllowance = ({
   taxYear,
-  taxableAnnualIncome,
+  totalAnnualIncome,
   retrospectivePensionPaymentsTaxRelief,
   employeeDcPensionContributions,
   employerDcPensionContributions,
@@ -39,13 +39,13 @@ export const calculatePensionAnnualAllowance = ({
     (retrospectivePensionPaymentsTaxRelief ?? 0);
 
   const adjustedIncome =
-    taxableAnnualIncome +
+    totalAnnualIncome +
     pensionSavings -
     (retrospectivePensionPaymentsTaxRelief ?? 0) -
     (lumpSumDeathBenefits ?? 0);
 
   const thresholdIncome =
-    taxableAnnualIncome +
+    totalAnnualIncome +
     (employeeDcPensionContributions ?? 0) -
     (retrospectivePensionPaymentsTaxRelief ?? 0) -
     (lumpSumDeathBenefits ?? 0);
