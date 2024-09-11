@@ -29,7 +29,9 @@ Run: `yarn add @saving-tool/hmrc-income-tax` (or `npm install @saving-tool/hmrc-
 
 ## Usage
 
-There are 5 functions exposed by the library:
+`country` is an optional input for all APIs: `"England/NI/Wales" | "Scotland"`. If not provided, the default is `"England/NI/Wales"`.
+
+Note that `taxYear` is an optional input to select which tax year rates should be used (default is "2024/25").
 
 ### `calculatePersonalAllowance`
 
@@ -92,11 +94,42 @@ getHmrcRates({
 }) => EnglishTaxRates | ScottishTaxRates;
 ```
 
-All APIs return raw amounts and there is no formatting or display functionality.
+### `calculatePensionAnnualAllowance`
 
-`country` is an optional input for all APIs: `"England/NI/Wales" | "Scotland"`. If not provided, the default is `"England/NI/Wales"`.
+Returns an object containing an annual allowance information for pension contributions.
+Note that pension tapering calculations are quite complex. You can also refer to the tests with various examples.
 
-Note that `taxYear` is an optional input to select which tax year rates should be used (default is "2024/25").
+"Personally paid" pension contributions means you paid from your bank account direct to a pension i.e. not through work.
+
+For employee pension contributions:
+
+- Use `employeeDcPensionContributions` for salary sacrifice contributions (post-2015 schemes\*)
+- Use `retrospectivePensionPaymentsTaxRelief` for salary sacrifice contributions (pre-2015 schemes\*)
+- Use `retrospectivePensionPaymentsTaxRelief` for personally paid or other relief-at-source contributions
+
+\* The rules changed for salary sacrifice schemes set up on or after 9th July 2015
+
+```typescript
+calculatePensionAnnualAllowance({
+  taxYear?: TaxYear;
+  totalAnnualIncome: number; // Note: include any salary sacrificed income, plus investent income, but do not include employer contributions, or relief-at-source contributions such as ones personally paid
+  retrospectivePensionPaymentsTaxRelief?: number; // Relief-at-source pension contributions such as ones personally paid
+  employeeDcPensionContributions?: number;
+  employerDcPensionContributions?: number;
+  lumpSumDeathBenefits?: number;
+}) => {
+    adjustedIncome: number;
+    thresholdIncome: number;
+    reduction: number;
+    allowance: number;
+};
+```
+
+Note that this implementation does not yet support the following:
+
+- Use of carry-forward from previous years' allowances
+- Accounting for DB (Defined Benefit) pensions
+- Paying into overseas pensions
 
 ## Examples (2022/23 HMRC Rates)
 

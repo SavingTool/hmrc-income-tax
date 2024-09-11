@@ -57,6 +57,11 @@ interface BasicTaxRates {
   NI_UPPER_RATE: number;
   NI_MIDDLE_BRACKET: number;
   NI_UPPER_BRACKET: number;
+
+  // Pension allowances
+  PENSION_ANNUAL_ALLOWANCE: number;
+  PENSION_MINIMUM_ANNUAL_ALLOWANCE: number;
+  PENSION_ADJUSTED_LIMIT: number;
 }
 
 export interface EnglishTaxRates extends BasicTaxRates {
