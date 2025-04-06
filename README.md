@@ -14,13 +14,15 @@ Multiple versions of the HMRC rates can be supported, although only the follwing
 
 England/NI/Wales:
 
-- 2024/25 (default)
+- 2025/26 (default)
+- 2024/25
 - 2023/24
 - 2022/23
 
 Scotland:
 
-- 2024/25 (default)
+- 2025/26 (default)
+- 2024/25
 
 Works in all modern browsers and Node.js (LTS recommended).
 
@@ -32,7 +34,7 @@ Run: `yarn add @saving-tool/hmrc-income-tax` (or `npm install @saving-tool/hmrc-
 
 `country` is an optional input for all APIs: `"England/NI/Wales" | "Scotland"`. If not provided, the default is `"England/NI/Wales"`.
 
-Note that `taxYear` is an optional input to select which tax year rates should be used (default is "2024/25").
+Note that `taxYear` is an optional input to select which tax year rates should be used (default is "2025/26").
 
 ### `calculatePersonalAllowance`
 

@@ -23,9 +23,13 @@ export interface ScottishIncomeTax {
 
 export type StudentLoanPlan = 1 | 2 | 4 | 5 | "postgrad";
 
-export type SupportedEnglishTaxYear = "2022/23" | "2023/24" | "2024/25";
+export type SupportedEnglishTaxYear =
+  | "2022/23"
+  | "2023/24"
+  | "2024/25"
+  | "2025/26";
 
-export type SupportedScottishTaxYear = "2024/25";
+export type SupportedScottishTaxYear = "2024/25" | "2025/26";
 
 export type TaxYear = SupportedEnglishTaxYear | SupportedScottishTaxYear;
 
