@@ -183,12 +183,12 @@ const scottishTaxRates: Record<SupportedScottishTaxYear, ScottishTaxRates> = {
 
     PERSONAL_ALLOWANCE_DROPOFF: 100_000,
     // Student loan repayments
-    STUDENT_LOAN_PLAN_1_WEEKLY_THRESHOLD: 480.57,
-    STUDENT_LOAN_PLAN_2_WEEKLY_THRESHOLD: 524.9,
-    STUDENT_LOAN_PLAN_4_WEEKLY_THRESHOLD: 531.92,
+    STUDENT_LOAN_PLAN_1_WEEKLY_THRESHOLD: 501,
+    STUDENT_LOAN_PLAN_2_WEEKLY_THRESHOLD: 547,
+    STUDENT_LOAN_PLAN_4_WEEKLY_THRESHOLD: 629,
     STUDENT_LOAN_PLAN_5_WEEKLY_THRESHOLD: 480,
     STUDENT_LOAN_REPAYMENT_AMOUNT: 0.09, // People on plans 1, 2, 4 + 5 repay 9% of the amount you earn over the threshold
-    STUDENT_LOAN_POSTGRAD_WEEKLY_THRESHOLD: 403.84,
+    STUDENT_LOAN_POSTGRAD_WEEKLY_THRESHOLD: 403,
     STUDENT_LOAN_REPAYMENT_AMOUNT_POSTGRAD: 0.06, // People on postgrad plans repay 6% of the amount you earn over the threshold
     // National Insurance
     NI_MIDDLE_RATE: 0.08,
