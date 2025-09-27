@@ -61,6 +61,49 @@ calculateIncomeTax({
 }) => EnglishIncomeTax | ScottishIncomeTax;
 ```
 
+**New in v1.3.0:** Cumulative PAYE Mode
+
+For variable monthly income scenarios (e.g., NHS workers with variable pay), you can now use cumulative PAYE calculation mode:
+
+```typescript
+calculateIncomeTax({
+  taxYear?: TaxYear;
+  country?: Country,
+  cumulativePaye: {
+    monthNumber: number; // 1-12, which month of the tax year
+    cumulativeGrossIncome: number; // Total gross income to date in the tax year
+    cumulativeTaxPaid: number; // Total tax already paid to date in the tax year
+  }
+}) => EnglishIncomeTax | ScottishIncomeTax;
+```
+
+**Example**: £10,000 income in month 1, then £0 for rest of year
+```typescript
+// Month 1: £10,000 gross income
+const month1Tax = calculateIncomeTax({
+  taxYear: "2024/25",
+  cumulativePaye: {
+    monthNumber: 1,
+    cumulativeGrossIncome: 10_000,
+    cumulativeTaxPaid: 0,
+  },
+});
+// Returns: £1,790.50 tax (correct PAYE amount)
+
+// Month 2: No additional income
+const month2Tax = calculateIncomeTax({
+  taxYear: "2024/25", 
+  cumulativePaye: {
+    monthNumber: 2,
+    cumulativeGrossIncome: 10_000, // Still £10k total
+    cumulativeTaxPaid: 1790.5, // Tax paid in month 1
+  },
+});
+// Returns: £0 additional tax (PAYE correctly handles variable income)
+```
+
+This cumulative mode correctly implements HMRC PAYE rules where personal allowances are pro-rated monthly, avoiding the over-taxation that occurs when simply annualizing variable monthly income.
+
 ### `calculateEmployeeNationalInsurance`
 
 Calculates the National Insurance contributions due in a tax year on an individual's taxable income, single amount. Note: only supports class 1, category A.

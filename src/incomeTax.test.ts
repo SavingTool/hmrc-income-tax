@@ -321,3 +321,227 @@ describe("calculateIncomeTax (24/25) - Scotland", () => {
     });
   });
 });
+
+// Cumulative PAYE tests - Example from the issue
+describe("calculateIncomeTax - Cumulative PAYE Mode", () => {
+  describe("Issue example: £10,000 in month 1, then £0 for months 2-12", () => {
+    const taxYear = "2024/25";
+
+    test("Month 1: £10,000 gross income should result in £1,790 tax", () => {
+      const result = calculateIncomeTax({
+        taxYear,
+        cumulativePaye: {
+          monthNumber: 1,
+          cumulativeGrossIncome: 10_000,
+          cumulativeTaxPaid: 0,
+        },
+      });
+
+      // The expected result from the issue is £1,790
+      // Personal allowance for month 1: £12,570 / 12 = £1,047.50
+      // Taxable income: £10,000 - £1,047.50 = £8,952.50
+      // Tax: £8,952.50 * 20% = £1,790.50
+      expect(result.total).toBeCloseTo(1790.5, 1);
+    });
+
+    test("Month 2: £0 additional income should result in £0 additional tax", () => {
+      const result = calculateIncomeTax({
+        taxYear,
+        cumulativePaye: {
+          monthNumber: 2,
+          cumulativeGrossIncome: 10_000, // Same as month 1
+          cumulativeTaxPaid: 1790, // Tax paid in month 1
+        },
+      });
+
+      expect(result.total).toBeCloseTo(0, 0);
+    });
+
+    test("Month 12: Still £0 additional income should result in £0 additional tax", () => {
+      const result = calculateIncomeTax({
+        taxYear,
+        cumulativePaye: {
+          monthNumber: 12,
+          cumulativeGrossIncome: 10_000, // Same as month 1
+          cumulativeTaxPaid: 1790, // Tax paid in month 1
+        },
+      });
+
+      expect(result.total).toBeCloseTo(0, 0);
+    });
+  });
+
+  describe("Validation tests", () => {
+    test("Should throw error for invalid month number (< 1)", () => {
+      expect(() => {
+        calculateIncomeTax({
+          cumulativePaye: {
+            monthNumber: 0,
+            cumulativeGrossIncome: 1000,
+            cumulativeTaxPaid: 0,
+          },
+        });
+      }).toThrow("monthNumber must be between 1 and 12");
+    });
+
+    test("Should throw error for invalid month number (> 12)", () => {
+      expect(() => {
+        calculateIncomeTax({
+          cumulativePaye: {
+            monthNumber: 13,
+            cumulativeGrossIncome: 1000,
+            cumulativeTaxPaid: 0,
+          },
+        });
+      }).toThrow("monthNumber must be between 1 and 12");
+    });
+
+    test("Should throw error when missing required parameters in standard mode", () => {
+      expect(() => {
+        calculateIncomeTax({
+          // Missing both taxableAnnualIncome and personalAllowance
+        });
+      }).toThrow(
+        "taxableAnnualIncome and personalAllowance are required when not using cumulativePaye mode"
+      );
+    });
+  });
+
+  describe("Progressive income throughout the year", () => {
+    const taxYear = "2024/25";
+
+    test("Month 1: £3,000 income", () => {
+      const result = calculateIncomeTax({
+        taxYear,
+        cumulativePaye: {
+          monthNumber: 1,
+          cumulativeGrossIncome: 3_000,
+          cumulativeTaxPaid: 0,
+        },
+      });
+
+      // Income below personal allowance pro-rata (£12,570 / 12 = £1,047.50)
+      // So £3,000 is above the monthly allowance, some tax should be due
+      expect(result.total).toBeGreaterThan(0);
+    });
+
+    test("Month 6: £18,000 cumulative income", () => {
+      const month1Tax = calculateIncomeTax({
+        taxYear,
+        cumulativePaye: {
+          monthNumber: 1,
+          cumulativeGrossIncome: 3_000,
+          cumulativeTaxPaid: 0,
+        },
+      }).total;
+
+      const result = calculateIncomeTax({
+        taxYear,
+        cumulativePaye: {
+          monthNumber: 6,
+          cumulativeGrossIncome: 18_000,
+          cumulativeTaxPaid: month1Tax,
+        },
+      });
+
+      expect(result.total).toBeGreaterThan(0);
+    });
+  });
+
+  describe("Comparison with annualized approach (demonstrating the issue)", () => {
+    const taxYear = "2024/25";
+
+    test("Annualized approach gives incorrect result", () => {
+      // This is what you get if you annualize £10,000 * 12 and divide by 12
+      const annualizedIncome = 10_000 * 12; // £120,000
+      const personalAllowance = calculatePersonalAllowance({
+        taxYear,
+        taxableAnnualIncome: annualizedIncome,
+      });
+
+      const annualTax = calculateIncomeTax({
+        taxYear,
+        taxableAnnualIncome: annualizedIncome,
+        personalAllowance,
+      });
+
+      const monthlyTaxFromAnnual = annualTax.total / 12;
+
+      // This should be around £3,286 (considering personal allowance tapering at £120k income)
+      expect(monthlyTaxFromAnnual).toBeCloseTo(3286, 0);
+
+      // But PAYE should give £1,790.50
+      const payeResult = calculateIncomeTax({
+        taxYear,
+        cumulativePaye: {
+          monthNumber: 1,
+          cumulativeGrossIncome: 10_000,
+          cumulativeTaxPaid: 0,
+        },
+      });
+
+      expect(payeResult.total).toBeCloseTo(1790.5, 1);
+      expect(payeResult.total).toBeLessThan(monthlyTaxFromAnnual);
+    });
+  });
+
+  describe("Year-long example with variable income", () => {
+    const taxYear = "2024/25";
+    let cumulativeTaxPaid = 0;
+
+    test("Month 1: £10,000 income", () => {
+      const result = calculateIncomeTax({
+        taxYear,
+        cumulativePaye: {
+          monthNumber: 1,
+          cumulativeGrossIncome: 10_000,
+          cumulativeTaxPaid,
+        },
+      });
+
+      expect(result.total).toBeCloseTo(1790.5, 1);
+      cumulativeTaxPaid += result.total;
+    });
+
+    test("Month 2: Additional £5,000 income", () => {
+      const result = calculateIncomeTax({
+        taxYear,
+        cumulativePaye: {
+          monthNumber: 2,
+          cumulativeGrossIncome: 15_000,
+          cumulativeTaxPaid,
+        },
+      });
+
+      // Month 2 allowance: £12,570 * 2 / 12 = £2,095
+      // Cumulative taxable: £15,000 - £2,095 = £12,905
+      // Cumulative tax due: £12,905 * 20% = £2,581
+      // Monthly tax: £2,581 - £1,790.5 = £790.5
+      expect(result.total).toBeCloseTo(790.5, 1);
+      cumulativeTaxPaid += result.total;
+    });
+  });
+
+  describe("Scotland cumulative PAYE", () => {
+    const taxYear = "2024/25";
+
+    test("Month 1: £10,000 income in Scotland", () => {
+      const result = calculateIncomeTax({
+        taxYear,
+        country: "Scotland",
+        cumulativePaye: {
+          monthNumber: 1,
+          cumulativeGrossIncome: 10_000,
+          cumulativeTaxPaid: 0,
+        },
+      });
+
+      expect(result.incomeTaxType).toBe("Scotland");
+      expect(result.total).toBeGreaterThan(0);
+      // Type assertion to access Scottish-specific properties
+      if (result.incomeTaxType === "Scotland") {
+        expect(typeof result.breakdown.starterRateTax).toBe("number");
+      }
+    });
+  });
+});

@@ -21,6 +21,12 @@ export interface ScottishIncomeTax {
   };
 }
 
+export interface CumulativePayeOptions {
+  monthNumber: number; // 1-12, which month of the tax year
+  cumulativeGrossIncome: number; // Total gross income to date in the tax year
+  cumulativeTaxPaid: number; // Total tax already paid to date in the tax year
+}
+
 export type StudentLoanPlan = 1 | 2 | 4 | 5 | "postgrad";
 
 export type SupportedEnglishTaxYear =
