@@ -91,9 +91,13 @@ function calculateEnglishCumulativePayeTaxes({
   } = taxRates;
 
   // Pro-rate only the personal allowance for the current month
-  const proRatedPersonalAllowance = (DEFAULT_PERSONAL_ALLOWANCE * monthNumber) / 12;
+  const proRatedPersonalAllowance =
+    (DEFAULT_PERSONAL_ALLOWANCE * monthNumber) / 12;
 
-  const adjustedTaxableIncome = Math.max(0, cumulativeGrossIncome - proRatedPersonalAllowance);
+  const adjustedTaxableIncome = Math.max(
+    0,
+    cumulativeGrossIncome - proRatedPersonalAllowance
+  );
   const adjustedHigherBracket = HIGHER_BRACKET - DEFAULT_PERSONAL_ALLOWANCE;
 
   // 3 rates of tax
@@ -128,9 +132,12 @@ function calculateEnglishCumulativePayeTaxes({
   const monthlyTaxDue = Math.max(0, cumulativeTaxDue - cumulativeTaxPaid);
 
   // Calculate proportional breakdown for the monthly tax due
-  const proportionBasic = cumulativeTaxDue > 0 ? basicRateTax / cumulativeTaxDue : 0;
-  const proportionHigher = cumulativeTaxDue > 0 ? higherRateTax / cumulativeTaxDue : 0;
-  const proportionAdditional = cumulativeTaxDue > 0 ? additionalRateTax / cumulativeTaxDue : 0;
+  const proportionBasic =
+    cumulativeTaxDue > 0 ? basicRateTax / cumulativeTaxDue : 0;
+  const proportionHigher =
+    cumulativeTaxDue > 0 ? higherRateTax / cumulativeTaxDue : 0;
+  const proportionAdditional =
+    cumulativeTaxDue > 0 ? additionalRateTax / cumulativeTaxDue : 0;
 
   return {
     total: monthlyTaxDue,
@@ -170,9 +177,13 @@ function calculateScottishCumulativePayeTaxes({
   } = taxRates;
 
   // Pro-rate only the personal allowance for the current month
-  const proRatedPersonalAllowance = (DEFAULT_PERSONAL_ALLOWANCE * monthNumber) / 12;
+  const proRatedPersonalAllowance =
+    (DEFAULT_PERSONAL_ALLOWANCE * monthNumber) / 12;
 
-  const adjustedTaxableIncome = Math.max(0, cumulativeGrossIncome - proRatedPersonalAllowance);
+  const adjustedTaxableIncome = Math.max(
+    0,
+    cumulativeGrossIncome - proRatedPersonalAllowance
+  );
 
   const bracket1 = BASIC_BRACKET - DEFAULT_PERSONAL_ALLOWANCE;
   const bracket2 = INTERMEDIATE_BRACKET - DEFAULT_PERSONAL_ALLOWANCE;
@@ -251,12 +262,18 @@ function calculateScottishCumulativePayeTaxes({
   const monthlyTaxDue = Math.max(0, cumulativeTaxDue - cumulativeTaxPaid);
 
   // Calculate proportional breakdown for the monthly tax due
-  const proportionStarter = cumulativeTaxDue > 0 ? starterRateTax / cumulativeTaxDue : 0;
-  const proportionBasic = cumulativeTaxDue > 0 ? basicRateTax / cumulativeTaxDue : 0;
-  const proportionIntermediate = cumulativeTaxDue > 0 ? intermediateRateTax / cumulativeTaxDue : 0;
-  const proportionHigher = cumulativeTaxDue > 0 ? higherRateTax / cumulativeTaxDue : 0;
-  const proportionAdvanced = cumulativeTaxDue > 0 ? advancedRateTax / cumulativeTaxDue : 0;
-  const proportionTop = cumulativeTaxDue > 0 ? topRateTax / cumulativeTaxDue : 0;
+  const proportionStarter =
+    cumulativeTaxDue > 0 ? starterRateTax / cumulativeTaxDue : 0;
+  const proportionBasic =
+    cumulativeTaxDue > 0 ? basicRateTax / cumulativeTaxDue : 0;
+  const proportionIntermediate =
+    cumulativeTaxDue > 0 ? intermediateRateTax / cumulativeTaxDue : 0;
+  const proportionHigher =
+    cumulativeTaxDue > 0 ? higherRateTax / cumulativeTaxDue : 0;
+  const proportionAdvanced =
+    cumulativeTaxDue > 0 ? advancedRateTax / cumulativeTaxDue : 0;
+  const proportionTop =
+    cumulativeTaxDue > 0 ? topRateTax / cumulativeTaxDue : 0;
 
   return {
     total: monthlyTaxDue,
@@ -411,8 +428,9 @@ export const calculateIncomeTax = ({
 
   // Cumulative PAYE mode
   if (cumulativePaye) {
-    const { monthNumber, cumulativeGrossIncome, cumulativeTaxPaid } = cumulativePaye;
-    
+    const { monthNumber, cumulativeGrossIncome, cumulativeTaxPaid } =
+      cumulativePaye;
+
     if (monthNumber < 1 || monthNumber > 12) {
       throw new Error("monthNumber must be between 1 and 12");
     }
@@ -436,7 +454,9 @@ export const calculateIncomeTax = ({
 
   // Standard annual calculation mode
   if (taxableAnnualIncome === undefined || personalAllowance === undefined) {
-    throw new Error("taxableAnnualIncome and personalAllowance are required when not using cumulativePaye mode");
+    throw new Error(
+      "taxableAnnualIncome and personalAllowance are required when not using cumulativePaye mode"
+    );
   }
 
   if (isScottishTaxRates(taxRates)) {
