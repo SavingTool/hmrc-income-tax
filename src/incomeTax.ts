@@ -83,6 +83,7 @@ function calculateEnglishCumulativePayeTaxes({
 }): EnglishIncomeTax {
   const {
     DEFAULT_PERSONAL_ALLOWANCE,
+    PERSONAL_ALLOWANCE_DROPOFF,
     BASIC_RATE,
     ADDITIONAL_BRACKET,
     HIGHER_RATE,
@@ -90,15 +91,32 @@ function calculateEnglishCumulativePayeTaxes({
     ADDITIONAL_RATE,
   } = taxRates;
 
-  // Pro-rate only the personal allowance for the current month
+  // Calculate the correct personal allowance based on cumulative income (with tapering)
+  // £1 of personal allowance is reduced for every £2 of income over £100,000
+  let personalAllowanceDeduction =
+    cumulativeGrossIncome >= PERSONAL_ALLOWANCE_DROPOFF
+      ? (cumulativeGrossIncome - PERSONAL_ALLOWANCE_DROPOFF) / 2
+      : 0;
+
+  // Don't let the deduction go below zero
+  if (personalAllowanceDeduction < 0) {
+    personalAllowanceDeduction = 0;
+  }
+
+  const adjustedPersonalAllowance = Math.max(
+    0,
+    DEFAULT_PERSONAL_ALLOWANCE - personalAllowanceDeduction
+  );
+
+  // Pro-rate the correct personal allowance for the current month
   const proRatedPersonalAllowance =
-    (DEFAULT_PERSONAL_ALLOWANCE * monthNumber) / 12;
+    (adjustedPersonalAllowance * monthNumber) / 12;
 
   const adjustedTaxableIncome = Math.max(
     0,
     cumulativeGrossIncome - proRatedPersonalAllowance
   );
-  const adjustedHigherBracket = HIGHER_BRACKET - DEFAULT_PERSONAL_ALLOWANCE;
+  const adjustedHigherBracket = HIGHER_BRACKET - adjustedPersonalAllowance;
 
   // 3 rates of tax
   let basicRateTax = 0;
@@ -163,6 +181,7 @@ function calculateScottishCumulativePayeTaxes({
 }): ScottishIncomeTax {
   const {
     DEFAULT_PERSONAL_ALLOWANCE,
+    PERSONAL_ALLOWANCE_DROPOFF,
     STARTER_RATE,
     BASIC_BRACKET,
     BASIC_RATE,
@@ -176,19 +195,36 @@ function calculateScottishCumulativePayeTaxes({
     TOP_RATE,
   } = taxRates;
 
-  // Pro-rate only the personal allowance for the current month
+  // Calculate the correct personal allowance based on cumulative income (with tapering)
+  // £1 of personal allowance is reduced for every £2 of income over £100,000
+  let personalAllowanceDeduction =
+    cumulativeGrossIncome >= PERSONAL_ALLOWANCE_DROPOFF
+      ? (cumulativeGrossIncome - PERSONAL_ALLOWANCE_DROPOFF) / 2
+      : 0;
+
+  // Don't let the deduction go below zero
+  if (personalAllowanceDeduction < 0) {
+    personalAllowanceDeduction = 0;
+  }
+
+  const adjustedPersonalAllowance = Math.max(
+    0,
+    DEFAULT_PERSONAL_ALLOWANCE - personalAllowanceDeduction
+  );
+
+  // Pro-rate the correct personal allowance for the current month
   const proRatedPersonalAllowance =
-    (DEFAULT_PERSONAL_ALLOWANCE * monthNumber) / 12;
+    (adjustedPersonalAllowance * monthNumber) / 12;
 
   const adjustedTaxableIncome = Math.max(
     0,
     cumulativeGrossIncome - proRatedPersonalAllowance
   );
 
-  const bracket1 = BASIC_BRACKET - DEFAULT_PERSONAL_ALLOWANCE;
-  const bracket2 = INTERMEDIATE_BRACKET - DEFAULT_PERSONAL_ALLOWANCE;
-  const bracket3 = HIGHER_BRACKET - DEFAULT_PERSONAL_ALLOWANCE;
-  const bracket4 = ADVANCED_BRACKET - DEFAULT_PERSONAL_ALLOWANCE;
+  const bracket1 = BASIC_BRACKET - adjustedPersonalAllowance;
+  const bracket2 = INTERMEDIATE_BRACKET - adjustedPersonalAllowance;
+  const bracket3 = HIGHER_BRACKET - adjustedPersonalAllowance;
+  const bracket4 = ADVANCED_BRACKET - adjustedPersonalAllowance;
 
   // 6 rates of tax in Scotland
   let starterRateTax = 0;

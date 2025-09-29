@@ -448,6 +448,98 @@ describe("calculateIncomeTax - Cumulative PAYE Mode", () => {
     });
   });
 
+  describe("Personal allowance tapering in cumulative PAYE", () => {
+    const taxYear = "2024/25";
+
+    test("High earner (£100k) should have full personal allowance in month 1", () => {
+      const result = calculateIncomeTax({
+        taxYear,
+        cumulativePaye: {
+          monthNumber: 1,
+          cumulativeGrossIncome: 100_000,
+          cumulativeTaxPaid: 0,
+        },
+      });
+
+      // At £100k, PA tapering just starts, so full PA should apply
+      // Expected: (£100k - £12,570/12) * rates = roughly £32k
+      expect(result.total).toBeCloseTo(32041, 0);
+    });
+
+    test("High earner (£110k) should have reduced personal allowance", () => {
+      const result = calculateIncomeTax({
+        taxYear,
+        cumulativePaye: {
+          monthNumber: 1,
+          cumulativeGrossIncome: 110_000,
+          cumulativeTaxPaid: 0,
+        },
+      });
+
+      // At £110k, PA should be reduced by £5k (£10k over threshold / 2)
+      // PA = £12,570 - £5,000 = £7,570, monthly = £630.83
+      // Tax should be higher than £100k case
+      expect(result.total).toBeGreaterThan(32041);
+      expect(result.total).toBeCloseTo(35208, 0);
+    });
+
+    test("Very high earner (£125,140) should have no personal allowance", () => {
+      const result = calculateIncomeTax({
+        taxYear,
+        cumulativePaye: {
+          monthNumber: 1,
+          cumulativeGrossIncome: 125_140,
+          cumulativeTaxPaid: 0,
+        },
+      });
+
+      // At £125,140, PA should be completely tapered away
+      // PA = £0, monthly = £0
+      expect(result.total).toBeCloseTo(40002, 0);
+    });
+
+    test("Personal allowance tapering should work across multiple months", () => {
+      // Month 1: £60k
+      const month1 = calculateIncomeTax({
+        taxYear,
+        cumulativePaye: {
+          monthNumber: 1,
+          cumulativeGrossIncome: 60_000,
+          cumulativeTaxPaid: 0,
+        },
+      });
+
+      // Month 6: £110k cumulative (£50k more, now in tapering territory)
+      const month6 = calculateIncomeTax({
+        taxYear,
+        cumulativePaye: {
+          monthNumber: 6,
+          cumulativeGrossIncome: 110_000,
+          cumulativeTaxPaid: month1.total,
+        },
+      });
+
+      // Should have additional tax due to reduced PA
+      expect(month6.total).toBeGreaterThan(0);
+    });
+
+    test("Should handle Scottish rates with personal allowance tapering", () => {
+      const result = calculateIncomeTax({
+        taxYear,
+        country: "Scotland",
+        cumulativePaye: {
+          monthNumber: 1,
+          cumulativeGrossIncome: 110_000,
+          cumulativeTaxPaid: 0,
+        },
+      });
+
+      // Should have reduced PA like English calculation
+      expect(result.total).toBeGreaterThan(35000); // More than basic calculation
+      expect(result.incomeTaxType).toBe("Scotland");
+    });
+  });
+
   describe("Comparison with annualized approach (demonstrating the issue)", () => {
     const taxYear = "2024/25";
 
