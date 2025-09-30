@@ -95,10 +95,12 @@ function calculateEnglishCumulativePayeTaxes({
 
   // Use supplied personal allowance if provided, otherwise calculate it
   let adjustedPersonalAllowance: number;
+  let proRatedPersonalAllowance: number;
 
   if (personalAllowance !== undefined) {
-    // Use the supplied personal allowance
+    // Use the supplied personal allowance and pro-rate it
     adjustedPersonalAllowance = personalAllowance;
+    proRatedPersonalAllowance = (adjustedPersonalAllowance * monthNumber) / 12;
   } else {
     // Calculate the correct personal allowance based on cumulative income (with tapering)
     // £1 of personal allowance is reduced for every £2 of income over £100,000
@@ -116,11 +118,18 @@ function calculateEnglishCumulativePayeTaxes({
       0,
       DEFAULT_PERSONAL_ALLOWANCE - personalAllowanceDeduction
     );
-  }
 
-  // Pro-rate the correct personal allowance for the current month
-  const proRatedPersonalAllowance =
-    (adjustedPersonalAllowance * monthNumber) / 12;
+    // For cumulative PAYE, when PA is reduced due to high income,
+    // use the full reduced annual PA in month 1, not pro-rated
+    if (personalAllowanceDeduction > 0) {
+      // High earner - use full reduced personal allowance
+      proRatedPersonalAllowance = adjustedPersonalAllowance;
+    } else {
+      // Standard earner - pro-rate the standard personal allowance
+      proRatedPersonalAllowance =
+        (adjustedPersonalAllowance * monthNumber) / 12;
+    }
+  }
 
   const adjustedTaxableIncome = Math.max(
     0,
@@ -210,10 +219,12 @@ function calculateScottishCumulativePayeTaxes({
 
   // Use supplied personal allowance if provided, otherwise calculate it
   let adjustedPersonalAllowance: number;
+  let proRatedPersonalAllowance: number;
 
   if (personalAllowance !== undefined) {
-    // Use the supplied personal allowance
+    // Use the supplied personal allowance and pro-rate it
     adjustedPersonalAllowance = personalAllowance;
+    proRatedPersonalAllowance = (adjustedPersonalAllowance * monthNumber) / 12;
   } else {
     // Calculate the correct personal allowance based on cumulative income (with tapering)
     // £1 of personal allowance is reduced for every £2 of income over £100,000
@@ -231,11 +242,18 @@ function calculateScottishCumulativePayeTaxes({
       0,
       DEFAULT_PERSONAL_ALLOWANCE - personalAllowanceDeduction
     );
-  }
 
-  // Pro-rate the correct personal allowance for the current month
-  const proRatedPersonalAllowance =
-    (adjustedPersonalAllowance * monthNumber) / 12;
+    // For cumulative PAYE, when PA is reduced due to high income,
+    // use the full reduced annual PA in month 1, not pro-rated
+    if (personalAllowanceDeduction > 0) {
+      // High earner - use full reduced personal allowance
+      proRatedPersonalAllowance = adjustedPersonalAllowance;
+    } else {
+      // Standard earner - pro-rate the standard personal allowance
+      proRatedPersonalAllowance =
+        (adjustedPersonalAllowance * monthNumber) / 12;
+    }
+  }
 
   const adjustedTaxableIncome = Math.max(
     0,
@@ -380,7 +398,6 @@ function calculateScottishTaxes({
   const bracket2 = INTERMEDIATE_BRACKET - DEFAULT_PERSONAL_ALLOWANCE;
   const bracket3 = HIGHER_BRACKET - DEFAULT_PERSONAL_ALLOWANCE;
   const bracket4 = ADVANCED_BRACKET - DEFAULT_PERSONAL_ALLOWANCE;
-  const bracket5 = TOP_BRACKET - DEFAULT_PERSONAL_ALLOWANCE;
 
   // 6 rates of tax in Scotland
   let starterRateTax = 0;

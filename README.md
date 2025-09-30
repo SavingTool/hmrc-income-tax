@@ -78,7 +78,10 @@ calculateIncomeTax({
 }) => EnglishIncomeTax | ScottishIncomeTax;
 ```
 
-**Example**: £10,000 income in month 1, then £0 for rest of year
+**Important**: In cumulative PAYE mode, the function returns the **tax due for that specific month only**, not the total cumulative tax. This represents what should be deducted from the current month's payslip.
+
+**Example 1**: £10,000 income in month 1, then £0 for rest of year
+
 ```typescript
 // Month 1: £10,000 gross income
 const month1Tax = calculateIncomeTax({
@@ -89,21 +92,47 @@ const month1Tax = calculateIncomeTax({
     cumulativeTaxPaid: 0,
   },
 });
-// Returns: £1,790.50 tax (correct PAYE amount)
+// Returns: { total: 1790.5, ... } - deduct £1,790.50 from month 1 payslip
 
 // Month 2: No additional income
 const month2Tax = calculateIncomeTax({
-  taxYear: "2024/25", 
+  taxYear: "2024/25",
   cumulativePaye: {
     monthNumber: 2,
     cumulativeGrossIncome: 10_000, // Still £10k total
     cumulativeTaxPaid: 1790.5, // Tax paid in month 1
   },
 });
-// Returns: £0 additional tax (PAYE correctly handles variable income)
+// Returns: { total: 0, ... } - deduct £0 from month 2 payslip (no tax due this month)
 ```
 
-This cumulative mode correctly implements HMRC PAYE rules where personal allowances are pro-rated monthly, avoiding the over-taxation that occurs when simply annualizing variable monthly income.
+**Example 2**: Variable high income with personal allowance tapering
+
+```typescript
+// Month 1: £60,000 gross income
+const month1Tax = calculateIncomeTax({
+  taxYear: "2024/25",
+  cumulativePaye: {
+    monthNumber: 1,
+    cumulativeGrossIncome: 60_000,
+    cumulativeTaxPaid: 0,
+  },
+});
+// Returns: { total: 16041, ... } - deduct £16,041 from month 1 payslip
+
+// Month 6: Additional £50k earned (£110k total, crossing into PA tapering)
+const month6Tax = calculateIncomeTax({
+  taxYear: "2024/25",
+  cumulativePaye: {
+    monthNumber: 6,
+    cumulativeGrossIncome: 110_000, // £60k + £50k
+    cumulativeTaxPaid: 16041, // Tax paid in month 1
+  },
+});
+// Returns: { total: 17391, ... } - deduct £17,391 from month 6 payslip
+```
+
+This cumulative mode implements HMRC PAYE rules where personal allowances are pro-rated monthly and handles high earner tapering, avoiding the over-taxation that occurs when simply annualizing variable monthly income.
 
 ### `calculateEmployeeNationalInsurance`
 

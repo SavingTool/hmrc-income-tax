@@ -422,7 +422,8 @@ describe("calculateIncomeTax - Cumulative PAYE Mode", () => {
 
       // Income below personal allowance pro-rata (£12,570 / 12 = £1,047.50)
       // So £3,000 is above the monthly allowance, some tax should be due
-      expect(result.total).toBeGreaterThan(0);
+      // If this person earns nothing more in the year, this would be later refunded by HMRC
+      expect(result.total).toBeCloseTo(390.5, 1);
     });
 
     test("Month 6: £18,000 cumulative income", () => {
@@ -444,12 +445,12 @@ describe("calculateIncomeTax - Cumulative PAYE Mode", () => {
         },
       });
 
-      expect(result.total).toBeGreaterThan(0);
+      expect(result.total).toBeCloseTo(1952.5, 1);
     });
   });
 
   describe("Personal allowance tapering in cumulative PAYE", () => {
-    const taxYear = "2024/25";
+    const taxYear = "2025/26";
 
     test("High earner (£100k) should have full personal allowance in month 1", () => {
       const result = calculateIncomeTax({
@@ -478,9 +479,11 @@ describe("calculateIncomeTax - Cumulative PAYE Mode", () => {
 
       // At £110k, PA should be reduced by £5k (£10k over threshold / 2)
       // PA = £12,570 - £5,000 = £7,570, monthly = £630.83
-      // Tax should be higher than £100k case
-      expect(result.total).toBeGreaterThan(32041);
-      expect(result.total).toBeCloseTo(36208, 0);
+
+      // Tax at 20% should be £7,540
+      // Tax at 40% should be £25,892
+      // Total = £33,432
+      expect(result.total).toBeCloseTo(33432, 0);
     });
 
     test("Very high earner (£125,140) should have no personal allowance", () => {
@@ -509,6 +512,8 @@ describe("calculateIncomeTax - Cumulative PAYE Mode", () => {
         },
       });
 
+      expect(month1.total).toBeCloseTo(16041, 1);
+
       // Month 6: £110k cumulative (£50k more, now in tapering territory)
       const month6 = calculateIncomeTax({
         taxYear,
@@ -519,8 +524,7 @@ describe("calculateIncomeTax - Cumulative PAYE Mode", () => {
         },
       });
 
-      // Should have additional tax due to reduced PA
-      expect(month6.total).toBeGreaterThan(0);
+      expect(month6.total).toBeCloseTo(17391, 1);
     });
 
     test("Should handle Scottish rates with personal allowance tapering", () => {
@@ -534,8 +538,7 @@ describe("calculateIncomeTax - Cumulative PAYE Mode", () => {
         },
       });
 
-      // Should have reduced PA like English calculation
-      expect(result.total).toBeGreaterThan(35000); // More than basic calculation
+      expect(result.total).toBeCloseTo(37513.5, 1);
       expect(result.incomeTaxType).toBe("Scotland");
     });
   });
@@ -629,8 +632,8 @@ describe("calculateIncomeTax - Cumulative PAYE Mode", () => {
       });
 
       expect(result.incomeTaxType).toBe("Scotland");
-      expect(result.total).toBeGreaterThan(0);
-      // Type assertion to access Scottish-specific properties
+      expect(result.total).toBeCloseTo(1767.43, 1);
+
       if (result.incomeTaxType === "Scotland") {
         expect(typeof result.breakdown.starterRateTax).toBe("number");
       }
