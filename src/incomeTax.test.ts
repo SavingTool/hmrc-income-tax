@@ -480,7 +480,7 @@ describe("calculateIncomeTax - Cumulative PAYE Mode", () => {
       // PA = £12,570 - £5,000 = £7,570, monthly = £630.83
       // Tax should be higher than £100k case
       expect(result.total).toBeGreaterThan(32041);
-      expect(result.total).toBeCloseTo(35208, 0);
+      expect(result.total).toBeCloseTo(36208, 0);
     });
 
     test("Very high earner (£125,140) should have no personal allowance", () => {
@@ -495,7 +495,7 @@ describe("calculateIncomeTax - Cumulative PAYE Mode", () => {
 
       // At £125,140, PA should be completely tapered away
       // PA = £0, monthly = £0
-      expect(result.total).toBeCloseTo(40002, 0);
+      expect(result.total).toBeCloseTo(42516, 0);
     });
 
     test("Personal allowance tapering should work across multiple months", () => {

@@ -75,11 +75,13 @@ function calculateEnglishCumulativePayeTaxes({
   cumulativeGrossIncome,
   monthNumber,
   cumulativeTaxPaid,
+  personalAllowance,
 }: {
   taxRates: EnglishTaxRates;
   cumulativeGrossIncome: number;
   monthNumber: number;
   cumulativeTaxPaid: number;
+  personalAllowance?: number;
 }): EnglishIncomeTax {
   const {
     DEFAULT_PERSONAL_ALLOWANCE,
@@ -91,22 +93,30 @@ function calculateEnglishCumulativePayeTaxes({
     ADDITIONAL_RATE,
   } = taxRates;
 
-  // Calculate the correct personal allowance based on cumulative income (with tapering)
-  // £1 of personal allowance is reduced for every £2 of income over £100,000
-  let personalAllowanceDeduction =
-    cumulativeGrossIncome >= PERSONAL_ALLOWANCE_DROPOFF
-      ? (cumulativeGrossIncome - PERSONAL_ALLOWANCE_DROPOFF) / 2
-      : 0;
+  // Use supplied personal allowance if provided, otherwise calculate it
+  let adjustedPersonalAllowance: number;
 
-  // Don't let the deduction go below zero
-  if (personalAllowanceDeduction < 0) {
-    personalAllowanceDeduction = 0;
+  if (personalAllowance !== undefined) {
+    // Use the supplied personal allowance
+    adjustedPersonalAllowance = personalAllowance;
+  } else {
+    // Calculate the correct personal allowance based on cumulative income (with tapering)
+    // £1 of personal allowance is reduced for every £2 of income over £100,000
+    let personalAllowanceDeduction =
+      cumulativeGrossIncome >= PERSONAL_ALLOWANCE_DROPOFF
+        ? (cumulativeGrossIncome - PERSONAL_ALLOWANCE_DROPOFF) / 2
+        : 0;
+
+    // Don't let the deduction go below zero
+    if (personalAllowanceDeduction < 0) {
+      personalAllowanceDeduction = 0;
+    }
+
+    adjustedPersonalAllowance = Math.max(
+      0,
+      DEFAULT_PERSONAL_ALLOWANCE - personalAllowanceDeduction
+    );
   }
-
-  const adjustedPersonalAllowance = Math.max(
-    0,
-    DEFAULT_PERSONAL_ALLOWANCE - personalAllowanceDeduction
-  );
 
   // Pro-rate the correct personal allowance for the current month
   const proRatedPersonalAllowance =
@@ -116,7 +126,8 @@ function calculateEnglishCumulativePayeTaxes({
     0,
     cumulativeGrossIncome - proRatedPersonalAllowance
   );
-  const adjustedHigherBracket = HIGHER_BRACKET - adjustedPersonalAllowance;
+  // Tax brackets are defined relative to the default PA, not the individual's PA
+  const adjustedHigherBracket = HIGHER_BRACKET - DEFAULT_PERSONAL_ALLOWANCE;
 
   // 3 rates of tax
   let basicRateTax = 0;
@@ -173,11 +184,13 @@ function calculateScottishCumulativePayeTaxes({
   cumulativeGrossIncome,
   monthNumber,
   cumulativeTaxPaid,
+  personalAllowance,
 }: {
   taxRates: ScottishTaxRates;
   cumulativeGrossIncome: number;
   monthNumber: number;
   cumulativeTaxPaid: number;
+  personalAllowance?: number;
 }): ScottishIncomeTax {
   const {
     DEFAULT_PERSONAL_ALLOWANCE,
@@ -195,22 +208,30 @@ function calculateScottishCumulativePayeTaxes({
     TOP_RATE,
   } = taxRates;
 
-  // Calculate the correct personal allowance based on cumulative income (with tapering)
-  // £1 of personal allowance is reduced for every £2 of income over £100,000
-  let personalAllowanceDeduction =
-    cumulativeGrossIncome >= PERSONAL_ALLOWANCE_DROPOFF
-      ? (cumulativeGrossIncome - PERSONAL_ALLOWANCE_DROPOFF) / 2
-      : 0;
+  // Use supplied personal allowance if provided, otherwise calculate it
+  let adjustedPersonalAllowance: number;
 
-  // Don't let the deduction go below zero
-  if (personalAllowanceDeduction < 0) {
-    personalAllowanceDeduction = 0;
+  if (personalAllowance !== undefined) {
+    // Use the supplied personal allowance
+    adjustedPersonalAllowance = personalAllowance;
+  } else {
+    // Calculate the correct personal allowance based on cumulative income (with tapering)
+    // £1 of personal allowance is reduced for every £2 of income over £100,000
+    let personalAllowanceDeduction =
+      cumulativeGrossIncome >= PERSONAL_ALLOWANCE_DROPOFF
+        ? (cumulativeGrossIncome - PERSONAL_ALLOWANCE_DROPOFF) / 2
+        : 0;
+
+    // Don't let the deduction go below zero
+    if (personalAllowanceDeduction < 0) {
+      personalAllowanceDeduction = 0;
+    }
+
+    adjustedPersonalAllowance = Math.max(
+      0,
+      DEFAULT_PERSONAL_ALLOWANCE - personalAllowanceDeduction
+    );
   }
-
-  const adjustedPersonalAllowance = Math.max(
-    0,
-    DEFAULT_PERSONAL_ALLOWANCE - personalAllowanceDeduction
-  );
 
   // Pro-rate the correct personal allowance for the current month
   const proRatedPersonalAllowance =
@@ -221,10 +242,11 @@ function calculateScottishCumulativePayeTaxes({
     cumulativeGrossIncome - proRatedPersonalAllowance
   );
 
-  const bracket1 = BASIC_BRACKET - adjustedPersonalAllowance;
-  const bracket2 = INTERMEDIATE_BRACKET - adjustedPersonalAllowance;
-  const bracket3 = HIGHER_BRACKET - adjustedPersonalAllowance;
-  const bracket4 = ADVANCED_BRACKET - adjustedPersonalAllowance;
+  // Tax brackets are defined relative to the default PA, not the individual's PA
+  const bracket1 = BASIC_BRACKET - DEFAULT_PERSONAL_ALLOWANCE;
+  const bracket2 = INTERMEDIATE_BRACKET - DEFAULT_PERSONAL_ALLOWANCE;
+  const bracket3 = HIGHER_BRACKET - DEFAULT_PERSONAL_ALLOWANCE;
+  const bracket4 = ADVANCED_BRACKET - DEFAULT_PERSONAL_ALLOWANCE;
 
   // 6 rates of tax in Scotland
   let starterRateTax = 0;
@@ -477,6 +499,7 @@ export const calculateIncomeTax = ({
         cumulativeGrossIncome,
         monthNumber,
         cumulativeTaxPaid,
+        personalAllowance,
       });
     } else {
       return calculateEnglishCumulativePayeTaxes({
@@ -484,6 +507,7 @@ export const calculateIncomeTax = ({
         cumulativeGrossIncome,
         monthNumber,
         cumulativeTaxPaid,
+        personalAllowance,
       });
     }
   }

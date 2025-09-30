@@ -56,8 +56,8 @@ Calculates the income tax due in a tax year on an individual's taxable income
 calculateIncomeTax({
   taxYear?: TaxYear;
   country?: Country,
-  personalAllowance: number,
-  taxableAnnualIncome: number
+  personalAllowance?: number,
+  taxableAnnualIncome?: number
 }) => EnglishIncomeTax | ScottishIncomeTax;
 ```
 
@@ -69,6 +69,7 @@ For variable monthly income scenarios (e.g., NHS workers with variable pay), you
 calculateIncomeTax({
   taxYear?: TaxYear;
   country?: Country,
+  personalAllowance?: number, // Optional: if provided, uses this value; otherwise auto-calculates with tapering
   cumulativePaye: {
     monthNumber: number; // 1-12, which month of the tax year
     cumulativeGrossIncome: number; // Total gross income to date in the tax year
