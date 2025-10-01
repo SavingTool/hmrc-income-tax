@@ -26,6 +26,8 @@ Scotland:
 
 Works in all modern browsers and Node.js (LTS recommended).
 
+**Precision**: All calculations return values rounded to 1p (2 decimal places) following [HMRC's official guidance](https://www.gov.uk/government/publications/cwg2-further-guide-to-paye-and-national-insurance-contributions/2023-to-2024-employer-further-guide-to-paye-and-national-insurance-contributions#sec1). A `roundToPence()` utility function is also exported for custom calculations.
+
 ## Installation
 
 Run: `yarn add @saving-tool/hmrc-income-tax` (or `npm install @saving-tool/hmrc-income-tax`)
@@ -306,9 +308,9 @@ It's important to understand that in most cases this library is expecting _taxab
 
 ## Formatting and rounding output
 
-A formatter/rounder function is not included as to separate that concern from the raw tax calculations. Your application may want to apply it's own rounding and formatting logic.
+All calculation functions return values rounded to 1p precision (2 decimal places), following HMRC standards. If you need to format values for display (e.g., rounding to whole pounds or adding currency symbols), you can apply your own formatting logic.
 
-Example roll-your-own formatter using the `Intl` API (similar to what [SavingTool.co.uk](https://savingtool.co.uk) uses):
+Example formatter using the `Intl` API to round to nearest pound (similar to what [SavingTool.co.uk](https://savingtool.co.uk) uses):
 
 ```javascript
 const gbpFormatter = new Intl.NumberFormat("en-GB", {
