@@ -1,4 +1,5 @@
 import { getHmrcRates } from "./hmrc";
+import { roundToPence } from "./utils";
 
 import type { TaxYear, Country } from "./types";
 
@@ -34,5 +35,5 @@ export const calculateEmployeeNationalInsurance = ({
     middleBracket = afterFreeSection * NI_MIDDLE_RATE;
   }
 
-  return (middleBracket + upperBracket) * 52;
+  return roundToPence((middleBracket + upperBracket) * 52);
 };

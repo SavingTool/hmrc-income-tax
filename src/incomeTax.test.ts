@@ -218,7 +218,7 @@ const expectationsC = [
   {
     taxableAnnualIncome: 20_000,
     starterRateTax: 438.33,
-    basicRateTax: 1024.6000000000001,
+    basicRateTax: 1024.6,
     intermediateRateTax: 0,
     higherRateTax: 0,
     advancedRateTax: 0,
@@ -227,7 +227,7 @@ const expectationsC = [
   {
     taxableAnnualIncome: 22_500,
     starterRateTax: 438.33,
-    basicRateTax: 1524.6000000000001,
+    basicRateTax: 1524.6,
     intermediateRateTax: 0,
     higherRateTax: 0,
     advancedRateTax: 0,
@@ -247,7 +247,7 @@ const expectationsC = [
     starterRateTax: 438.33,
     basicRateTax: 2337,
     intermediateRateTax: 3591.21,
-    higherRateTax: 13161.539999999999,
+    higherRateTax: 13161.54,
     advancedRateTax: 0,
     topRateTax: 0,
   },
@@ -295,7 +295,7 @@ const expectationsC = [
     intermediateRateTax: 3591.21,
     higherRateTax: 13161.96,
     advancedRateTax: 28219.05,
-    topRateTax: 35932.799999999996,
+    topRateTax: 35932.8,
   },
 ];
 

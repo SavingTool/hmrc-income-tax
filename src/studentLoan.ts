@@ -1,4 +1,5 @@
 import { getHmrcRates } from "./hmrc";
+import { roundToPence } from "./utils";
 
 import type { StudentLoanPlan, TaxYear, Country } from "./types";
 
@@ -69,5 +70,5 @@ export const calculateStudentLoanRepayments = ({
       (weeklySalary - threshold) * repaymentAmount * 52;
   }
 
-  return studentLoanAnnualRepayments;
+  return roundToPence(studentLoanAnnualRepayments);
 };
