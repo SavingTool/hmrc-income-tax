@@ -1,4 +1,5 @@
 import { getHmrcRates } from "./hmrc";
+import { roundToPence } from "./utils";
 
 import type { TaxYear, Country } from "./types";
 
@@ -30,5 +31,5 @@ export const calculatePersonalAllowance = ({
 
   const sum = DEFAULT_PERSONAL_ALLOWANCE - personalAllowanceDeduction;
 
-  return sum < 0 ? 0 : sum;
+  return roundToPence(sum < 0 ? 0 : sum);
 };

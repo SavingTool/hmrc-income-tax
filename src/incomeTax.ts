@@ -1,4 +1,5 @@
 import { getHmrcRates, isScottishTaxRates } from "./hmrc";
+import { roundToPence } from "./utils";
 
 import type {
   EnglishIncomeTax,
@@ -60,12 +61,12 @@ function calculateEnglishTaxes({
 
   // Income is lower than the personal allowance - no income tax
   return {
-    total: basicRateTax + higherRateTax + additionalRateTax,
+    total: roundToPence(basicRateTax + higherRateTax + additionalRateTax),
     incomeTaxType: "England/NI/Wales",
     breakdown: {
-      basicRateTax,
-      higherRateTax,
-      additionalRateTax,
+      basicRateTax: roundToPence(basicRateTax),
+      higherRateTax: roundToPence(higherRateTax),
+      additionalRateTax: roundToPence(additionalRateTax),
     },
   };
 }
@@ -178,12 +179,12 @@ function calculateEnglishCumulativePayeTaxes({
     cumulativeTaxDue > 0 ? additionalRateTax / cumulativeTaxDue : 0;
 
   return {
-    total: monthlyTaxDue,
+    total: roundToPence(monthlyTaxDue),
     incomeTaxType: "England/NI/Wales",
     breakdown: {
-      basicRateTax: monthlyTaxDue * proportionBasic,
-      higherRateTax: monthlyTaxDue * proportionHigher,
-      additionalRateTax: monthlyTaxDue * proportionAdditional,
+      basicRateTax: roundToPence(monthlyTaxDue * proportionBasic),
+      higherRateTax: roundToPence(monthlyTaxDue * proportionHigher),
+      additionalRateTax: roundToPence(monthlyTaxDue * proportionAdditional),
     },
   };
 }
@@ -352,15 +353,15 @@ function calculateScottishCumulativePayeTaxes({
     cumulativeTaxDue > 0 ? topRateTax / cumulativeTaxDue : 0;
 
   return {
-    total: monthlyTaxDue,
+    total: roundToPence(monthlyTaxDue),
     incomeTaxType: "Scotland",
     breakdown: {
-      starterRateTax: monthlyTaxDue * proportionStarter,
-      basicRateTax: monthlyTaxDue * proportionBasic,
-      intermediateRateTax: monthlyTaxDue * proportionIntermediate,
-      higherRateTax: monthlyTaxDue * proportionHigher,
-      advancedRateTax: monthlyTaxDue * proportionAdvanced,
-      topRateTax: monthlyTaxDue * proportionTop,
+      starterRateTax: roundToPence(monthlyTaxDue * proportionStarter),
+      basicRateTax: roundToPence(monthlyTaxDue * proportionBasic),
+      intermediateRateTax: roundToPence(monthlyTaxDue * proportionIntermediate),
+      higherRateTax: roundToPence(monthlyTaxDue * proportionHigher),
+      advancedRateTax: roundToPence(monthlyTaxDue * proportionAdvanced),
+      topRateTax: roundToPence(monthlyTaxDue * proportionTop),
     },
   };
 }
@@ -471,15 +472,15 @@ function calculateScottishTaxes({
     topRateTax;
 
   return {
-    total,
+    total: roundToPence(total),
     incomeTaxType: "Scotland",
     breakdown: {
-      starterRateTax,
-      basicRateTax,
-      intermediateRateTax,
-      higherRateTax,
-      advancedRateTax,
-      topRateTax,
+      starterRateTax: roundToPence(starterRateTax),
+      basicRateTax: roundToPence(basicRateTax),
+      intermediateRateTax: roundToPence(intermediateRateTax),
+      higherRateTax: roundToPence(higherRateTax),
+      advancedRateTax: roundToPence(advancedRateTax),
+      topRateTax: roundToPence(topRateTax),
     },
   };
 }
