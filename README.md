@@ -274,17 +274,21 @@ calculatePensionAnnualAllowance({
   employeeDcPensionContributions?: number;
   employerDcPensionContributions?: number;
   lumpSumDeathBenefits?: number;
+  annualAllowanceCarryForward?: number; // Total unused allowance carried forward from the previous 3 tax years
 }) => {
     adjustedIncome: number;
     thresholdIncome: number;
     reduction: number;
-    allowance: number;
+    allowance: number;          // Current tax year's allowance after any tapering
+    carryForward: number;       // Carry forward applied (equals annualAllowanceCarryForward input, or 0)
+    availableAllowance: number; // Total available allowance: allowance + carryForward
 };
 ```
 
+`annualAllowanceCarryForward` is the sum of unused allowance from up to the previous 3 tax years. You must have been a member of a registered pension scheme in each year you wish to carry forward from. If a prior year was tapered, that year's tapered allowance (not the standard allowance) determines how much unused allowance is available to carry forward.
+
 Note that this implementation does not yet support the following:
 
-- Use of carry-forward from previous years' allowances
 - Accounting for DB (Defined Benefit) pensions
 - Paying into overseas pensions
 
