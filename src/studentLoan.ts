@@ -3,16 +3,17 @@ import { getHmrcRates } from "./hmrc";
 import type { StudentLoanPlan, TaxYear, Country } from "./types";
 
 // Calculates an individual's annual student loan repayments
+// Pass gross PAYE employment income — student loan repayments are calculated on gross income, not reduced by non-salary-sacrifice pension contributions.
 // Note that student loan repayments do not take into account the personal allowance in any way, it's a simple threshold system
 export const calculateStudentLoanRepayments = ({
   taxYear,
   country,
-  taxableAnnualIncome,
+  grossAnnualIncome,
   studentLoanPlanNo,
 }: {
   taxYear?: TaxYear;
   country?: Country;
-  taxableAnnualIncome: number;
+  grossAnnualIncome: number;
   studentLoanPlanNo: StudentLoanPlan;
 }): number => {
   const {
@@ -58,7 +59,7 @@ export const calculateStudentLoanRepayments = ({
     }
   }
 
-  const weeklySalary = taxableAnnualIncome / 52;
+  const weeklySalary = grossAnnualIncome / 52;
   const repaymentAmount =
     studentLoanPlanNo === "postgrad"
       ? STUDENT_LOAN_REPAYMENT_AMOUNT_POSTGRAD
