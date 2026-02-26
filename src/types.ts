@@ -21,6 +21,15 @@ export interface ScottishIncomeTax {
   };
 }
 
+export interface DividendTax {
+  total: number;
+  breakdown: {
+    basicRateDividendTax: number;
+    higherRateDividendTax: number;
+    additionalRateDividendTax: number;
+  };
+}
+
 export interface CumulativePayeOptions {
   monthNumber: number; // 1-12, which month of the tax year
   cumulativeGrossIncome: number; // Total gross income to date in the tax year

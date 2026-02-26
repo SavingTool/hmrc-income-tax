@@ -12,8 +12,9 @@ This library makes it easy to calculate, based on a PAYE taxable salary:
 - Pension annual allowance, including pension tapering
 - Corporation Tax (including marginal relief)
 - Apprenticeship Levy
+- Dividend Tax
 
-Rate data is also provided for dividend tax and VAT.
+Rate data is also provided for VAT.
 
 Multiple versions of the HMRC rates can be supported, although only the follwing years have been implemented:
 
@@ -185,6 +186,31 @@ calculateApprenticeshipLevy({
 }) => number;
 ```
 
+### `calculateDividendTax`
+
+Calculates dividend tax on dividend income stacked on top of other income. Dividend tax rates and band thresholds are UK-wide (not devolved), so this function does not accept a `country` parameter.
+
+The personal allowance is applied to non-dividend income first. Any unused allowance then applies to dividend income. The dividend allowance is tax-free but still occupies band space, which can push dividends above it into a higher rate band.
+
+```typescript
+calculateDividendTax({
+  taxYear?: TaxYear,
+  nonDividendTaxableIncome: number, // salary, self-employment income, etc.
+  dividendIncome: number,
+  personalAllowance?: number        // auto-calculated from total income if omitted
+}) => DividendTax;
+
+// DividendTax:
+// {
+//   total: number;
+//   breakdown: {
+//     basicRateDividendTax: number;    // 8.75%
+//     higherRateDividendTax: number;   // 33.75%
+//     additionalRateDividendTax: number; // 39.35%
+//   }
+// }
+```
+
 ### `calculateStudentLoanRepayments`
 
 Calculates the student loan repayments due in a tax year on an individual's taxable income, single amount.
@@ -200,7 +226,7 @@ calculateStudentLoanRepayments({
 
 ### `getHmrcRates`
 
-Returns an underlying static set of HMRC rates for a given tax year. This is useful for doing your own arbitrary calculations, and also provides access to rate data not exposed via dedicated functions (dividend tax rates, VAT rates).
+Returns an underlying static set of HMRC rates for a given tax year. This is useful for doing your own arbitrary calculations, and also provides access to rate data not exposed via dedicated functions (VAT rates).
 
 ```typescript
 getHmrcRates({
@@ -222,6 +248,8 @@ Notable rate fields available via `getHmrcRates`:
 | `VAT_REGISTRATION_THRESHOLD` | Annual turnover threshold for VAT registration |
 | `EMPLOYER_NI_RATE` | Employer NI rate above the secondary threshold |
 | `EMPLOYER_NI_SECONDARY_THRESHOLD` | Weekly secondary threshold for employer NI |
+
+**Note on VAT calculations:** A `calculateVat` function is intentionally out of scope for this library. VAT involves too many situational factors (exempt vs zero-rated vs reduced-rate supplies, partial exemption, flat-rate scheme, margin scheme, etc.) for a single function to be correct in the general case without a richer input model. The rate and threshold data above is provided so consumers can apply the relevant rate for their specific situation.
 
 ### `calculatePensionAnnualAllowance`
 

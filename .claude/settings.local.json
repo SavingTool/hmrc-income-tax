@@ -1,5 +1,9 @@
 {
   "permissions": {
-    "allow": ["Bash(node -e \":*)", "WebFetch(domain:github.com)"]
+    "allow": [
+      "Bash(node -e \":*)",
+      "WebFetch(domain:github.com)",
+      "Bash(yarn test)"
+    ]
   }
 }

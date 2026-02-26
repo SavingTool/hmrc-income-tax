@@ -6,3 +6,4 @@ export * from "./studentLoan";
 export * from "./pensionAnnualAllowance";
 export * from "./corporationTax";
 export * from "./apprenticeshipLevy";
+export * from "./dividendTax";
