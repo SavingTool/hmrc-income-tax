@@ -2,20 +2,21 @@ import { getHmrcRates } from "./hmrc";
 
 import type { TaxYear, Country } from "./types";
 
-// Calculates an individual's national insurance contributions based on taxable income.
+// Calculates an individual's national insurance contributions based on gross employment income.
+// Pass gross PAYE employment income — NI is not reduced by non-salary-sacrifice pension contributions.
 // Supports class 1, category A employee national insurance only.
 // Uses the employee's weekly salary as a basis, as per the system, then re-converts into a year at the end.
 // See https://www.gov.uk/national-insurance-rates-letters/category-letters for other categories
 export const calculateEmployeeNationalInsurance = ({
   taxYear,
   country,
-  taxableAnnualIncome,
+  grossAnnualIncome,
 }: {
   taxYear?: TaxYear;
   country?: Country;
-  taxableAnnualIncome: number;
+  grossAnnualIncome: number;
 }) => {
-  const weeklySalary = taxableAnnualIncome / 52;
+  const weeklySalary = grossAnnualIncome / 52;
   const { NI_MIDDLE_RATE, NI_UPPER_RATE, NI_MIDDLE_BRACKET, NI_UPPER_BRACKET } =
     getHmrcRates({ taxYear, country });
   const afterFreeSection = weeklySalary - NI_MIDDLE_BRACKET;
@@ -37,20 +38,21 @@ export const calculateEmployeeNationalInsurance = ({
   return (middleBracket + upperBracket) * 52;
 };
 
-// Calculates employer national insurance contributions based on an employee's taxable income.
+// Calculates employer national insurance contributions based on an employee's gross employment income.
+// Pass gross PAYE employment income — NI is not reduced by non-salary-sacrifice pension contributions.
 // Supports class 1, category A secondary contributions only.
 // Uses the employee's weekly salary as a basis, as per the system, then re-converts into a year at the end.
 // See https://www.gov.uk/national-insurance-rates-letters/category-letters for other categories
 export const calculateEmployerNationalInsurance = ({
   taxYear,
   country,
-  taxableAnnualIncome,
+  grossAnnualIncome,
 }: {
   taxYear?: TaxYear;
   country?: Country;
-  taxableAnnualIncome: number;
+  grossAnnualIncome: number;
 }) => {
-  const weeklySalary = taxableAnnualIncome / 52;
+  const weeklySalary = grossAnnualIncome / 52;
   const { EMPLOYER_NI_RATE, EMPLOYER_NI_SECONDARY_THRESHOLD } = getHmrcRates({
     taxYear,
     country,

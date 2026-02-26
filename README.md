@@ -142,25 +142,29 @@ This cumulative mode implements HMRC PAYE rules where personal allowances are pr
 
 ### `calculateEmployeeNationalInsurance`
 
-Calculates the National Insurance contributions due in a tax year on an individual's taxable income, single amount. Note: only supports class 1, category A.
+Calculates the National Insurance contributions due in a tax year on an individual's gross employment income, single amount. Note: only supports class 1, category A.
+
+Pass gross PAYE employment income. Unlike income tax, NI is not reduced by non-salary-sacrifice pension contributions.
 
 ```typescript
 calculateEmployeeNationalInsurance({
   taxYear?: TaxYear,
   country?: Country,
-  taxableAnnualIncome: number
+  grossAnnualIncome: number // gross PAYE employment income, before any non-salary-sacrifice pension deductions
 }) => number;
 ```
 
 ### `calculateEmployerNationalInsurance`
 
-Calculates the employer National Insurance contributions due in a tax year on an employee's taxable income. Note: only supports class 1, category A secondary contributions.
+Calculates the employer National Insurance contributions due in a tax year on an employee's gross employment income. Note: only supports class 1, category A secondary contributions.
+
+Pass gross PAYE employment income. Unlike income tax, NI is not reduced by non-salary-sacrifice pension contributions.
 
 ```typescript
 calculateEmployerNationalInsurance({
   taxYear?: TaxYear,
   country?: Country,
-  taxableAnnualIncome: number
+  grossAnnualIncome: number // gross PAYE employment income, before any non-salary-sacrifice pension deductions
 }) => number;
 ```
 
@@ -213,13 +217,15 @@ calculateDividendTax({
 
 ### `calculateStudentLoanRepayments`
 
-Calculates the student loan repayments due in a tax year on an individual's taxable income, single amount.
+Calculates the student loan repayments due in a tax year on an individual's gross employment income, single amount.
+
+Pass gross PAYE employment income. Like NI, student loan repayments are not reduced by non-salary-sacrifice pension contributions.
 
 ```typescript
 calculateStudentLoanRepayments({
   taxYear?: TaxYear,
   country?: Country,
-  taxableAnnualIncome: number,
+  grossAnnualIncome: number, // gross PAYE employment income, before any non-salary-sacrifice pension deductions
   studentLoanPlanNo: 1 | 2 | 4 | 5 | 'postgrad'
 }) => number;
 ```
