@@ -2,18 +2,21 @@
 
 An ultra-fast, tiny TypeScript implementation of common UK Income Tax & National Insurance calculations. See it in action on [SavingTool.co.uk](https://savingtool.co.uk).
 
-This library makes it easy to calculate, based on a PAYE taxable salary:
+This library supports both employee and employer-side payroll calculations, making it suitable for building payroll tools, salary calculators, and HR/finance applications. It makes it easy to calculate:
 
+**Employee**
 - Personal Allowance
 - Income Tax
 - Employee National Insurance Contributions (Class 1, all category letters; defaults to Category A)
-- Employer National Insurance Contributions (Class 1, all category letters; defaults to Category A)
 - Self-employed National Insurance Contributions (Class 2, Class 3 voluntary, and Class 4)
 - Student Loan Repayments (Plans 1, 2, 4, 5 or postgrad)
 - Pension annual allowance, including pension tapering
-- Corporation Tax (including marginal relief)
-- Apprenticeship Levy
 - Dividend Tax
+
+**Employer**
+- Employer National Insurance Contributions (Class 1, all category letters; defaults to Category A)
+- Apprenticeship Levy
+- Corporation Tax (including marginal relief)
 
 Rate data is also provided for VAT.
 
