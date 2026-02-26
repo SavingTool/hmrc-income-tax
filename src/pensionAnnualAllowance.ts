@@ -9,11 +9,15 @@ interface Args {
   employeeDcPensionContributions?: number;
   employerDcPensionContributions?: number;
   lumpSumDeathBenefits?: number;
+  // Total unused annual allowance carried forward from the previous 3 tax years.
+  // You must have been a member of a registered pension scheme in each year you
+  // wish to carry forward from. Carry forward from a tapered year uses that
+  // year's tapered allowance (not the standard allowance).
+  annualAllowanceCarryForward?: number;
 }
 
 // Calculates an individual's annual pension contributions allowance
 // UNSUPPORTED: DB Pensions
-// UNSUPPORTED: Carry forward allowances from previous years
 // UNSUPPORTED: Paying into overseas pension schemes
 // Tips:
 // Use `retrospectivePensionPaymentsTaxRelief` for personal contributions (or any other form of relief at source contribution)
@@ -26,6 +30,7 @@ export const calculatePensionAnnualAllowance = ({
   employeeDcPensionContributions,
   employerDcPensionContributions,
   lumpSumDeathBenefits,
+  annualAllowanceCarryForward,
 }: Args) => {
   const {
     PENSION_ANNUAL_ALLOWANCE, // 60k
@@ -66,10 +71,14 @@ export const calculatePensionAnnualAllowance = ({
         : updated;
   }
 
+  const carryForward = annualAllowanceCarryForward ?? 0;
+
   return {
     adjustedIncome,
     thresholdIncome,
     reduction,
     allowance: newAllowance,
+    carryForward,
+    availableAllowance: newAllowance + carryForward,
   };
 };

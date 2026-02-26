@@ -5,7 +5,8 @@
       "WebFetch(domain:github.com)",
       "Bash(yarn test)",
       "Bash(yarn prettier)",
-      "Bash(yarn prettier:fix)"
+      "Bash(yarn prettier:fix)",
+      "Bash(yarn test --testPathPattern=pensionAnnualAllowance)"
     ]
   }
 }
