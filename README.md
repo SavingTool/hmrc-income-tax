@@ -6,8 +6,9 @@ This library makes it easy to calculate, based on a PAYE taxable salary:
 
 - Personal Allowance
 - Income Tax
-- Employee National Insurance Contributions (Class 1, Category A only)
-- Employer National Insurance Contributions (Class 1, Category A only)
+- Employee National Insurance Contributions (Class 1, all category letters; defaults to Category A)
+- Employer National Insurance Contributions (Class 1, all category letters; defaults to Category A)
+- Self-employed National Insurance Contributions (Class 2, Class 3 voluntary, and Class 4)
 - Student Loan Repayments (Plans 1, 2, 4, 5 or postgrad)
 - Pension annual allowance, including pension tapering
 - Corporation Tax (including marginal relief)
@@ -142,29 +143,80 @@ This cumulative mode implements HMRC PAYE rules where personal allowances are pr
 
 ### `calculateEmployeeNationalInsurance`
 
-Calculates the National Insurance contributions due in a tax year on an individual's gross employment income, single amount. Note: only supports class 1, category A.
+Calculates Class 1 employee National Insurance contributions due in a tax year on an individual's gross employment income, single amount.
 
 Pass gross PAYE employment income. Unlike income tax, NI is not reduced by non-salary-sacrifice pension contributions.
+
+`niCategory` defaults to `"A"` (the standard category for most employees). See [HMRC category letters](https://www.gov.uk/national-insurance-rates-letters/category-letters) for the full list. All standard, freeport, and investment zone category letters are supported.
 
 ```typescript
 calculateEmployeeNationalInsurance({
   taxYear?: TaxYear,
   country?: Country,
-  grossAnnualIncome: number // gross PAYE employment income, before any non-salary-sacrifice pension deductions
+  grossAnnualIncome: number, // gross PAYE employment income, before any non-salary-sacrifice pension deductions
+  niCategory?: NICategory    // defaults to "A"
 }) => number;
 ```
 
+Examples of common categories:
+
+| Category | Applies to |
+|----------|-----------|
+| `"A"` | Most employees (default) |
+| `"B"` | Married women/widows with a valid reduced rate election |
+| `"C"` | Employees over State Pension age (0% employee NI) |
+| `"H"` | Apprentices under 25 |
+| `"M"` | Employees under 21 |
+| `"J"` | Employees deferring NI because they have another job |
+
 ### `calculateEmployerNationalInsurance`
 
-Calculates the employer National Insurance contributions due in a tax year on an employee's gross employment income. Note: only supports class 1, category A secondary contributions.
+Calculates Class 1 employer National Insurance contributions due in a tax year on an employee's gross employment income.
 
 Pass gross PAYE employment income. Unlike income tax, NI is not reduced by non-salary-sacrifice pension contributions.
+
+`niCategory` defaults to `"A"`. Several categories reduce the employer's liability: categories `H`, `M`, `V`, and `Z` attract 0% employer NI up to the upper earnings limit (£50,270/year), which is the relief for hiring apprentices under 25, employees under 21, and armed forces veterans. Freeport categories (`F`, `I`, `L`, `S`) and investment zone categories (`N`, `E`, `D`, `K`) attract 0% employer NI up to £25,000/year.
 
 ```typescript
 calculateEmployerNationalInsurance({
   taxYear?: TaxYear,
   country?: Country,
-  grossAnnualIncome: number // gross PAYE employment income, before any non-salary-sacrifice pension deductions
+  grossAnnualIncome: number, // gross PAYE employment income, before any non-salary-sacrifice pension deductions
+  niCategory?: NICategory    // defaults to "A"
+}) => number;
+```
+
+### `calculateClass2NationalInsurance`
+
+Returns the annual Class 2 NI liability for a self-employed individual.
+
+From 2024/25 onwards, Class 2 is treated as automatically paid for those with profits above the small profits threshold — so this returns `0` for 2024/25 and later. For 2022/23 and 2023/24, it returns the annual flat-rate amount for those above the threshold.
+
+```typescript
+calculateClass2NationalInsurance({
+  taxYear?: TaxYear,
+  grossAnnualProfit?: number // if omitted, assumes above the small profits threshold
+}) => number;
+```
+
+### `calculateClass3NationalInsurance`
+
+Returns the annual cost of voluntary Class 3 NI contributions, used to fill gaps in an NI record.
+
+```typescript
+calculateClass3NationalInsurance({
+  taxYear?: TaxYear
+}) => number;
+```
+
+### `calculateClass4NationalInsurance`
+
+Calculates Class 4 NI on self-employed trading profits. Class 4 does not count towards state benefits or the state pension.
+
+```typescript
+calculateClass4NationalInsurance({
+  taxYear?: TaxYear,
+  grossAnnualProfit: number
 }) => number;
 ```
 

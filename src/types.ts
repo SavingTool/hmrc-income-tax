@@ -38,6 +38,16 @@ export interface CumulativePayeOptions {
 
 export type StudentLoanPlan = 1 | 2 | 4 | 5 | "postgrad";
 
+// Class 1 NI category letters.
+// See https://www.gov.uk/national-insurance-rates-letters/category-letters
+export type NICategory =
+  // Standard
+  | "A" | "B" | "C" | "H" | "J" | "M" | "V" | "Z" | "X"
+  // Freeport
+  | "F" | "I" | "L" | "S"
+  // Investment Zone
+  | "N" | "E" | "D" | "K";
+
 export type SupportedEnglishTaxYear =
   | "2022/23"
   | "2023/24"
