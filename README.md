@@ -85,7 +85,7 @@ calculateIncomeTax({
 ```typescript
 // Month 1: £10,000 gross income
 const month1Tax = calculateIncomeTax({
-  taxYear: "2024/25",
+  taxYear: "2025/26",
   cumulativePaye: {
     monthNumber: 1,
     cumulativeGrossIncome: 10_000,
@@ -96,7 +96,7 @@ const month1Tax = calculateIncomeTax({
 
 // Month 2: No additional income
 const month2Tax = calculateIncomeTax({
-  taxYear: "2024/25",
+  taxYear: "2025/26",
   cumulativePaye: {
     monthNumber: 2,
     cumulativeGrossIncome: 10_000, // Still £10k total
@@ -111,7 +111,7 @@ const month2Tax = calculateIncomeTax({
 ```typescript
 // Month 1: £60,000 gross income
 const month1Tax = calculateIncomeTax({
-  taxYear: "2024/25",
+  taxYear: "2025/26",
   cumulativePaye: {
     monthNumber: 1,
     cumulativeGrossIncome: 60_000,
@@ -122,7 +122,7 @@ const month1Tax = calculateIncomeTax({
 
 // Month 6: Additional £50k earned (£110k total, crossing into PA tapering)
 const month6Tax = calculateIncomeTax({
-  taxYear: "2024/25",
+  taxYear: "2025/26",
   cumulativePaye: {
     monthNumber: 6,
     cumulativeGrossIncome: 110_000, // £60k + £50k
@@ -207,9 +207,7 @@ Note that this implementation does not yet support the following:
 - Accounting for DB (Defined Benefit) pensions
 - Paying into overseas pensions
 
-## Examples (2022/23 HMRC Rates)
-
-**DISCLAIMER:** These examples were written against the 2022/23 England/Wales/NI HMRC rates, hence will output different results vs today's HMRC rates.
+## Examples (2025/26 HMRC Rates)
 
 Mark S. of MDR earns £55,000. His employer contributes 6% to his pension, but also matches up to another 2%. Mark contributes 2% via salary sacrafice to get the matching. Therefore, Mark's taxable income is £53,900. He has £19,000 of outstanding student loan debt, and is on Plan 1.
 
@@ -221,7 +219,7 @@ import {
   calculateStudentLoanRepayments,
 } from "@saving-tool/hmrc-income-tax";
 
-const taxYear = "2022/23";
+const taxYear = "2025/26";
 
 // Mark S.
 const taxableAnnualIncome = 53_900;
@@ -244,22 +242,22 @@ const nationalInsuranceContributions = calculateEmployeeNationalInsurance({
   taxableAnnualIncome,
   taxYear,
 });
-// => 5471
+// => 3088.32
 
 const studentLoanRepayments = calculateStudentLoanRepayments({
   taxableAnnualIncome,
   studentLoanPlanNo: 1,
   taxYear,
 });
-// => 3162
+// => 2506.32
 
 // Do whatever you want, e.g. calculate the take-home pay
 const takeHome =
   taxableAnnualIncome -
-  totalIncomeTax -
+  total -
   nationalInsuranceContributions -
   studentLoanRepayments;
-// => 36275
+// => 39313.36
 ```
 
 Irv B. of MDR earns £160,000. His employer contributes some amount to his pension, but he contributes nothing. He has no student loan.
@@ -271,7 +269,7 @@ import {
   calculateEmployeeNationalInsurance,
 } from "@saving-tool/hmrc-income-tax";
 
-const taxYear = "2022/23";
+const taxYear = "2025/26";
 
 // Irv B.
 const taxableAnnualIncome = 160_000;
@@ -288,18 +286,18 @@ const incomeTax = calculateIncomeTax({
   taxYear,
 });
 const { total } = incomeTax;
-// => 57589
+// => 58203
 
 const nationalInsuranceContributions = calculateEmployeeNationalInsurance({
   taxableAnnualIncome,
   taxYear,
 });
-// => 8919
+// => 5210.32
 
 // Do whatever you want, e.g. calculate the take-home pay
 const takeHome =
-  taxableAnnualIncome - totalIncomeTax - nationalInsuranceContributions;
-// => 93492
+  taxableAnnualIncome - total - nationalInsuranceContributions;
+// => 96586.68
 ```
 
 It's important to understand that in most cases this library is expecting _taxable_ income (appropriate API naming aims to make this clear). Any salary sacrafice mechanisms should be applied before these calculations, and the appropriate taxable amount used when calling this library.
