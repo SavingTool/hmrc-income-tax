@@ -7,8 +7,13 @@ This library makes it easy to calculate, based on a PAYE taxable salary:
 - Personal Allowance
 - Income Tax
 - Employee National Insurance Contributions (Class 1, Category A only)
+- Employer National Insurance Contributions (Class 1, Category A only)
 - Student Loan Repayments (Plans 1, 2, 4, 5 or postgrad)
 - Pension annual allowance, including pension tapering
+- Corporation Tax (including marginal relief)
+- Apprenticeship Levy
+
+Rate data is also provided for dividend tax and VAT.
 
 Multiple versions of the HMRC rates can be supported, although only the follwing years have been implemented:
 
@@ -146,6 +151,40 @@ calculateEmployeeNationalInsurance({
 }) => number;
 ```
 
+### `calculateEmployerNationalInsurance`
+
+Calculates the employer National Insurance contributions due in a tax year on an employee's taxable income. Note: only supports class 1, category A secondary contributions.
+
+```typescript
+calculateEmployerNationalInsurance({
+  taxYear?: TaxYear,
+  country?: Country,
+  taxableAnnualIncome: number
+}) => number;
+```
+
+### `calculateCorporationTax`
+
+Calculates corporation tax on a company's taxable profits. Applies marginal relief for profits between £50,000 and £250,000 (for tax years from 2023/24 onwards). Assumes a single company with no associated companies — if your company has associated companies, divide the thresholds by the total number of associated companies before comparing to profits.
+
+```typescript
+calculateCorporationTax({
+  taxYear?: TaxYear,
+  profits: number
+}) => number;
+```
+
+### `calculateApprenticeshipLevy`
+
+Calculates the Apprenticeship Levy payable on an employer's annual pay bill. The levy is 0.5% of the pay bill above the £15,000 annual allowance. Only employers with a pay bill over £3,000,000 will have a levy to pay.
+
+```typescript
+calculateApprenticeshipLevy({
+  taxYear?: TaxYear,
+  annualPayBill: number
+}) => number;
+```
+
 ### `calculateStudentLoanRepayments`
 
 Calculates the student loan repayments due in a tax year on an individual's taxable income, single amount.
@@ -161,7 +200,7 @@ calculateStudentLoanRepayments({
 
 ### `getHmrcRates`
 
-Returns an underlying static set of HMRC rates for a given tax year. This is useful for doing your own arbitrary calculations.
+Returns an underlying static set of HMRC rates for a given tax year. This is useful for doing your own arbitrary calculations, and also provides access to rate data not exposed via dedicated functions (dividend tax rates, VAT rates).
 
 ```typescript
 getHmrcRates({
@@ -169,6 +208,20 @@ getHmrcRates({
   country?: Country
 }) => EnglishTaxRates | ScottishTaxRates;
 ```
+
+Notable rate fields available via `getHmrcRates`:
+
+| Field | Description |
+|---|---|
+| `DIVIDEND_ALLOWANCE` | Annual dividend allowance (£500 for 2024/25+) |
+| `DIVIDEND_BASIC_RATE` | Dividend tax rate for basic rate taxpayers (8.75%) |
+| `DIVIDEND_HIGHER_RATE` | Dividend tax rate for higher rate taxpayers (33.75%) |
+| `DIVIDEND_ADDITIONAL_RATE` | Dividend tax rate for additional rate taxpayers (39.35%) |
+| `VAT_STANDARD_RATE` | Standard VAT rate (20%) |
+| `VAT_REDUCED_RATE` | Reduced VAT rate (5%) |
+| `VAT_REGISTRATION_THRESHOLD` | Annual turnover threshold for VAT registration |
+| `EMPLOYER_NI_RATE` | Employer NI rate above the secondary threshold |
+| `EMPLOYER_NI_SECONDARY_THRESHOLD` | Weekly secondary threshold for employer NI |
 
 ### `calculatePensionAnnualAllowance`
 
