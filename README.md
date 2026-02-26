@@ -160,14 +160,14 @@ calculateEmployeeNationalInsurance({
 
 Examples of common categories:
 
-| Category | Applies to |
-|----------|-----------|
-| `"A"` | Most employees (default) |
-| `"B"` | Married women/widows with a valid reduced rate election |
-| `"C"` | Employees over State Pension age (0% employee NI) |
-| `"H"` | Apprentices under 25 |
-| `"M"` | Employees under 21 |
-| `"J"` | Employees deferring NI because they have another job |
+| Category | Applies to                                              |
+| -------- | ------------------------------------------------------- |
+| `"A"`    | Most employees (default)                                |
+| `"B"`    | Married women/widows with a valid reduced rate election |
+| `"C"`    | Employees over State Pension age (0% employee NI)       |
+| `"H"`    | Apprentices under 25                                    |
+| `"M"`    | Employees under 21                                      |
+| `"J"`    | Employees deferring NI because they have another job    |
 
 ### `calculateEmployerNationalInsurance`
 
@@ -295,17 +295,17 @@ getHmrcRates({
 
 Notable rate fields available via `getHmrcRates`:
 
-| Field | Description |
-|---|---|
-| `DIVIDEND_ALLOWANCE` | Annual dividend allowance (£500 for 2024/25+) |
-| `DIVIDEND_BASIC_RATE` | Dividend tax rate for basic rate taxpayers (8.75%) |
-| `DIVIDEND_HIGHER_RATE` | Dividend tax rate for higher rate taxpayers (33.75%) |
-| `DIVIDEND_ADDITIONAL_RATE` | Dividend tax rate for additional rate taxpayers (39.35%) |
-| `VAT_STANDARD_RATE` | Standard VAT rate (20%) |
-| `VAT_REDUCED_RATE` | Reduced VAT rate (5%) |
-| `VAT_REGISTRATION_THRESHOLD` | Annual turnover threshold for VAT registration |
-| `EMPLOYER_NI_RATE` | Employer NI rate above the secondary threshold |
-| `EMPLOYER_NI_SECONDARY_THRESHOLD` | Weekly secondary threshold for employer NI |
+| Field                             | Description                                              |
+| --------------------------------- | -------------------------------------------------------- |
+| `DIVIDEND_ALLOWANCE`              | Annual dividend allowance (£500 for 2024/25+)            |
+| `DIVIDEND_BASIC_RATE`             | Dividend tax rate for basic rate taxpayers (8.75%)       |
+| `DIVIDEND_HIGHER_RATE`            | Dividend tax rate for higher rate taxpayers (33.75%)     |
+| `DIVIDEND_ADDITIONAL_RATE`        | Dividend tax rate for additional rate taxpayers (39.35%) |
+| `VAT_STANDARD_RATE`               | Standard VAT rate (20%)                                  |
+| `VAT_REDUCED_RATE`                | Reduced VAT rate (5%)                                    |
+| `VAT_REGISTRATION_THRESHOLD`      | Annual turnover threshold for VAT registration           |
+| `EMPLOYER_NI_RATE`                | Employer NI rate above the secondary threshold           |
+| `EMPLOYER_NI_SECONDARY_THRESHOLD` | Weekly secondary threshold for employer NI               |
 
 **Note on VAT calculations:** A `calculateVat` function is intentionally out of scope for this library. VAT involves too many situational factors (exempt vs zero-rated vs reduced-rate supplies, partial exemption, flat-rate scheme, margin scheme, etc.) for a single function to be correct in the general case without a richer input model. The rate and threshold data above is provided so consumers can apply the relevant rate for their specific situation.
 
@@ -438,8 +438,7 @@ const nationalInsuranceContributions = calculateEmployeeNationalInsurance({
 // => 5210.32
 
 // Do whatever you want, e.g. calculate the take-home pay
-const takeHome =
-  taxableAnnualIncome - total - nationalInsuranceContributions;
+const takeHome = taxableAnnualIncome - total - nationalInsuranceContributions;
 // => 96586.68
 ```
 

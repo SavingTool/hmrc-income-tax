@@ -1,6 +1,11 @@
 import { getHmrcRates } from "./hmrc";
 
-import type { TaxYear, Country, NICategory, SupportedEnglishTaxYear } from "./types";
+import type {
+  TaxYear,
+  Country,
+  NICategory,
+  SupportedEnglishTaxYear,
+} from "./types";
 
 // ─── Self-contained expanded NI rates ─────────────────────────────────────────
 // Rates that aren't already stored in hmrc.ts (which holds Class 1 Cat A data).
@@ -84,7 +89,7 @@ const niRatesByYear: Record<SupportedEnglishTaxYear, ExpandedNIRates> = {
     catBMiddleRate: 0.0185,
     freeportUpperSecondaryThreshold: 481, // £25,000/year
     investmentZoneUpperSecondaryThreshold: 481, // £25,000/year
-    class2WeeklyRate: 3.50,
+    class2WeeklyRate: 3.5,
     class2SmallProfitsThreshold: 6_845,
     class3WeeklyRate: 17.75,
     class4MainRate: 0.06,
@@ -244,8 +249,11 @@ export const calculateEmployerNationalInsurance = ({
   niCategory?: NICategory;
 }) => {
   const weeklySalary = grossAnnualIncome / 52;
-  const { EMPLOYER_NI_RATE, EMPLOYER_NI_SECONDARY_THRESHOLD, NI_UPPER_BRACKET } =
-    getHmrcRates({ taxYear, country });
+  const {
+    EMPLOYER_NI_RATE,
+    EMPLOYER_NI_SECONDARY_THRESHOLD,
+    NI_UPPER_BRACKET,
+  } = getHmrcRates({ taxYear, country });
   const niRates = getNIRatesForYear(taxYear ?? "2025/26");
 
   const effectiveThreshold = getEmployerEffectiveThreshold(
@@ -325,8 +333,12 @@ export const calculateClass4NationalInsurance = ({
   grossAnnualProfit: number;
 }) => {
   const niRates = getNIRatesForYear(taxYear ?? "2025/26");
-  const { class4LowerProfitsLimit, class4UpperProfitsLimit, class4MainRate, class4AdditionalRate } =
-    niRates;
+  const {
+    class4LowerProfitsLimit,
+    class4UpperProfitsLimit,
+    class4MainRate,
+    class4AdditionalRate,
+  } = niRates;
 
   if (grossAnnualProfit <= class4LowerProfitsLimit) {
     return 0;
