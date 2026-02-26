@@ -39,6 +39,7 @@ The CI currently runs these steps:
 - Have `np` installed, globally
 - Use Windows Terminal (or macOS) - avoid Git Bash for Windows, as the interactivity that `np` requires does not work!
 - *Important*: the git remote must be the ssh url in order for np to work correctly. By default, GitHub Desktop uses the https URL as far as I can tell. It can be easily changed via: `git remote set-url origin git@github.com:sgb-io/hmrc-income-tax.git`. If you have failed to do this, the "pushing tags" part will hang. If this happens, ctrl+c out, manually run git push --follow-tags
-- On an up-to-date `main`, run Run `yarn run tag:{patch|minor|major}`. This creates a git tag **and pushes it up**.
+- On an up-to-date `main`, run `yarn build` to ensure `lib/` is clean and up-to-date. `tsc` does not remove stale files, so a local `lib/` can accumulate outdated artifacts (e.g. compiled test files from before they were excluded) that cause spurious test failures.
+- Run `yarn run tag:{patch|minor|major}`. This creates a git tag **and pushes it up**.
 - This also opens a GitHub release draft - go ahead and publish it.
 - The GitHub action should publish to npm automatically. Check the Actions tab to see it happening. This is controlled by the `publish` workflow defined in `.github/workflows`.
