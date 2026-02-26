@@ -21,6 +21,15 @@ export interface ScottishIncomeTax {
   };
 }
 
+export interface DividendTax {
+  total: number;
+  breakdown: {
+    basicRateDividendTax: number;
+    higherRateDividendTax: number;
+    additionalRateDividendTax: number;
+  };
+}
+
 export interface CumulativePayeOptions {
   monthNumber: number; // 1-12, which month of the tax year
   cumulativeGrossIncome: number; // Total gross income to date in the tax year
@@ -61,12 +70,42 @@ interface BasicTaxRates {
   STUDENT_LOAN_REPAYMENT_AMOUNT: number;
   STUDENT_LOAN_REPAYMENT_AMOUNT_POSTGRAD: number;
 
-  // National Insurance
+  // Employee National Insurance
   // See https://www.gov.uk/guidance/rates-and-thresholds-for-employers-2022-to-2023 for current and previous rates
   NI_MIDDLE_RATE: number;
   NI_UPPER_RATE: number;
   NI_MIDDLE_BRACKET: number;
   NI_UPPER_BRACKET: number;
+
+  // Employer National Insurance (Class 1, Category A secondary contributions)
+  // See https://www.gov.uk/guidance/rates-and-thresholds-for-employers-2025-to-2026
+  EMPLOYER_NI_RATE: number;
+  EMPLOYER_NI_SECONDARY_THRESHOLD: number; // Weekly secondary threshold
+
+  // Dividend tax
+  // See https://www.gov.uk/tax-on-dividends
+  DIVIDEND_ALLOWANCE: number;
+  DIVIDEND_BASIC_RATE: number;
+  DIVIDEND_HIGHER_RATE: number;
+  DIVIDEND_ADDITIONAL_RATE: number;
+
+  // VAT
+  // See https://www.gov.uk/vat-registration/overview
+  VAT_STANDARD_RATE: number;
+  VAT_REDUCED_RATE: number;
+  VAT_REGISTRATION_THRESHOLD: number;
+
+  // Apprenticeship Levy
+  // See https://www.gov.uk/guidance/pay-apprenticeship-levy
+  APPRENTICESHIP_LEVY_RATE: number;
+  APPRENTICESHIP_LEVY_ALLOWANCE: number;
+
+  // Corporation Tax
+  // See https://www.gov.uk/corporation-tax-rates
+  CORPORATION_TAX_MAIN_RATE: number;
+  CORPORATION_TAX_SMALL_PROFITS_RATE: number;
+  CORPORATION_TAX_SMALL_PROFITS_THRESHOLD: number;
+  CORPORATION_TAX_MAIN_RATE_THRESHOLD: number;
 
   // Pension allowances
   PENSION_ANNUAL_ALLOWANCE: number;

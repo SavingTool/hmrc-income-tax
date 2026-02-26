@@ -28,11 +28,32 @@ const englandNiWalesTaxRates: Record<SupportedEnglishTaxYear, EnglishTaxRates> =
       STUDENT_LOAN_REPAYMENT_AMOUNT: 0.09, // People on plans 1 or 2 repay 9% of the amount you earn over the threshold
       STUDENT_LOAN_POSTGRAD_WEEKLY_THRESHOLD: 403.84,
       STUDENT_LOAN_REPAYMENT_AMOUNT_POSTGRAD: 0.06, // People on postgrad plans repay 6% of the amount you earn over the threshold
-      // National Insurance
+      // Employee National Insurance
       NI_MIDDLE_RATE: 0.1325,
       NI_UPPER_RATE: 0.0325,
       NI_MIDDLE_BRACKET: 242,
       NI_UPPER_BRACKET: 967,
+      // Employer National Insurance (Class 1, Category A)
+      // Note: rate was temporarily 15.05% Apr–Nov 2022 due to Health and Social Care Levy surcharge
+      EMPLOYER_NI_RATE: 0.138,
+      EMPLOYER_NI_SECONDARY_THRESHOLD: 175, // £175/week = £9,100/year
+      // Dividend tax
+      DIVIDEND_ALLOWANCE: 2_000,
+      DIVIDEND_BASIC_RATE: 0.0875,
+      DIVIDEND_HIGHER_RATE: 0.3375,
+      DIVIDEND_ADDITIONAL_RATE: 0.3935,
+      // VAT
+      VAT_STANDARD_RATE: 0.2,
+      VAT_REDUCED_RATE: 0.05,
+      VAT_REGISTRATION_THRESHOLD: 85_000,
+      // Apprenticeship Levy
+      APPRENTICESHIP_LEVY_RATE: 0.005,
+      APPRENTICESHIP_LEVY_ALLOWANCE: 15_000,
+      // Corporation Tax (flat 19% rate for 2022/23)
+      CORPORATION_TAX_MAIN_RATE: 0.19,
+      CORPORATION_TAX_SMALL_PROFITS_RATE: 0.19,
+      CORPORATION_TAX_SMALL_PROFITS_THRESHOLD: 50_000,
+      CORPORATION_TAX_MAIN_RATE_THRESHOLD: 250_000,
       // Pension allowances
       PENSION_ANNUAL_ALLOWANCE: 40_000,
       PENSION_MINIMUM_ANNUAL_ALLOWANCE: 4_000,
@@ -56,11 +77,31 @@ const englandNiWalesTaxRates: Record<SupportedEnglishTaxYear, EnglishTaxRates> =
       STUDENT_LOAN_REPAYMENT_AMOUNT: 0.09, // People on plans 1, 2, 4 + 5 repay 9% of the amount you earn over the threshold
       STUDENT_LOAN_POSTGRAD_WEEKLY_THRESHOLD: 403,
       STUDENT_LOAN_REPAYMENT_AMOUNT_POSTGRAD: 0.06, // People on postgrad plans repay 6% of the amount you earn over the threshold
-      // National Insurance
+      // Employee National Insurance
       NI_MIDDLE_RATE: 0.1, // Changed from 12% to 10% on 6th Jan 2024 (out of normal cycle)
       NI_UPPER_RATE: 0.02,
       NI_MIDDLE_BRACKET: 242,
       NI_UPPER_BRACKET: 967,
+      // Employer National Insurance (Class 1, Category A)
+      EMPLOYER_NI_RATE: 0.138,
+      EMPLOYER_NI_SECONDARY_THRESHOLD: 175, // £175/week = £9,100/year
+      // Dividend tax
+      DIVIDEND_ALLOWANCE: 1_000,
+      DIVIDEND_BASIC_RATE: 0.0875,
+      DIVIDEND_HIGHER_RATE: 0.3375,
+      DIVIDEND_ADDITIONAL_RATE: 0.3935,
+      // VAT
+      VAT_STANDARD_RATE: 0.2,
+      VAT_REDUCED_RATE: 0.05,
+      VAT_REGISTRATION_THRESHOLD: 85_000,
+      // Apprenticeship Levy
+      APPRENTICESHIP_LEVY_RATE: 0.005,
+      APPRENTICESHIP_LEVY_ALLOWANCE: 15_000,
+      // Corporation Tax
+      CORPORATION_TAX_MAIN_RATE: 0.25,
+      CORPORATION_TAX_SMALL_PROFITS_RATE: 0.19,
+      CORPORATION_TAX_SMALL_PROFITS_THRESHOLD: 50_000,
+      CORPORATION_TAX_MAIN_RATE_THRESHOLD: 250_000,
       // Pension allowances
       PENSION_ANNUAL_ALLOWANCE: 60_000,
       PENSION_MINIMUM_ANNUAL_ALLOWANCE: 10_000,
@@ -84,11 +125,31 @@ const englandNiWalesTaxRates: Record<SupportedEnglishTaxYear, EnglishTaxRates> =
       STUDENT_LOAN_REPAYMENT_AMOUNT: 0.09, // People on plans 1, 2, 4 + 5 repay 9% of the amount you earn over the threshold
       STUDENT_LOAN_POSTGRAD_WEEKLY_THRESHOLD: 403.84,
       STUDENT_LOAN_REPAYMENT_AMOUNT_POSTGRAD: 0.06, // People on postgrad plans repay 6% of the amount you earn over the threshold
-      // National Insurance
+      // Employee National Insurance
       NI_MIDDLE_RATE: 0.08,
       NI_UPPER_RATE: 0.02,
       NI_MIDDLE_BRACKET: 242,
       NI_UPPER_BRACKET: 967,
+      // Employer National Insurance (Class 1, Category A)
+      EMPLOYER_NI_RATE: 0.138,
+      EMPLOYER_NI_SECONDARY_THRESHOLD: 175, // £175/week = £9,100/year
+      // Dividend tax
+      DIVIDEND_ALLOWANCE: 500,
+      DIVIDEND_BASIC_RATE: 0.0875,
+      DIVIDEND_HIGHER_RATE: 0.3375,
+      DIVIDEND_ADDITIONAL_RATE: 0.3935,
+      // VAT (registration threshold increased from £85k to £90k on 1 April 2024)
+      VAT_STANDARD_RATE: 0.2,
+      VAT_REDUCED_RATE: 0.05,
+      VAT_REGISTRATION_THRESHOLD: 90_000,
+      // Apprenticeship Levy
+      APPRENTICESHIP_LEVY_RATE: 0.005,
+      APPRENTICESHIP_LEVY_ALLOWANCE: 15_000,
+      // Corporation Tax
+      CORPORATION_TAX_MAIN_RATE: 0.25,
+      CORPORATION_TAX_SMALL_PROFITS_RATE: 0.19,
+      CORPORATION_TAX_SMALL_PROFITS_THRESHOLD: 50_000,
+      CORPORATION_TAX_MAIN_RATE_THRESHOLD: 250_000,
       // Pension allowances
       PENSION_ANNUAL_ALLOWANCE: 60_000,
       PENSION_MINIMUM_ANNUAL_ALLOWANCE: 10_000,
@@ -112,11 +173,32 @@ const englandNiWalesTaxRates: Record<SupportedEnglishTaxYear, EnglishTaxRates> =
       STUDENT_LOAN_REPAYMENT_AMOUNT: 0.09, // People on plans 1, 2, 4 + 5 repay 9% of the amount you earn over the threshold
       STUDENT_LOAN_POSTGRAD_WEEKLY_THRESHOLD: 403,
       STUDENT_LOAN_REPAYMENT_AMOUNT_POSTGRAD: 0.06, // People on postgrad plans repay 6% of the amount you earn over the threshold
-      // National Insurance
+      // Employee National Insurance
       NI_MIDDLE_RATE: 0.08,
       NI_UPPER_RATE: 0.02,
       NI_MIDDLE_BRACKET: 242,
       NI_UPPER_BRACKET: 967,
+      // Employer National Insurance (Class 1, Category A)
+      // Secondary threshold lowered to £5,000/year and rate increased to 15% from April 2025 (Autumn Budget 2024)
+      EMPLOYER_NI_RATE: 0.15,
+      EMPLOYER_NI_SECONDARY_THRESHOLD: 96, // £96/week = £4,992/year
+      // Dividend tax
+      DIVIDEND_ALLOWANCE: 500,
+      DIVIDEND_BASIC_RATE: 0.0875,
+      DIVIDEND_HIGHER_RATE: 0.3375,
+      DIVIDEND_ADDITIONAL_RATE: 0.3935,
+      // VAT
+      VAT_STANDARD_RATE: 0.2,
+      VAT_REDUCED_RATE: 0.05,
+      VAT_REGISTRATION_THRESHOLD: 90_000,
+      // Apprenticeship Levy
+      APPRENTICESHIP_LEVY_RATE: 0.005,
+      APPRENTICESHIP_LEVY_ALLOWANCE: 15_000,
+      // Corporation Tax
+      CORPORATION_TAX_MAIN_RATE: 0.25,
+      CORPORATION_TAX_SMALL_PROFITS_RATE: 0.19,
+      CORPORATION_TAX_SMALL_PROFITS_THRESHOLD: 50_000,
+      CORPORATION_TAX_MAIN_RATE_THRESHOLD: 250_000,
       // Pension allowances
       PENSION_ANNUAL_ALLOWANCE: 60_000,
       PENSION_MINIMUM_ANNUAL_ALLOWANCE: 10_000,
@@ -153,11 +235,31 @@ const scottishTaxRates: Record<SupportedScottishTaxYear, ScottishTaxRates> = {
     STUDENT_LOAN_REPAYMENT_AMOUNT: 0.09, // People on plans 1, 2, 4 + 5 repay 9% of the amount you earn over the threshold
     STUDENT_LOAN_POSTGRAD_WEEKLY_THRESHOLD: 403.84,
     STUDENT_LOAN_REPAYMENT_AMOUNT_POSTGRAD: 0.06, // People on postgrad plans repay 6% of the amount you earn over the threshold
-    // National Insurance
+    // Employee National Insurance
     NI_MIDDLE_RATE: 0.08,
     NI_UPPER_RATE: 0.02,
     NI_MIDDLE_BRACKET: 242,
     NI_UPPER_BRACKET: 967,
+    // Employer National Insurance (Class 1, Category A)
+    EMPLOYER_NI_RATE: 0.138,
+    EMPLOYER_NI_SECONDARY_THRESHOLD: 175, // £175/week = £9,100/year
+    // Dividend tax
+    DIVIDEND_ALLOWANCE: 500,
+    DIVIDEND_BASIC_RATE: 0.0875,
+    DIVIDEND_HIGHER_RATE: 0.3375,
+    DIVIDEND_ADDITIONAL_RATE: 0.3935,
+    // VAT (registration threshold increased from £85k to £90k on 1 April 2024)
+    VAT_STANDARD_RATE: 0.2,
+    VAT_REDUCED_RATE: 0.05,
+    VAT_REGISTRATION_THRESHOLD: 90_000,
+    // Apprenticeship Levy
+    APPRENTICESHIP_LEVY_RATE: 0.005,
+    APPRENTICESHIP_LEVY_ALLOWANCE: 15_000,
+    // Corporation Tax
+    CORPORATION_TAX_MAIN_RATE: 0.25,
+    CORPORATION_TAX_SMALL_PROFITS_RATE: 0.19,
+    CORPORATION_TAX_SMALL_PROFITS_THRESHOLD: 50_000,
+    CORPORATION_TAX_MAIN_RATE_THRESHOLD: 250_000,
     // Pension allowances
     PENSION_ANNUAL_ALLOWANCE: 60_000,
     PENSION_MINIMUM_ANNUAL_ALLOWANCE: 10_000,
@@ -190,11 +292,32 @@ const scottishTaxRates: Record<SupportedScottishTaxYear, ScottishTaxRates> = {
     STUDENT_LOAN_REPAYMENT_AMOUNT: 0.09, // People on plans 1, 2, 4 + 5 repay 9% of the amount you earn over the threshold
     STUDENT_LOAN_POSTGRAD_WEEKLY_THRESHOLD: 403,
     STUDENT_LOAN_REPAYMENT_AMOUNT_POSTGRAD: 0.06, // People on postgrad plans repay 6% of the amount you earn over the threshold
-    // National Insurance
+    // Employee National Insurance
     NI_MIDDLE_RATE: 0.08,
     NI_UPPER_RATE: 0.02,
     NI_MIDDLE_BRACKET: 242,
     NI_UPPER_BRACKET: 967,
+    // Employer National Insurance (Class 1, Category A)
+    // Secondary threshold lowered to £5,000/year and rate increased to 15% from April 2025 (Autumn Budget 2024)
+    EMPLOYER_NI_RATE: 0.15,
+    EMPLOYER_NI_SECONDARY_THRESHOLD: 96, // £96/week = £4,992/year
+    // Dividend tax
+    DIVIDEND_ALLOWANCE: 500,
+    DIVIDEND_BASIC_RATE: 0.0875,
+    DIVIDEND_HIGHER_RATE: 0.3375,
+    DIVIDEND_ADDITIONAL_RATE: 0.3935,
+    // VAT
+    VAT_STANDARD_RATE: 0.2,
+    VAT_REDUCED_RATE: 0.05,
+    VAT_REGISTRATION_THRESHOLD: 90_000,
+    // Apprenticeship Levy
+    APPRENTICESHIP_LEVY_RATE: 0.005,
+    APPRENTICESHIP_LEVY_ALLOWANCE: 15_000,
+    // Corporation Tax
+    CORPORATION_TAX_MAIN_RATE: 0.25,
+    CORPORATION_TAX_SMALL_PROFITS_RATE: 0.19,
+    CORPORATION_TAX_SMALL_PROFITS_THRESHOLD: 50_000,
+    CORPORATION_TAX_MAIN_RATE_THRESHOLD: 250_000,
     // Pension allowances
     PENSION_ANNUAL_ALLOWANCE: 60_000,
     PENSION_MINIMUM_ANNUAL_ALLOWANCE: 10_000,

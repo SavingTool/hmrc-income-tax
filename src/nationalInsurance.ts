@@ -2,8 +2,8 @@ import { getHmrcRates } from "./hmrc";
 
 import type { TaxYear, Country } from "./types";
 
-// Calculates an individual's national insurance contributions based on taxable income
-// Note: This is employee contributions only. Supports class 1, category A national insurance only.
+// Calculates an individual's national insurance contributions based on taxable income.
+// Supports class 1, category A employee national insurance only.
 // Uses the employee's weekly salary as a basis, as per the system, then re-converts into a year at the end.
 // See https://www.gov.uk/national-insurance-rates-letters/category-letters for other categories
 export const calculateEmployeeNationalInsurance = ({
@@ -35,4 +35,32 @@ export const calculateEmployeeNationalInsurance = ({
   }
 
   return (middleBracket + upperBracket) * 52;
+};
+
+// Calculates employer national insurance contributions based on an employee's taxable income.
+// Supports class 1, category A secondary contributions only.
+// Uses the employee's weekly salary as a basis, as per the system, then re-converts into a year at the end.
+// See https://www.gov.uk/national-insurance-rates-letters/category-letters for other categories
+export const calculateEmployerNationalInsurance = ({
+  taxYear,
+  country,
+  taxableAnnualIncome,
+}: {
+  taxYear?: TaxYear;
+  country?: Country;
+  taxableAnnualIncome: number;
+}) => {
+  const weeklySalary = taxableAnnualIncome / 52;
+  const { EMPLOYER_NI_RATE, EMPLOYER_NI_SECONDARY_THRESHOLD } = getHmrcRates({
+    taxYear,
+    country,
+  });
+
+  if (weeklySalary <= EMPLOYER_NI_SECONDARY_THRESHOLD) {
+    return 0;
+  }
+
+  return (
+    (weeklySalary - EMPLOYER_NI_SECONDARY_THRESHOLD) * EMPLOYER_NI_RATE * 52
+  );
 };
