@@ -6,16 +6,38 @@ import { calculateDividendTax } from "./dividendTax";
 describe("calculateDividendTax (25/26)", () => {
   test("zero dividend income", () => {
     expect(
-      calculateDividendTax({ taxYear: "2025/26", nonDividendTaxableIncome: 30_000, dividendIncome: 0 })
-    ).toEqual({ total: 0, breakdown: { basicRateDividendTax: 0, higherRateDividendTax: 0, additionalRateDividendTax: 0 } });
+      calculateDividendTax({
+        taxYear: "2025/26",
+        nonDividendTaxableIncome: 30_000,
+        dividendIncome: 0,
+      })
+    ).toEqual({
+      total: 0,
+      breakdown: {
+        basicRateDividendTax: 0,
+        higherRateDividendTax: 0,
+        additionalRateDividendTax: 0,
+      },
+    });
   });
 
   test("all covered by personal allowance and dividend allowance", () => {
     // nonDividend=5000, dividend=7000, PA=12570
     // paRemainingForDividends=7570, dividendAfterPA=0 → no tax
     expect(
-      calculateDividendTax({ taxYear: "2025/26", nonDividendTaxableIncome: 5_000, dividendIncome: 7_000 })
-    ).toEqual({ total: 0, breakdown: { basicRateDividendTax: 0, higherRateDividendTax: 0, additionalRateDividendTax: 0 } });
+      calculateDividendTax({
+        taxYear: "2025/26",
+        nonDividendTaxableIncome: 5_000,
+        dividendIncome: 7_000,
+      })
+    ).toEqual({
+      total: 0,
+      breakdown: {
+        basicRateDividendTax: 0,
+        higherRateDividendTax: 0,
+        additionalRateDividendTax: 0,
+      },
+    });
   });
 
   test("all basic rate - salary + small dividend", () => {

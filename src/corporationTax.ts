@@ -43,9 +43,11 @@ export const calculateCorporationTax = ({
   const standardFraction =
     (CORPORATION_TAX_SMALL_PROFITS_THRESHOLD *
       (CORPORATION_TAX_MAIN_RATE - CORPORATION_TAX_SMALL_PROFITS_RATE)) /
-    (CORPORATION_TAX_MAIN_RATE_THRESHOLD - CORPORATION_TAX_SMALL_PROFITS_THRESHOLD);
+    (CORPORATION_TAX_MAIN_RATE_THRESHOLD -
+      CORPORATION_TAX_SMALL_PROFITS_THRESHOLD);
 
-  const marginalRelief = standardFraction * (CORPORATION_TAX_MAIN_RATE_THRESHOLD - profits);
+  const marginalRelief =
+    standardFraction * (CORPORATION_TAX_MAIN_RATE_THRESHOLD - profits);
 
   return profits * CORPORATION_TAX_MAIN_RATE - marginalRelief;
 };

@@ -57,7 +57,8 @@ export const calculateDividendTax = ({
   if (taxableDividends > 0) {
     // Band position (in total income terms) where taxable dividends begin:
     // after non-dividend income (or the PA boundary, whichever is higher) plus the dividend allowance.
-    const bandPositionStart = Math.max(nonDividendTaxableIncome, pa) + dividendAllowanceUsed;
+    const bandPositionStart =
+      Math.max(nonDividendTaxableIncome, pa) + dividendAllowanceUsed;
     let remaining = taxableDividends;
     let position = bandPositionStart;
 
@@ -81,7 +82,8 @@ export const calculateDividendTax = ({
   }
 
   return {
-    total: basicRateDividendTax + higherRateDividendTax + additionalRateDividendTax,
+    total:
+      basicRateDividendTax + higherRateDividendTax + additionalRateDividendTax,
     breakdown: {
       basicRateDividendTax,
       higherRateDividendTax,

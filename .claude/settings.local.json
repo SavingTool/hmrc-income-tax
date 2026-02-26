@@ -3,7 +3,9 @@
     "allow": [
       "Bash(node -e \":*)",
       "WebFetch(domain:github.com)",
-      "Bash(yarn test)"
+      "Bash(yarn test)",
+      "Bash(yarn prettier)",
+      "Bash(yarn prettier:fix)"
     ]
   }
 }

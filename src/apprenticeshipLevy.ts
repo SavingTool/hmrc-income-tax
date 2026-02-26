@@ -13,7 +13,11 @@ export const calculateApprenticeshipLevy = ({
   taxYear?: TaxYear;
   annualPayBill: number;
 }) => {
-  const { APPRENTICESHIP_LEVY_RATE, APPRENTICESHIP_LEVY_ALLOWANCE } = getHmrcRates({ taxYear });
+  const { APPRENTICESHIP_LEVY_RATE, APPRENTICESHIP_LEVY_ALLOWANCE } =
+    getHmrcRates({ taxYear });
 
-  return Math.max(0, annualPayBill * APPRENTICESHIP_LEVY_RATE - APPRENTICESHIP_LEVY_ALLOWANCE);
+  return Math.max(
+    0,
+    annualPayBill * APPRENTICESHIP_LEVY_RATE - APPRENTICESHIP_LEVY_ALLOWANCE
+  );
 };

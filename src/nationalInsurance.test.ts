@@ -1,4 +1,7 @@
-import { calculateEmployeeNationalInsurance, calculateEmployerNationalInsurance } from "./nationalInsurance";
+import {
+  calculateEmployeeNationalInsurance,
+  calculateEmployerNationalInsurance,
+} from "./nationalInsurance";
 
 const expectationsA = [
   { taxableAnnualIncome: 15_000, nics: 320.11999999999995 },

@@ -60,5 +60,7 @@ export const calculateEmployerNationalInsurance = ({
     return 0;
   }
 
-  return (weeklySalary - EMPLOYER_NI_SECONDARY_THRESHOLD) * EMPLOYER_NI_RATE * 52;
+  return (
+    (weeklySalary - EMPLOYER_NI_SECONDARY_THRESHOLD) * EMPLOYER_NI_RATE * 52
+  );
 };
