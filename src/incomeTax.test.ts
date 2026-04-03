@@ -177,6 +177,29 @@ describe("calculateIncomeTax (24/25)", () => {
   });
 });
 
+// England, 2026/27 — income tax thresholds frozen (same as 2024/25 and 2025/26)
+describe("calculateIncomeTax (26/27)", () => {
+  expectationsB.forEach((expectation) => {
+    const { taxableAnnualIncome, basic, higher, additional } = expectation;
+    test(taxableAnnualIncome.toString(), () => {
+      const personalAllowance = calculatePersonalAllowance({
+        taxYear: "2026/27",
+        taxableAnnualIncome,
+      });
+      const taxAmounts = calculateIncomeTax({
+        taxYear: "2026/27",
+        taxableAnnualIncome,
+        personalAllowance,
+      });
+      expect(taxAmounts.breakdown).toEqual({
+        basicRateTax: basic,
+        higherRateTax: higher,
+        additionalRateTax: additional,
+      });
+    });
+  });
+});
+
 // Scotland, 2024/25
 const expectationsC = [
   {

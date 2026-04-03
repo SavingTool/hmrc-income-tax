@@ -1,7 +1,7 @@
 import { getHmrcRates } from "./hmrc";
 
 describe("getHmrcRates", () => {
-  test("It uses default 2024/25 rates", () => {
+  test("It uses default 2026/27 rates", () => {
     const rates = getHmrcRates();
     expect(rates.DEFAULT_PERSONAL_ALLOWANCE).toEqual(12570);
     expect(rates.NI_MIDDLE_RATE).toEqual(0.08);
@@ -24,6 +24,20 @@ describe("getHmrcRates", () => {
   test("It uses explicit 2024/25 rates", () => {
     expect(
       getHmrcRates({ taxYear: "2024/25", country: "England/NI/Wales" })
+        .DEFAULT_PERSONAL_ALLOWANCE
+    ).toEqual(12570);
+  });
+
+  test("It uses explicit 2025/26 rates", () => {
+    expect(
+      getHmrcRates({ taxYear: "2025/26", country: "England/NI/Wales" })
+        .DEFAULT_PERSONAL_ALLOWANCE
+    ).toEqual(12570);
+  });
+
+  test("It uses explicit 2026/27 rates", () => {
+    expect(
+      getHmrcRates({ taxYear: "2026/27", country: "England/NI/Wales" })
         .DEFAULT_PERSONAL_ALLOWANCE
     ).toEqual(12570);
   });

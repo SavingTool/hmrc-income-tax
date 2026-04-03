@@ -38,3 +38,17 @@ describe("calculateApprenticeshipLevy (25/26)", () => {
     });
   });
 });
+
+describe("calculateApprenticeshipLevy (26/27)", () => {
+  expectations.forEach((expectation) => {
+    const { annualPayBill, levy } = expectation;
+    test(annualPayBill.toString(), () => {
+      expect(
+        calculateApprenticeshipLevy({
+          taxYear: "2026/27",
+          annualPayBill,
+        })
+      ).toBeCloseTo(levy, 1);
+    });
+  });
+});
