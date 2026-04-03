@@ -167,6 +167,21 @@ describe("calculateEmployerNationalInsurance (25/26)", () => {
   });
 });
 
+// Employer NI (Class 1, Category A): 15% above £96/week secondary threshold (unchanged from 2025/26)
+describe("calculateEmployerNationalInsurance (26/27)", () => {
+  employerExpectations2526.forEach((expectation) => {
+    const { grossAnnualIncome, nics } = expectation;
+    test(grossAnnualIncome.toString(), () => {
+      expect(
+        calculateEmployerNationalInsurance({
+          taxYear: "2026/27",
+          grossAnnualIncome,
+        })
+      ).toBeCloseTo(nics, 1);
+    });
+  });
+});
+
 // ─── Class 1, Category B — Employee (married women reduced rate) ──────────────
 // 2024/25: 1.85% on £242–£967/week, 2% above £967/week
 // £30,000: weekly = 576.92, in middle band: (576.92 - 242) × 1.85% × 52 = 322.47
@@ -421,6 +436,10 @@ describe("calculateClass2NationalInsurance", () => {
   test("2025/26 — always returns 0 (treated as paid automatically)", () => {
     expect(calculateClass2NationalInsurance({ taxYear: "2025/26" })).toBe(0);
   });
+
+  test("2026/27 — always returns 0 (treated as paid automatically)", () => {
+    expect(calculateClass2NationalInsurance({ taxYear: "2026/27" })).toBe(0);
+  });
 });
 
 // ─── Class 3 ─────────────────────────────────────────────────────────────────
@@ -429,6 +448,12 @@ describe("calculateClass3NationalInsurance", () => {
     expect(
       calculateClass3NationalInsurance({ taxYear: "2025/26" })
     ).toBeCloseTo(923, 0);
+  });
+
+  test("2026/27 — £18.10/week × 52 = £941.20", () => {
+    expect(
+      calculateClass3NationalInsurance({ taxYear: "2026/27" })
+    ).toBeCloseTo(941.2, 1);
   });
 
   test("2024/25 — £17.45/week × 52 = £907.40", () => {
@@ -525,6 +550,31 @@ describe("calculateClass4NationalInsurance (24/25)", () => {
     expect(
       calculateClass4NationalInsurance({
         taxYear: "2024/25",
+        grossAnnualProfit: 80_000,
+      })
+    ).toBeCloseTo(2856.6, 1);
+  });
+});
+
+// 2026/27: same rates as 2025/26 for Class 4 (thresholds frozen)
+describe("calculateClass4NationalInsurance (26/27)", () => {
+  test("£30,000", () => {
+    // (30000 - 12570) × 6% = 17430 × 0.06 = 1045.80
+    expect(
+      calculateClass4NationalInsurance({
+        taxYear: "2026/27",
+        grossAnnualProfit: 30_000,
+      })
+    ).toBeCloseTo(1045.8, 1);
+  });
+
+  test("£80,000", () => {
+    // main: (50270 - 12570) × 6% = 2262
+    // additional: (80000 - 50270) × 2% = 29730 × 0.02 = 594.60
+    // total: 2856.60
+    expect(
+      calculateClass4NationalInsurance({
+        taxYear: "2026/27",
         grossAnnualProfit: 80_000,
       })
     ).toBeCloseTo(2856.6, 1);

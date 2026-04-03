@@ -24,14 +24,16 @@ Multiple versions of the HMRC rates can be supported, although only the follwing
 
 England/NI/Wales:
 
-- 2025/26 (default)
+- 2026/27 (default)
+- 2025/26
 - 2024/25
 - 2023/24
 - 2022/23
 
 Scotland:
 
-- 2025/26 (default)
+- 2026/27 (default)
+- 2025/26
 - 2024/25
 
 Works in all modern browsers and Node.js (LTS recommended).
@@ -44,7 +46,7 @@ Run: `yarn add @saving-tool/hmrc-income-tax` (or `npm install @saving-tool/hmrc-
 
 `country` is an optional input for all APIs: `"England/NI/Wales" | "Scotland"`. If not provided, the default is `"England/NI/Wales"`.
 
-Note that `taxYear` is an optional input to select which tax year rates should be used (default is "2025/26").
+Note that `taxYear` is an optional input to select which tax year rates should be used (default is "2026/27").
 
 ### `calculatePersonalAllowance`
 
@@ -95,7 +97,7 @@ calculateIncomeTax({
 ```typescript
 // Month 1: £10,000 gross income
 const month1Tax = calculateIncomeTax({
-  taxYear: "2025/26",
+  taxYear: "2026/27",
   cumulativePaye: {
     monthNumber: 1,
     cumulativeGrossIncome: 10_000,
@@ -106,7 +108,7 @@ const month1Tax = calculateIncomeTax({
 
 // Month 2: No additional income
 const month2Tax = calculateIncomeTax({
-  taxYear: "2025/26",
+  taxYear: "2026/27",
   cumulativePaye: {
     monthNumber: 2,
     cumulativeGrossIncome: 10_000, // Still £10k total
@@ -121,7 +123,7 @@ const month2Tax = calculateIncomeTax({
 ```typescript
 // Month 1: £60,000 gross income
 const month1Tax = calculateIncomeTax({
-  taxYear: "2025/26",
+  taxYear: "2026/27",
   cumulativePaye: {
     monthNumber: 1,
     cumulativeGrossIncome: 60_000,
@@ -132,7 +134,7 @@ const month1Tax = calculateIncomeTax({
 
 // Month 6: Additional £50k earned (£110k total, crossing into PA tapering)
 const month6Tax = calculateIncomeTax({
-  taxYear: "2025/26",
+  taxYear: "2026/27",
   cumulativePaye: {
     monthNumber: 6,
     cumulativeGrossIncome: 110_000, // £60k + £50k
@@ -353,9 +355,9 @@ Note that this implementation does not yet support the following:
 - Accounting for DB (Defined Benefit) pensions
 - Paying into overseas pensions
 
-## Examples (2025/26 HMRC Rates)
+## Examples (2026/27 HMRC Rates)
 
-Mark S. of MDR earns £55,000. His employer contributes 6% to his pension, but also matches up to another 2%. Mark contributes 2% via salary sacrafice to get the matching. Therefore, Mark's taxable income is £53,900. He has £19,000 of outstanding student loan debt, and is on Plan 1.
+Mark S. of MDR earns £55,000. His employer contributes 6% to his pension, but also matches up to another 2%. Mark contributes 2% via salary sacrifice to get the matching. Therefore, Mark's taxable income is £53,900. He has £19,000 of outstanding student loan debt, and is on Plan 1.
 
 ```javascript
 import {
@@ -365,7 +367,7 @@ import {
   calculateStudentLoanRepayments,
 } from "@saving-tool/hmrc-income-tax";
 
-const taxYear = "2025/26";
+const taxYear = "2026/27";
 
 // Mark S.
 const taxableAnnualIncome = 53_900;
@@ -395,7 +397,7 @@ const studentLoanRepayments = calculateStudentLoanRepayments({
   studentLoanPlanNo: 1,
   taxYear,
 });
-// => 2506.32
+// => 2398.68
 
 // Do whatever you want, e.g. calculate the take-home pay
 const takeHome =
@@ -403,7 +405,7 @@ const takeHome =
   total -
   nationalInsuranceContributions -
   studentLoanRepayments;
-// => 39313.36
+// => 39421.00
 ```
 
 Irv B. of MDR earns £160,000. His employer contributes some amount to his pension, but he contributes nothing. He has no student loan.
@@ -415,7 +417,7 @@ import {
   calculateEmployeeNationalInsurance,
 } from "@saving-tool/hmrc-income-tax";
 
-const taxYear = "2025/26";
+const taxYear = "2026/27";
 
 // Irv B.
 const taxableAnnualIncome = 160_000;
@@ -445,7 +447,7 @@ const takeHome = taxableAnnualIncome - total - nationalInsuranceContributions;
 // => 96586.68
 ```
 
-It's important to understand that in most cases this library is expecting _taxable_ income (appropriate API naming aims to make this clear). Any salary sacrafice mechanisms should be applied before these calculations, and the appropriate taxable amount used when calling this library.
+It's important to understand that in most cases this library is expecting _taxable_ income (appropriate API naming aims to make this clear). Any salary sacrifice mechanisms should be applied before these calculations, and the appropriate taxable amount used when calling this library.
 
 ## Formatting and rounding output
 

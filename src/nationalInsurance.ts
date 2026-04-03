@@ -97,6 +97,18 @@ const niRatesByYear: Record<SupportedEnglishTaxYear, ExpandedNIRates> = {
     class4LowerProfitsLimit: 12_570,
     class4UpperProfitsLimit: 50_270,
   },
+  "2026/27": {
+    catBMiddleRate: 0.0185,
+    freeportUpperSecondaryThreshold: 481, // £25,000/year (unchanged)
+    investmentZoneUpperSecondaryThreshold: 481, // £25,000/year (unchanged)
+    class2WeeklyRate: 3.55,
+    class2SmallProfitsThreshold: 6_955,
+    class3WeeklyRate: 18.1,
+    class4MainRate: 0.06,
+    class4AdditionalRate: 0.02,
+    class4LowerProfitsLimit: 12_570,
+    class4UpperProfitsLimit: 50_270,
+  },
 };
 
 // NI rates are UK-wide; Scottish tax years map to their English-year equivalent.
@@ -204,7 +216,7 @@ export const calculateEmployeeNationalInsurance = ({
   const weeklySalary = grossAnnualIncome / 52;
   const { NI_MIDDLE_RATE, NI_UPPER_RATE, NI_MIDDLE_BRACKET, NI_UPPER_BRACKET } =
     getHmrcRates({ taxYear, country });
-  const niRates = getNIRatesForYear(taxYear ?? "2025/26");
+  const niRates = getNIRatesForYear(taxYear ?? "2026/27");
 
   const { middleRate, upperRate } = getEmployeeNIRates(
     niCategory,
@@ -254,7 +266,7 @@ export const calculateEmployerNationalInsurance = ({
     EMPLOYER_NI_SECONDARY_THRESHOLD,
     NI_UPPER_BRACKET,
   } = getHmrcRates({ taxYear, country });
-  const niRates = getNIRatesForYear(taxYear ?? "2025/26");
+  const niRates = getNIRatesForYear(taxYear ?? "2026/27");
 
   const effectiveThreshold = getEmployerEffectiveThreshold(
     niCategory,
@@ -289,11 +301,15 @@ export const calculateClass2NationalInsurance = ({
   taxYear?: TaxYear;
   grossAnnualProfit?: number;
 }) => {
-  const yearToUse = taxYear ?? "2025/26";
+  const yearToUse = taxYear ?? "2026/27";
   const niRates = getNIRatesForYear(yearToUse);
 
   // From 2024/25, Class 2 is treated as paid — no actual payment required
-  if (yearToUse === "2024/25" || yearToUse === "2025/26") {
+  if (
+    yearToUse === "2024/25" ||
+    yearToUse === "2025/26" ||
+    yearToUse === "2026/27"
+  ) {
     return 0;
   }
 
@@ -316,7 +332,7 @@ export const calculateClass3NationalInsurance = ({
 }: {
   taxYear?: TaxYear;
 }) => {
-  const niRates = getNIRatesForYear(taxYear ?? "2025/26");
+  const niRates = getNIRatesForYear(taxYear ?? "2026/27");
   return niRates.class3WeeklyRate * 52;
 };
 
@@ -332,7 +348,7 @@ export const calculateClass4NationalInsurance = ({
   taxYear?: TaxYear;
   grossAnnualProfit: number;
 }) => {
-  const niRates = getNIRatesForYear(taxYear ?? "2025/26");
+  const niRates = getNIRatesForYear(taxYear ?? "2026/27");
   const {
     class4LowerProfitsLimit,
     class4UpperProfitsLimit,
