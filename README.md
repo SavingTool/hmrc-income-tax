@@ -357,7 +357,7 @@ Note that this implementation does not yet support the following:
 
 ## Examples (2026/27 HMRC Rates)
 
-Mark S. of MDR earns £55,000. His employer contributes 6% to his pension, but also matches up to another 2%. Mark contributes 2% via salary sacrafice to get the matching. Therefore, Mark's taxable income is £53,900. He has £19,000 of outstanding student loan debt, and is on Plan 1.
+Mark S. of MDR earns £55,000. His employer contributes 6% to his pension, but also matches up to another 2%. Mark contributes 2% via salary sacrifice to get the matching. Therefore, Mark's taxable income is £53,900. He has £19,000 of outstanding student loan debt, and is on Plan 1.
 
 ```javascript
 import {
@@ -447,7 +447,7 @@ const takeHome = taxableAnnualIncome - total - nationalInsuranceContributions;
 // => 96586.68
 ```
 
-It's important to understand that in most cases this library is expecting _taxable_ income (appropriate API naming aims to make this clear). Any salary sacrafice mechanisms should be applied before these calculations, and the appropriate taxable amount used when calling this library.
+It's important to understand that in most cases this library is expecting _taxable_ income (appropriate API naming aims to make this clear). Any salary sacrifice mechanisms should be applied before these calculations, and the appropriate taxable amount used when calling this library.
 
 ## Formatting and rounding output
 
