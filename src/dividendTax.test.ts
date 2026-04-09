@@ -158,6 +158,54 @@ describe("calculateDividendTax (25/26)", () => {
   });
 });
 
+// 2026/27 rates: basic 10.75%, higher 35.75%, additional 39.35% (dividend rates increased from April 2026)
+// See https://www.gov.uk/government/publications/changes-to-tax-rates-for-property-savings-dividend-income
+describe("calculateDividendTax (26/27)", () => {
+  test("all basic rate - salary + small dividend", () => {
+    // nonDividend=30000, dividend=5000, PA=12570
+    // dividendAfterPA=5000, allowanceUsed=500, taxableDividends=4500
+    // bandStart=30500, all below 50270 → basic: 4500 × 10.75% = 483.75
+    const result = calculateDividendTax({
+      taxYear: "2026/27",
+      nonDividendTaxableIncome: 30_000,
+      dividendIncome: 5_000,
+    });
+    expect(result.total).toBeCloseTo(483.75, 2);
+    expect(result.breakdown.basicRateDividendTax).toBeCloseTo(483.75, 2);
+    expect(result.breakdown.higherRateDividendTax).toBeCloseTo(0, 2);
+    expect(result.breakdown.additionalRateDividendTax).toBeCloseTo(0, 2);
+  });
+
+  test("straddles basic and higher rate bands", () => {
+    // nonDividend=48000, dividend=5000, PA=12570
+    // bandStart=48500, basic: (50270-48500)=1770 × 10.75%=190.275, higher: 2730 × 35.75%=975.975
+    const result = calculateDividendTax({
+      taxYear: "2026/27",
+      nonDividendTaxableIncome: 48_000,
+      dividendIncome: 5_000,
+    });
+    expect(result.total).toBeCloseTo(1166.25, 2);
+    expect(result.breakdown.basicRateDividendTax).toBeCloseTo(190.275, 2);
+    expect(result.breakdown.higherRateDividendTax).toBeCloseTo(975.975, 2);
+    expect(result.breakdown.additionalRateDividendTax).toBeCloseTo(0, 2);
+  });
+
+  test("high earner with no personal allowance, higher and additional rate", () => {
+    // nonDividend=120000, dividend=10000, total=130000 → PA=0
+    // dividendAfterPA=10000, allowanceUsed=500, taxableDividends=9500
+    // bandStart=120500, higher: (125140-120500)=4640 × 35.75%=1658.8, additional: 4860 × 39.35%=1912.41
+    const result = calculateDividendTax({
+      taxYear: "2026/27",
+      nonDividendTaxableIncome: 120_000,
+      dividendIncome: 10_000,
+    });
+    expect(result.total).toBeCloseTo(3571.21, 1);
+    expect(result.breakdown.basicRateDividendTax).toBeCloseTo(0, 2);
+    expect(result.breakdown.higherRateDividendTax).toBeCloseTo(1658.8, 2);
+    expect(result.breakdown.additionalRateDividendTax).toBeCloseTo(1912.41, 1);
+  });
+});
+
 // Spot-check 2023/24 (ADDITIONAL_BRACKET=125140, DIVIDEND_ALLOWANCE=1000)
 describe("calculateDividendTax (23/24)", () => {
   test("all basic rate", () => {

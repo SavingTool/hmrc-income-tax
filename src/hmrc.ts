@@ -232,10 +232,11 @@ const englandNiWalesTaxRates: Record<SupportedEnglishTaxYear, EnglishTaxRates> =
       // Unchanged from April 2025: rate 15%, secondary threshold £5,000/year (Autumn Budget 2024)
       EMPLOYER_NI_RATE: 0.15,
       EMPLOYER_NI_SECONDARY_THRESHOLD: 96, // £96/week = £4,992/year
-      // Dividend tax (unchanged)
+      // Dividend tax (rates increased from April 2026: basic 8.75%→10.75%, higher 33.75%→35.75%)
+      // See https://www.gov.uk/government/publications/changes-to-tax-rates-for-property-savings-dividend-income
       DIVIDEND_ALLOWANCE: 500,
-      DIVIDEND_BASIC_RATE: 0.0875,
-      DIVIDEND_HIGHER_RATE: 0.3375,
+      DIVIDEND_BASIC_RATE: 0.1075,
+      DIVIDEND_HIGHER_RATE: 0.3575,
       DIVIDEND_ADDITIONAL_RATE: 0.3935,
       // VAT (unchanged)
       VAT_STANDARD_RATE: 0.2,
@@ -410,10 +411,11 @@ const scottishTaxRates: Record<SupportedScottishTaxYear, ScottishTaxRates> = {
     // Unchanged from April 2025: rate 15%, secondary threshold £5,000/year (Autumn Budget 2024)
     EMPLOYER_NI_RATE: 0.15,
     EMPLOYER_NI_SECONDARY_THRESHOLD: 96, // £96/week = £4,992/year
-    // Dividend tax (unchanged)
+    // Dividend tax (rates increased from April 2026: basic 8.75%→10.75%, higher 33.75%→35.75%)
+    // See https://www.gov.uk/government/publications/changes-to-tax-rates-for-property-savings-dividend-income
     DIVIDEND_ALLOWANCE: 500,
-    DIVIDEND_BASIC_RATE: 0.0875,
-    DIVIDEND_HIGHER_RATE: 0.3375,
+    DIVIDEND_BASIC_RATE: 0.1075,
+    DIVIDEND_HIGHER_RATE: 0.3575,
     DIVIDEND_ADDITIONAL_RATE: 0.3935,
     // VAT (unchanged)
     VAT_STANDARD_RATE: 0.2,
