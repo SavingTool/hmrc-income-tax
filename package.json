@@ -34,11 +34,11 @@
   "types": "./lib/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/sgb-io/hmrc-income-tax.git"
+    "url": "https://github.com/SavingTool/hmrc-income-tax.git"
   },
-  "homepage": "https://github.com/sgb-io/hmrc-income-tax",
+  "homepage": "https://github.com/SavingTool/hmrc-income-tax",
   "bugs": {
-    "url": "https://github.com/sgb-io/hmrc-income-tax/issues"
+    "url": "https://github.com/SavingTool/hmrc-income-tax/issues"
   },
   "license": "MIT",
   "files": [
