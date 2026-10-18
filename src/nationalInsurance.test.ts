@@ -450,10 +450,10 @@ describe("calculateClass3NationalInsurance", () => {
     ).toBeCloseTo(923, 0);
   });
 
-  test("2026/27 — £18.10/week × 52 = £941.20", () => {
+  test("2026/27 — £18.40/week × 52 = £956.80", () => {
     expect(
       calculateClass3NationalInsurance({ taxYear: "2026/27" })
-    ).toBeCloseTo(941.2, 1);
+    ).toBeCloseTo(956.8, 1);
   });
 
   test("2024/25 — £17.45/week × 52 = £907.40", () => {
