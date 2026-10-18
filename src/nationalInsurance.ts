@@ -101,9 +101,9 @@ const niRatesByYear: Record<SupportedEnglishTaxYear, ExpandedNIRates> = {
     catBMiddleRate: 0.0185,
     freeportUpperSecondaryThreshold: 481, // £25,000/year (unchanged)
     investmentZoneUpperSecondaryThreshold: 481, // £25,000/year (unchanged)
-    class2WeeklyRate: 3.55,
-    class2SmallProfitsThreshold: 6_955,
-    class3WeeklyRate: 18.1,
+    class2WeeklyRate: 3.65,
+    class2SmallProfitsThreshold: 7_105,
+    class3WeeklyRate: 18.4,
     class4MainRate: 0.06,
     class4AdditionalRate: 0.02,
     class4LowerProfitsLimit: 12_570,
