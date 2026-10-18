@@ -4,6 +4,14 @@ on:
   push:
     tags:
       - "v*"
+  # Manual trigger, for re-trying a failed release. It stages whatever version is
+  # in package.json on the chosen branch, so only use it when that version hasn't
+  # been published yet. Normal releases should go through a tag push.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write # required for npm trusted publishing (OIDC)
 
 jobs:
   publish:
@@ -12,12 +20,15 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 22.x
+          node-version: 24.x
+          registry-url: "https://registry.npmjs.org"
+      # Staged publishing needs npm 11.15.0+
+      - run: npm install -g npm@latest
       - run: yarn
       - run: yarn build
       - run: yarn lint
       - run: yarn prettier
       - run: yarn test
-      - uses: JS-DevTools/npm-publish@v1
-        with:
-          token: ${{ secrets.NPM_TOKEN }}
+      # Stages the release; a maintainer must approve it with 2FA on npmjs.com
+      # (or `npm stage approve`) before it goes live
+      - run: npm stage publish --access public
