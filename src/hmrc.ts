@@ -216,9 +216,9 @@ const englandNiWalesTaxRates: Record<SupportedEnglishTaxYear, EnglishTaxRates> =
       PERSONAL_ALLOWANCE_DROPOFF: 100_000,
       // Student loan repayments
       // See https://www.gov.uk/repaying-your-student-loan/what-you-pay
-      STUDENT_LOAN_PLAN_1_WEEKLY_THRESHOLD: 524,
-      STUDENT_LOAN_PLAN_2_WEEKLY_THRESHOLD: 556,
-      STUDENT_LOAN_PLAN_4_WEEKLY_THRESHOLD: 649,
+      STUDENT_LOAN_PLAN_1_WEEKLY_THRESHOLD: 26_900 / 52, // £26,900/year
+      STUDENT_LOAN_PLAN_2_WEEKLY_THRESHOLD: 29_385 / 52, // £29,385/year
+      STUDENT_LOAN_PLAN_4_WEEKLY_THRESHOLD: 33_795 / 52, // £33,795/year
       STUDENT_LOAN_PLAN_5_WEEKLY_THRESHOLD: 480,
       STUDENT_LOAN_REPAYMENT_AMOUNT: 0.09, // People on plans 1, 2, 4 + 5 repay 9% of the amount you earn over the threshold
       STUDENT_LOAN_POSTGRAD_WEEKLY_THRESHOLD: 403,
@@ -382,9 +382,9 @@ const scottishTaxRates: Record<SupportedScottishTaxYear, ScottishTaxRates> = {
     DEFAULT_PERSONAL_ALLOWANCE: 12_570,
 
     STARTER_RATE: 0.19,
-    BASIC_BRACKET: 15_990,
+    BASIC_BRACKET: 16_538,
     BASIC_RATE: 0.2,
-    INTERMEDIATE_BRACKET: 28_380,
+    INTERMEDIATE_BRACKET: 29_527,
     INTERMEDIATE_RATE: 0.21,
     HIGHER_BRACKET: 43_663,
     HIGHER_RATE: 0.42,
@@ -395,9 +395,9 @@ const scottishTaxRates: Record<SupportedScottishTaxYear, ScottishTaxRates> = {
 
     PERSONAL_ALLOWANCE_DROPOFF: 100_000,
     // Student loan repayments
-    STUDENT_LOAN_PLAN_1_WEEKLY_THRESHOLD: 524,
-    STUDENT_LOAN_PLAN_2_WEEKLY_THRESHOLD: 556,
-    STUDENT_LOAN_PLAN_4_WEEKLY_THRESHOLD: 649,
+    STUDENT_LOAN_PLAN_1_WEEKLY_THRESHOLD: 26_900 / 52, // £26,900/year
+    STUDENT_LOAN_PLAN_2_WEEKLY_THRESHOLD: 29_385 / 52, // £29,385/year
+    STUDENT_LOAN_PLAN_4_WEEKLY_THRESHOLD: 33_795 / 52, // £33,795/year
     STUDENT_LOAN_PLAN_5_WEEKLY_THRESHOLD: 480,
     STUDENT_LOAN_REPAYMENT_AMOUNT: 0.09, // People on plans 1, 2, 4 + 5 repay 9% of the amount you earn over the threshold
     STUDENT_LOAN_POSTGRAD_WEEKLY_THRESHOLD: 403,

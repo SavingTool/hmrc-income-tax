@@ -42,3 +42,21 @@ describe("getHmrcRates", () => {
     ).toEqual(12570);
   });
 });
+
+describe("2026/27 student loan thresholds", () => {
+  const countries = ["England/NI/Wales", "Scotland"] as const;
+  countries.forEach((country) => {
+    test(`It uses the correct annual thresholds (${country})`, () => {
+      const rates = getHmrcRates({ taxYear: "2026/27", country });
+      expect(rates.STUDENT_LOAN_PLAN_1_WEEKLY_THRESHOLD * 52).toBeCloseTo(
+        26_900
+      );
+      expect(rates.STUDENT_LOAN_PLAN_2_WEEKLY_THRESHOLD * 52).toBeCloseTo(
+        29_385
+      );
+      expect(rates.STUDENT_LOAN_PLAN_4_WEEKLY_THRESHOLD * 52).toBeCloseTo(
+        33_795
+      );
+    });
+  });
+});

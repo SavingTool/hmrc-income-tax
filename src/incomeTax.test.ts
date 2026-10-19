@@ -663,3 +663,39 @@ describe("calculateIncomeTax - Cumulative PAYE Mode", () => {
     });
   });
 });
+
+// Scotland, 2026/27 — starter up to £16,537, basic £16,538–£29,526, intermediate £29,527–£43,662
+describe("calculateIncomeTax (26/27) - Scotland", () => {
+  const calculate = (taxableAnnualIncome: number) => {
+    const personalAllowance = calculatePersonalAllowance({
+      country: "Scotland",
+      taxYear: "2026/27",
+      taxableAnnualIncome,
+    });
+    return calculateIncomeTax({
+      taxYear: "2026/27",
+      country: "Scotland",
+      taxableAnnualIncome,
+      personalAllowance,
+    }).breakdown;
+  };
+
+  test("income at the top of the starter band", () => {
+    const breakdown = calculate(16_537);
+    expect(breakdown.starterRateTax).toBeCloseTo(754, 0);
+    expect(breakdown.basicRateTax).toBe(0);
+  });
+
+  test("income at the top of the basic band", () => {
+    const breakdown = calculate(29_526);
+    expect(breakdown.starterRateTax).toBeCloseTo(754, 0);
+    expect(breakdown.basicRateTax).toBeCloseTo(2_598, 0);
+    expect(breakdown.intermediateRateTax).toBe(0);
+  });
+
+  test("income at the top of the intermediate band", () => {
+    const breakdown = calculate(43_662);
+    expect(breakdown.intermediateRateTax).toBeCloseTo(2_968, 0);
+    expect(breakdown.higherRateTax).toBe(0);
+  });
+});
