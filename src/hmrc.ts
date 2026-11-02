@@ -215,7 +215,7 @@ const englandNiWalesTaxRates: Record<SupportedEnglishTaxYear, EnglishTaxRates> =
       ADDITIONAL_RATE: 0.45,
       PERSONAL_ALLOWANCE_DROPOFF: 100_000,
       // Student loan repayments
-      // See https://www.gov.uk/repaying-your-student-loan/what-you-pay
+      // See https://www.gov.uk/guidance/special-rules-for-student-loans
       STUDENT_LOAN_PLAN_1_WEEKLY_THRESHOLD: 26_900 / 52, // £26,900/year
       STUDENT_LOAN_PLAN_2_WEEKLY_THRESHOLD: 29_385 / 52, // £29,385/year
       STUDENT_LOAN_PLAN_4_WEEKLY_THRESHOLD: 33_795 / 52, // £33,795/year
