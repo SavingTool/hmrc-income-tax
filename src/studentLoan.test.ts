@@ -200,4 +200,25 @@ describe("calculateStudentLoanRepayments", () => {
       });
     });
   });
+
+  describe("2026/27 thresholds", () => {
+    test.each([
+      { grossAnnualIncome: 25_000, studentLoanPlanNo: 5 as const },
+      {
+        grossAnnualIncome: 21_000,
+        studentLoanPlanNo: "postgrad" as const,
+      },
+    ])(
+      "does not charge $studentLoanPlanNo repayments at the annual threshold",
+      ({ grossAnnualIncome, studentLoanPlanNo }) => {
+        expect(
+          calculateStudentLoanRepayments({
+            taxYear: "2026/27",
+            grossAnnualIncome,
+            studentLoanPlanNo,
+          })
+        ).toEqual(0);
+      }
+    );
+  });
 });
