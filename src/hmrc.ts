@@ -219,9 +219,9 @@ const englandNiWalesTaxRates: Record<SupportedEnglishTaxYear, EnglishTaxRates> =
       STUDENT_LOAN_PLAN_1_WEEKLY_THRESHOLD: 26_900 / 52, // £26,900/year
       STUDENT_LOAN_PLAN_2_WEEKLY_THRESHOLD: 29_385 / 52, // £29,385/year
       STUDENT_LOAN_PLAN_4_WEEKLY_THRESHOLD: 33_795 / 52, // £33,795/year
-      STUDENT_LOAN_PLAN_5_WEEKLY_THRESHOLD: 480,
+      STUDENT_LOAN_PLAN_5_WEEKLY_THRESHOLD: 25_000 / 52, // £25,000/year
       STUDENT_LOAN_REPAYMENT_AMOUNT: 0.09, // People on plans 1, 2, 4 + 5 repay 9% of the amount you earn over the threshold
-      STUDENT_LOAN_POSTGRAD_WEEKLY_THRESHOLD: 403,
+      STUDENT_LOAN_POSTGRAD_WEEKLY_THRESHOLD: 21_000 / 52, // £21,000/year
       STUDENT_LOAN_REPAYMENT_AMOUNT_POSTGRAD: 0.06, // People on postgrad plans repay 6% of the amount you earn over the threshold
       // Employee National Insurance (unchanged)
       NI_MIDDLE_RATE: 0.08,
@@ -398,9 +398,9 @@ const scottishTaxRates: Record<SupportedScottishTaxYear, ScottishTaxRates> = {
     STUDENT_LOAN_PLAN_1_WEEKLY_THRESHOLD: 26_900 / 52, // £26,900/year
     STUDENT_LOAN_PLAN_2_WEEKLY_THRESHOLD: 29_385 / 52, // £29,385/year
     STUDENT_LOAN_PLAN_4_WEEKLY_THRESHOLD: 33_795 / 52, // £33,795/year
-    STUDENT_LOAN_PLAN_5_WEEKLY_THRESHOLD: 480,
+    STUDENT_LOAN_PLAN_5_WEEKLY_THRESHOLD: 25_000 / 52, // £25,000/year
     STUDENT_LOAN_REPAYMENT_AMOUNT: 0.09, // People on plans 1, 2, 4 + 5 repay 9% of the amount you earn over the threshold
-    STUDENT_LOAN_POSTGRAD_WEEKLY_THRESHOLD: 403,
+    STUDENT_LOAN_POSTGRAD_WEEKLY_THRESHOLD: 21_000 / 52, // £21,000/year
     STUDENT_LOAN_REPAYMENT_AMOUNT_POSTGRAD: 0.06, // People on postgrad plans repay 6% of the amount you earn over the threshold
     // Employee National Insurance (unchanged)
     NI_MIDDLE_RATE: 0.08,

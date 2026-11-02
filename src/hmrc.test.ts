@@ -57,6 +57,12 @@ describe("2026/27 student loan thresholds", () => {
       expect(rates.STUDENT_LOAN_PLAN_4_WEEKLY_THRESHOLD * 52).toBeCloseTo(
         33_795
       );
+      expect(rates.STUDENT_LOAN_PLAN_5_WEEKLY_THRESHOLD * 52).toBeCloseTo(
+        25_000
+      );
+      expect(rates.STUDENT_LOAN_POSTGRAD_WEEKLY_THRESHOLD * 52).toBeCloseTo(
+        21_000
+      );
     });
   });
 });
