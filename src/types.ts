@@ -156,26 +156,30 @@ export interface EnglishTaxRates extends BasicTaxRates {
 export interface ScottishTaxRates extends BasicTaxRates {
   COUNTRY: "Scotland";
 
+  // Each *_BRACKET is the upper limit of the preceding band (the "to" column of the
+  // gov.scot table, assuming the standard personal allowance), as HIGHER_BRACKET is for
+  // England/NI/Wales. TOP_BRACKET is the upper limit of the advanced band on taxable income.
+
   // 1. Starter
   STARTER_RATE: number;
 
-  // 2. Basic
+  // 2. Basic: applies above BASIC_BRACKET (the top of the starter band)
   BASIC_BRACKET: number;
   BASIC_RATE: number;
 
-  // 3. Intermediate
+  // 3. Intermediate: applies above INTERMEDIATE_BRACKET (the top of the basic band)
   INTERMEDIATE_BRACKET: number;
   INTERMEDIATE_RATE: number;
 
-  // 4. Higher
+  // 4. Higher: applies above HIGHER_BRACKET (the top of the intermediate band)
   HIGHER_BRACKET: number;
   HIGHER_RATE: number;
 
-  // 5. Advanced
+  // 5. Advanced: applies above ADVANCED_BRACKET (the top of the higher band)
   ADVANCED_BRACKET: number;
   ADVANCED_RATE: number;
 
-  // 6. Top
+  // 6. Top: applies above TOP_BRACKET of taxable income
   TOP_BRACKET: number;
   TOP_RATE: number;
 }
