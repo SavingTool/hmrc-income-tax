@@ -33,6 +33,8 @@ const englandNiWalesTaxRates: Record<SupportedEnglishTaxYear, EnglishTaxRates> =
       NI_UPPER_RATE: 0.0325,
       NI_MIDDLE_BRACKET: 242,
       NI_UPPER_BRACKET: 967,
+      NI_MIDDLE_BRACKET_ANNUAL: 12_570, // £12,570/year from 6 July 2022 (as the weekly £242 above; HMRC's blended annual figure for the whole year is £11,908)
+      NI_UPPER_BRACKET_ANNUAL: 50_270, // £50,270/year
       // Employer National Insurance (Class 1, Category A)
       // Note: rate was temporarily 15.05% Apr–Nov 2022 due to Health and Social Care Levy surcharge
       EMPLOYER_NI_RATE: 0.138,
@@ -82,6 +84,8 @@ const englandNiWalesTaxRates: Record<SupportedEnglishTaxYear, EnglishTaxRates> =
       NI_UPPER_RATE: 0.02,
       NI_MIDDLE_BRACKET: 242,
       NI_UPPER_BRACKET: 967,
+      NI_MIDDLE_BRACKET_ANNUAL: 12_570, // £12,570/year
+      NI_UPPER_BRACKET_ANNUAL: 50_270, // £50,270/year
       // Employer National Insurance (Class 1, Category A)
       EMPLOYER_NI_RATE: 0.138,
       EMPLOYER_NI_SECONDARY_THRESHOLD: 175, // £175/week = £9,100/year
@@ -130,6 +134,8 @@ const englandNiWalesTaxRates: Record<SupportedEnglishTaxYear, EnglishTaxRates> =
       NI_UPPER_RATE: 0.02,
       NI_MIDDLE_BRACKET: 242,
       NI_UPPER_BRACKET: 967,
+      NI_MIDDLE_BRACKET_ANNUAL: 12_570, // £12,570/year
+      NI_UPPER_BRACKET_ANNUAL: 50_270, // £50,270/year
       // Employer National Insurance (Class 1, Category A)
       EMPLOYER_NI_RATE: 0.138,
       EMPLOYER_NI_SECONDARY_THRESHOLD: 175, // £175/week = £9,100/year
@@ -178,6 +184,8 @@ const englandNiWalesTaxRates: Record<SupportedEnglishTaxYear, EnglishTaxRates> =
       NI_UPPER_RATE: 0.02,
       NI_MIDDLE_BRACKET: 242,
       NI_UPPER_BRACKET: 967,
+      NI_MIDDLE_BRACKET_ANNUAL: 12_570, // £12,570/year
+      NI_UPPER_BRACKET_ANNUAL: 50_270, // £50,270/year
       // Employer National Insurance (Class 1, Category A)
       // Secondary threshold lowered to £5,000/year and rate increased to 15% from April 2025 (Autumn Budget 2024)
       EMPLOYER_NI_RATE: 0.15,
@@ -228,6 +236,8 @@ const englandNiWalesTaxRates: Record<SupportedEnglishTaxYear, EnglishTaxRates> =
       NI_UPPER_RATE: 0.02,
       NI_MIDDLE_BRACKET: 242,
       NI_UPPER_BRACKET: 967,
+      NI_MIDDLE_BRACKET_ANNUAL: 12_570, // £12,570/year
+      NI_UPPER_BRACKET_ANNUAL: 50_270, // £50,270/year
       // Employer National Insurance (Class 1, Category A)
       // Unchanged from April 2025: rate 15%, secondary threshold £5,000/year (Autumn Budget 2024)
       EMPLOYER_NI_RATE: 0.15,
@@ -294,6 +304,8 @@ const scottishTaxRates: Record<SupportedScottishTaxYear, ScottishTaxRates> = {
     NI_UPPER_RATE: 0.02,
     NI_MIDDLE_BRACKET: 242,
     NI_UPPER_BRACKET: 967,
+    NI_MIDDLE_BRACKET_ANNUAL: 12_570, // £12,570/year
+    NI_UPPER_BRACKET_ANNUAL: 50_270, // £50,270/year
     // Employer National Insurance (Class 1, Category A)
     EMPLOYER_NI_RATE: 0.138,
     EMPLOYER_NI_SECONDARY_THRESHOLD: 175, // £175/week = £9,100/year
@@ -355,6 +367,8 @@ const scottishTaxRates: Record<SupportedScottishTaxYear, ScottishTaxRates> = {
     NI_UPPER_RATE: 0.02,
     NI_MIDDLE_BRACKET: 242,
     NI_UPPER_BRACKET: 967,
+    NI_MIDDLE_BRACKET_ANNUAL: 12_570, // £12,570/year
+    NI_UPPER_BRACKET_ANNUAL: 50_270, // £50,270/year
     // Employer National Insurance (Class 1, Category A)
     // Secondary threshold lowered to £5,000/year and rate increased to 15% from April 2025 (Autumn Budget 2024)
     EMPLOYER_NI_RATE: 0.15,
@@ -415,6 +429,8 @@ const scottishTaxRates: Record<SupportedScottishTaxYear, ScottishTaxRates> = {
     NI_UPPER_RATE: 0.02,
     NI_MIDDLE_BRACKET: 242,
     NI_UPPER_BRACKET: 967,
+    NI_MIDDLE_BRACKET_ANNUAL: 12_570, // £12,570/year
+    NI_UPPER_BRACKET_ANNUAL: 50_270, // £50,270/year
     // Employer National Insurance (Class 1, Category A)
     // Unchanged from April 2025: rate 15%, secondary threshold £5,000/year (Autumn Budget 2024)
     EMPLOYER_NI_RATE: 0.15,

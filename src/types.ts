@@ -99,8 +99,12 @@ interface BasicTaxRates {
   // See https://www.gov.uk/guidance/rates-and-thresholds-for-employers-2022-to-2023 for current and previous rates
   NI_MIDDLE_RATE: number;
   NI_UPPER_RATE: number;
-  NI_MIDDLE_BRACKET: number;
-  NI_UPPER_BRACKET: number;
+  NI_MIDDLE_BRACKET: number; // Weekly primary threshold
+  NI_UPPER_BRACKET: number; // Weekly upper earnings limit
+  // HMRC publishes the annual thresholds separately; they are not 52 x the weekly figures
+  // (52 x £242 = £12,584, but the annual primary threshold is £12,570).
+  NI_MIDDLE_BRACKET_ANNUAL: number; // Annual primary threshold
+  NI_UPPER_BRACKET_ANNUAL: number; // Annual upper earnings limit
 
   // Employer National Insurance (Class 1, Category A secondary contributions)
   // See https://www.gov.uk/guidance/rates-and-thresholds-for-employers-2025-to-2026

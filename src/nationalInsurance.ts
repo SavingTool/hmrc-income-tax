@@ -201,7 +201,9 @@ const getEmployerEffectiveThreshold = (
 // Pass gross PAYE employment income — NI is not reduced by non-salary-sacrifice pension contributions.
 // Supports Class 1, all category letters. Defaults to Category A.
 // See https://www.gov.uk/national-insurance-rates-letters/category-letters
-// Uses the employee's weekly salary as a basis, as per the system, then re-converts into a year at the end.
+// Works on the annual figure with HMRC's annual thresholds (the annual earnings period), which are
+// published separately from the weekly ones and are not 52 x weekly: £12,570 / £50,270 a year
+// against 52 x £242 = £12,584 / 52 x £967 = £50,284.
 export const calculateEmployeeNationalInsurance = ({
   taxYear,
   country,
@@ -213,9 +215,12 @@ export const calculateEmployeeNationalInsurance = ({
   grossAnnualIncome: number;
   niCategory?: NICategory;
 }) => {
-  const weeklySalary = grossAnnualIncome / 52;
-  const { NI_MIDDLE_RATE, NI_UPPER_RATE, NI_MIDDLE_BRACKET, NI_UPPER_BRACKET } =
-    getHmrcRates({ taxYear, country });
+  const {
+    NI_MIDDLE_RATE,
+    NI_UPPER_RATE,
+    NI_MIDDLE_BRACKET_ANNUAL,
+    NI_UPPER_BRACKET_ANNUAL,
+  } = getHmrcRates({ taxYear, country });
   const niRates = getNIRatesForYear(taxYear ?? "2026/27");
 
   const { middleRate, upperRate } = getEmployeeNIRates(
@@ -225,23 +230,15 @@ export const calculateEmployeeNationalInsurance = ({
     niRates
   );
 
-  const afterFreeSection = weeklySalary - NI_MIDDLE_BRACKET;
-  let middleBracket = 0;
-  let upperBracket = 0;
+  // Earnings between the primary threshold and the upper earnings limit (inclusive), then above it
+  const middleSection = Math.max(
+    0,
+    Math.min(grossAnnualIncome, NI_UPPER_BRACKET_ANNUAL) -
+      NI_MIDDLE_BRACKET_ANNUAL
+  );
+  const upperSection = Math.max(0, grossAnnualIncome - NI_UPPER_BRACKET_ANNUAL);
 
-  if (weeklySalary > NI_UPPER_BRACKET) {
-    // 2 bands apply
-    const upperSection = weeklySalary - NI_UPPER_BRACKET;
-    const middleSection = weeklySalary - NI_MIDDLE_BRACKET - upperSection;
-    upperBracket = upperSection * upperRate;
-    middleBracket = middleSection * middleRate;
-  }
-
-  if (weeklySalary < NI_UPPER_BRACKET && weeklySalary > NI_MIDDLE_BRACKET) {
-    middleBracket = afterFreeSection * middleRate;
-  }
-
-  return (middleBracket + upperBracket) * 52;
+  return middleSection * middleRate + upperSection * upperRate;
 };
 
 // Calculates employer national insurance contributions based on an employee's gross employment income.

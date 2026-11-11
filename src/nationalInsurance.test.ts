@@ -7,26 +7,30 @@ import {
 } from "./nationalInsurance";
 
 // ─── Class 1, Category A — Employee ──────────────────────────────────────────
+// Annual thresholds: primary threshold £12,570, upper earnings limit £50,270 (all years below;
+// gov.uk "Rates and thresholds for employers"). E.g. 2024/25 £60,000: (50,270 - 12,570) x 8% +
+// (60,000 - 50,270) x 2% = 3,016 + 194.60 = 3,210.60. Values are exact decimals (the 2022/23
+// rates 13.25% / 3.25% give half-pennies); the library returns unrounded pounds.
 
 const expectationsA = [
-  { grossAnnualIncome: 15_000, nics: 320.11999999999995 },
-  { grossAnnualIncome: 17_500, nics: 651.3700000000001 },
-  { grossAnnualIncome: 20_000, nics: 982.6200000000002 },
-  { grossAnnualIncome: 22_500, nics: 1313.87 },
-  { grossAnnualIncome: 25_000, nics: 1645.1200000000001 },
-  { grossAnnualIncome: 50_000, nics: 4957.620000000001 },
-  { grossAnnualIncome: 55_000, nics: 5148.5199999999995 },
-  { grossAnnualIncome: 60_000, nics: 5311.02 },
-  { grossAnnualIncome: 75_000, nics: 5798.52 },
-  { grossAnnualIncome: 90_000, nics: 6286.0199999999995 },
-  { grossAnnualIncome: 110_000, nics: 6936.0199999999995 },
-  { grossAnnualIncome: 130_000, nics: 7586.0199999999995 },
-  { grossAnnualIncome: 150_000, nics: 8236.02 },
-  { grossAnnualIncome: 175_000, nics: 9048.52 },
-  { grossAnnualIncome: 200_000, nics: 9861.02 },
-  { grossAnnualIncome: 250_000, nics: 11486.02 },
-  { grossAnnualIncome: 500_000, nics: 19611.02 },
-  { grossAnnualIncome: 1_000_000, nics: 35861.02 },
+  { grossAnnualIncome: 15_000, nics: 321.975 },
+  { grossAnnualIncome: 17_500, nics: 653.225 },
+  { grossAnnualIncome: 20_000, nics: 984.475 },
+  { grossAnnualIncome: 22_500, nics: 1315.725 },
+  { grossAnnualIncome: 25_000, nics: 1646.975 },
+  { grossAnnualIncome: 50_000, nics: 4959.475 },
+  { grossAnnualIncome: 55_000, nics: 5148.975 },
+  { grossAnnualIncome: 60_000, nics: 5311.475 },
+  { grossAnnualIncome: 75_000, nics: 5798.975 },
+  { grossAnnualIncome: 90_000, nics: 6286.475 },
+  { grossAnnualIncome: 110_000, nics: 6936.475 },
+  { grossAnnualIncome: 130_000, nics: 7586.475 },
+  { grossAnnualIncome: 150_000, nics: 8236.475 },
+  { grossAnnualIncome: 175_000, nics: 9048.975 },
+  { grossAnnualIncome: 200_000, nics: 9861.475 },
+  { grossAnnualIncome: 250_000, nics: 11486.475 },
+  { grossAnnualIncome: 500_000, nics: 19611.475 },
+  { grossAnnualIncome: 1_000_000, nics: 35861.475 },
 ];
 
 describe("calculateEmployeeNationalInsurance (22/23)", () => {
@@ -44,24 +48,24 @@ describe("calculateEmployeeNationalInsurance (22/23)", () => {
 });
 
 const expectationsB = [
-  { grossAnnualIncome: 15_000, nics: 241.59 },
-  { grossAnnualIncome: 17_500, nics: 491.6 },
-  { grossAnnualIncome: 20_000, nics: 741.6 },
-  { grossAnnualIncome: 22_500, nics: 991.59 },
-  { grossAnnualIncome: 25_000, nics: 1241.6 },
-  { grossAnnualIncome: 50_000, nics: 3741.6 },
-  { grossAnnualIncome: 55_000, nics: 3864.32 },
-  { grossAnnualIncome: 60_000, nics: 3964.32 },
-  { grossAnnualIncome: 75_000, nics: 4264.32 },
-  { grossAnnualIncome: 90_000, nics: 4564.32 },
-  { grossAnnualIncome: 110_000, nics: 4964.32 },
-  { grossAnnualIncome: 130_000, nics: 5364.32 },
-  { grossAnnualIncome: 150_000, nics: 5764.32 },
-  { grossAnnualIncome: 175_000, nics: 6264.32 },
-  { grossAnnualIncome: 200_000, nics: 6764.32 },
-  { grossAnnualIncome: 250_000, nics: 7764.32 },
-  { grossAnnualIncome: 500_000, nics: 12764.32 },
-  { grossAnnualIncome: 1_000_000, nics: 22764.32 },
+  { grossAnnualIncome: 15_000, nics: 243 },
+  { grossAnnualIncome: 17_500, nics: 493 },
+  { grossAnnualIncome: 20_000, nics: 743 },
+  { grossAnnualIncome: 22_500, nics: 993 },
+  { grossAnnualIncome: 25_000, nics: 1243 },
+  { grossAnnualIncome: 50_000, nics: 3743 },
+  { grossAnnualIncome: 55_000, nics: 3864.6 },
+  { grossAnnualIncome: 60_000, nics: 3964.6 },
+  { grossAnnualIncome: 75_000, nics: 4264.6 },
+  { grossAnnualIncome: 90_000, nics: 4564.6 },
+  { grossAnnualIncome: 110_000, nics: 4964.6 },
+  { grossAnnualIncome: 130_000, nics: 5364.6 },
+  { grossAnnualIncome: 150_000, nics: 5764.6 },
+  { grossAnnualIncome: 175_000, nics: 6264.6 },
+  { grossAnnualIncome: 200_000, nics: 6764.6 },
+  { grossAnnualIncome: 250_000, nics: 7764.6 },
+  { grossAnnualIncome: 500_000, nics: 12764.6 },
+  { grossAnnualIncome: 1_000_000, nics: 22764.6 },
 ];
 
 describe("calculateEmployeeNationalInsurance (23/24)", () => {
@@ -79,24 +83,24 @@ describe("calculateEmployeeNationalInsurance (23/24)", () => {
 });
 
 const expectationsC = [
-  { grossAnnualIncome: 15_000, nics: 193.28 },
-  { grossAnnualIncome: 17_500, nics: 393.28 },
-  { grossAnnualIncome: 20_000, nics: 593.28 },
-  { grossAnnualIncome: 22_500, nics: 793.28 },
-  { grossAnnualIncome: 25_000, nics: 993.28 },
-  { grossAnnualIncome: 50_000, nics: 2993.28 },
-  { grossAnnualIncome: 55_000, nics: 3110.32 },
-  { grossAnnualIncome: 60_000, nics: 3210.32 },
-  { grossAnnualIncome: 75_000, nics: 3510.32 },
-  { grossAnnualIncome: 90_000, nics: 3810.32 },
-  { grossAnnualIncome: 110_000, nics: 4210.32 },
-  { grossAnnualIncome: 130_000, nics: 4610.32 },
-  { grossAnnualIncome: 150_000, nics: 5010.32 },
-  { grossAnnualIncome: 175_000, nics: 5510.32 },
-  { grossAnnualIncome: 200_000, nics: 6010.32 },
-  { grossAnnualIncome: 250_000, nics: 7010.32 },
-  { grossAnnualIncome: 500_000, nics: 12010.32 },
-  { grossAnnualIncome: 1_000_000, nics: 22010.32 },
+  { grossAnnualIncome: 15_000, nics: 194.4 },
+  { grossAnnualIncome: 17_500, nics: 394.4 },
+  { grossAnnualIncome: 20_000, nics: 594.4 },
+  { grossAnnualIncome: 22_500, nics: 794.4 },
+  { grossAnnualIncome: 25_000, nics: 994.4 },
+  { grossAnnualIncome: 50_000, nics: 2994.4 },
+  { grossAnnualIncome: 55_000, nics: 3110.6 },
+  { grossAnnualIncome: 60_000, nics: 3210.6 },
+  { grossAnnualIncome: 75_000, nics: 3510.6 },
+  { grossAnnualIncome: 90_000, nics: 3810.6 },
+  { grossAnnualIncome: 110_000, nics: 4210.6 },
+  { grossAnnualIncome: 130_000, nics: 4610.6 },
+  { grossAnnualIncome: 150_000, nics: 5010.6 },
+  { grossAnnualIncome: 175_000, nics: 5510.6 },
+  { grossAnnualIncome: 200_000, nics: 6010.6 },
+  { grossAnnualIncome: 250_000, nics: 7010.6 },
+  { grossAnnualIncome: 500_000, nics: 12010.6 },
+  { grossAnnualIncome: 1_000_000, nics: 22010.6 },
 ];
 
 describe("calculateEmployeeNationalInsurance (24/25)", () => {
@@ -110,6 +114,42 @@ describe("calculateEmployeeNationalInsurance (24/25)", () => {
         })
       ).toBeCloseTo(nics, 1);
     });
+  });
+});
+
+describe("calculateEmployeeNationalInsurance — annual thresholds (26/27)", () => {
+  const nics = (grossAnnualIncome: number) =>
+    calculateEmployeeNationalInsurance({
+      taxYear: "2026/27",
+      grossAnnualIncome,
+    });
+
+  test("nothing up to the £12,570 primary threshold", () => {
+    expect(nics(12_570)).toBe(0);
+    expect(nics(12_584)).toBeCloseTo(1.12, 2); // 14 x 8%: not 0, 52 x £242 is not the threshold
+  });
+
+  test("8% on the £1 above the primary threshold", () => {
+    expect(nics(12_571)).toBeCloseTo(0.08, 2);
+  });
+
+  test("the main rate applies up to and including the £50,270 upper earnings limit", () => {
+    expect(nics(50_270)).toBeCloseTo(3_016, 2); // 37,700 x 8%
+    expect(nics(50_271)).toBeCloseTo(3_016.02, 2);
+  });
+
+  test("£58,000: 3,016 + 7,730 x 2% = 3,170.60", () => {
+    expect(nics(58_000)).toBeCloseTo(3_170.6, 2);
+  });
+
+  test("Scotland uses the same UK-wide thresholds", () => {
+    expect(
+      calculateEmployeeNationalInsurance({
+        taxYear: "2026/27",
+        country: "Scotland",
+        grossAnnualIncome: 58_000,
+      })
+    ).toBeCloseTo(3_170.6, 2);
   });
 });
 
@@ -183,10 +223,9 @@ describe("calculateEmployerNationalInsurance (26/27)", () => {
 });
 
 // ─── Class 1, Category B — Employee (married women reduced rate) ──────────────
-// 2024/25: 1.85% on £242–£967/week, 2% above £967/week
-// £30,000: weekly = 576.92, in middle band: (576.92 - 242) × 1.85% × 52 = 322.47
-// £60,000: weekly = 1153.85, above UEL: (1153.85 - 967) × 2% × 52 = 194.32
-//          middle band: (967 - 242) × 1.85% × 52 = 697.41. Total = 891.73
+// 2024/25: 1.85% on £12,570–£50,270, 2% above £50,270
+// £30,000: (30,000 - 12,570) × 1.85% = 322.46
+// £60,000: middle band (50,270 - 12,570) × 1.85% = 697.45; above UEL (60,000 - 50,270) × 2% = 194.60. Total = 892.05
 describe("calculateEmployeeNationalInsurance — Category B (24/25)", () => {
   test("£12,570 (at primary threshold) — should be 0", () => {
     expect(
@@ -199,27 +238,26 @@ describe("calculateEmployeeNationalInsurance — Category B (24/25)", () => {
   });
 
   test("£30,000", () => {
-    // weekly = 576.92; middle: (576.92 - 242) × 0.0185 × 52 = 322.47
+    // middle: (30,000 - 12,570) × 0.0185 = 322.455
     expect(
       calculateEmployeeNationalInsurance({
         taxYear: "2024/25",
         grossAnnualIncome: 30_000,
         niCategory: "B",
       })
-    ).toBeCloseTo(322.5, 0);
+    ).toBeCloseTo(322.455, 3);
   });
 
   test("£60,000 (above UEL)", () => {
-    // weekly = 1153.85
-    // middle: (967 - 242) × 0.0185 × 52 = 725 × 0.0185 × 52 = 697.15
-    // upper: (1153.85 - 967) × 0.02 × 52 = 186.85 × 0.02 × 52 = 194.32
+    // middle: (50,270 - 12,570) × 0.0185 = 697.45
+    // upper: (60,000 - 50,270) × 0.02 = 194.60
     expect(
       calculateEmployeeNationalInsurance({
         taxYear: "2024/25",
         grossAnnualIncome: 60_000,
         niCategory: "B",
       })
-    ).toBeCloseTo(891.5, 0);
+    ).toBeCloseTo(892.05, 2);
   });
 });
 
@@ -247,10 +285,10 @@ describe("calculateEmployeeNationalInsurance — Category C (25/26)", () => {
 });
 
 // ─── Class 1, Category J — Employee (deferring — only upper rate applies) ────
-// 2025/26: 0% on £242–£967/week, 2% above £967/week
+// 2025/26: 0% on £12,570–£50,270, 2% above £50,270
 describe("calculateEmployeeNationalInsurance — Category J (25/26)", () => {
   test("£40,000 (below UEL) — should be 0", () => {
-    // weekly = 769.23; all in middle band → 0% → £0
+    // all in middle band → 0% → £0
     expect(
       calculateEmployeeNationalInsurance({
         taxYear: "2025/26",
@@ -261,14 +299,14 @@ describe("calculateEmployeeNationalInsurance — Category J (25/26)", () => {
   });
 
   test("£60,000 (above UEL)", () => {
-    // weekly = 1153.85; above UEL: (1153.85 - 967) × 0.02 × 52 = 194.32
+    // above UEL: (60,000 - 50,270) × 0.02 = 194.60
     expect(
       calculateEmployeeNationalInsurance({
         taxYear: "2025/26",
         grossAnnualIncome: 60_000,
         niCategory: "J",
       })
-    ).toBeCloseTo(194.3, 0);
+    ).toBeCloseTo(194.6, 2);
   });
 });
 

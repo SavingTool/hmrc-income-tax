@@ -152,6 +152,8 @@ Calculates Class 1 employee National Insurance contributions due in a tax year o
 
 Pass gross PAYE employment income. Unlike income tax, NI is not reduced by non-salary-sacrifice pension contributions.
 
+The calculation uses HMRC's annual thresholds (for 2026/27, a primary threshold of £12,570 and an upper earnings limit of £50,270), which is the annual earnings period. HMRC publishes these separately from the weekly figures (£242 and £967): they are not 52 × weekly.
+
 `niCategory` defaults to `"A"` (the standard category for most employees). See [HMRC category letters](https://www.gov.uk/national-insurance-rates-letters/category-letters) for the full list. All standard, freeport, and investment zone category letters are supported.
 
 ```typescript
@@ -390,7 +392,7 @@ const nationalInsuranceContributions = calculateEmployeeNationalInsurance({
   taxableAnnualIncome,
   taxYear,
 });
-// => 3088.32
+// => 3088.6
 
 const studentLoanRepayments = calculateStudentLoanRepayments({
   taxableAnnualIncome,
@@ -440,11 +442,11 @@ const nationalInsuranceContributions = calculateEmployeeNationalInsurance({
   taxableAnnualIncome,
   taxYear,
 });
-// => 5210.32
+// => 5210.6
 
 // Do whatever you want, e.g. calculate the take-home pay
 const takeHome = taxableAnnualIncome - total - nationalInsuranceContributions;
-// => 96586.68
+// => 96586.4
 ```
 
 It's important to understand that in most cases this library is expecting _taxable_ income (appropriate API naming aims to make this clear). Any salary sacrifice mechanisms should be applied before these calculations, and the appropriate taxable amount used when calling this library.
