@@ -50,7 +50,7 @@ Note that `taxYear` is an optional input to select which tax year rates should b
 
 ### `calculatePersonalAllowance`
 
-Calculates an individual's personal allowance for a tax year, single amount.
+Calculates an individual's personal allowance for a tax year, single amount. Above £100,000 the allowance is reduced by half of the excess, and a result that is not a whole number of pounds is rounded up to the next pound ([Income Tax Act 2007 s.35(3)](https://www.legislation.gov.uk/ukpga/2007/3/section/35)): an income of £100,001 keeps £12,570.
 
 ```typescript
 calculatePersonalAllowance({
@@ -151,6 +151,8 @@ This cumulative mode implements HMRC PAYE rules where personal allowances are pr
 Calculates Class 1 employee National Insurance contributions due in a tax year on an individual's gross employment income, single amount.
 
 Pass gross PAYE employment income. Unlike income tax, NI is not reduced by non-salary-sacrifice pension contributions.
+
+The calculation uses HMRC's annual thresholds (for 2026/27, a primary threshold of £12,570 and an upper earnings limit of £50,270), which is the annual earnings period. HMRC publishes these separately from the weekly figures (£242 and £967): they are not 52 × weekly.
 
 `niCategory` defaults to `"A"` (the standard category for most employees). See [HMRC category letters](https://www.gov.uk/national-insurance-rates-letters/category-letters) for the full list. All standard, freeport, and investment zone category letters are supported.
 
@@ -390,7 +392,7 @@ const nationalInsuranceContributions = calculateEmployeeNationalInsurance({
   taxableAnnualIncome,
   taxYear,
 });
-// => 3088.32
+// => 3088.6
 
 const studentLoanRepayments = calculateStudentLoanRepayments({
   taxableAnnualIncome,
@@ -440,11 +442,11 @@ const nationalInsuranceContributions = calculateEmployeeNationalInsurance({
   taxableAnnualIncome,
   taxYear,
 });
-// => 5210.32
+// => 5210.6
 
 // Do whatever you want, e.g. calculate the take-home pay
 const takeHome = taxableAnnualIncome - total - nationalInsuranceContributions;
-// => 96586.68
+// => 96586.4
 ```
 
 It's important to understand that in most cases this library is expecting _taxable_ income (appropriate API naming aims to make this clear). Any salary sacrifice mechanisms should be applied before these calculations, and the appropriate taxable amount used when calling this library.

@@ -99,8 +99,12 @@ interface BasicTaxRates {
   // See https://www.gov.uk/guidance/rates-and-thresholds-for-employers-2022-to-2023 for current and previous rates
   NI_MIDDLE_RATE: number;
   NI_UPPER_RATE: number;
-  NI_MIDDLE_BRACKET: number;
-  NI_UPPER_BRACKET: number;
+  NI_MIDDLE_BRACKET: number; // Weekly primary threshold
+  NI_UPPER_BRACKET: number; // Weekly upper earnings limit
+  // HMRC publishes the annual thresholds separately; they are not 52 x the weekly figures
+  // (52 x £242 = £12,584, but the annual primary threshold is £12,570).
+  NI_MIDDLE_BRACKET_ANNUAL: number; // Annual primary threshold
+  NI_UPPER_BRACKET_ANNUAL: number; // Annual upper earnings limit
 
   // Employer National Insurance (Class 1, Category A secondary contributions)
   // See https://www.gov.uk/guidance/rates-and-thresholds-for-employers-2025-to-2026
@@ -156,26 +160,30 @@ export interface EnglishTaxRates extends BasicTaxRates {
 export interface ScottishTaxRates extends BasicTaxRates {
   COUNTRY: "Scotland";
 
+  // Each *_BRACKET is the upper limit of the preceding band (the "to" column of the
+  // gov.scot table, assuming the standard personal allowance), as HIGHER_BRACKET is for
+  // England/NI/Wales. TOP_BRACKET is the upper limit of the advanced band on taxable income.
+
   // 1. Starter
   STARTER_RATE: number;
 
-  // 2. Basic
+  // 2. Basic: applies above BASIC_BRACKET (the top of the starter band)
   BASIC_BRACKET: number;
   BASIC_RATE: number;
 
-  // 3. Intermediate
+  // 3. Intermediate: applies above INTERMEDIATE_BRACKET (the top of the basic band)
   INTERMEDIATE_BRACKET: number;
   INTERMEDIATE_RATE: number;
 
-  // 4. Higher
+  // 4. Higher: applies above HIGHER_BRACKET (the top of the intermediate band)
   HIGHER_BRACKET: number;
   HIGHER_RATE: number;
 
-  // 5. Advanced
+  // 5. Advanced: applies above ADVANCED_BRACKET (the top of the higher band)
   ADVANCED_BRACKET: number;
   ADVANCED_RATE: number;
 
-  // 6. Top
+  // 6. Top: applies above TOP_BRACKET of taxable income
   TOP_BRACKET: number;
   TOP_RATE: number;
 }

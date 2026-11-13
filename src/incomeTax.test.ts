@@ -200,7 +200,8 @@ describe("calculateIncomeTax (26/27)", () => {
   });
 });
 
-// Scotland, 2024/25
+// Scotland, 2024/25: starter to £14,876, basic to £26,561, intermediate to £43,662,
+// higher to £75,000, advanced to £125,140 (gov.scot "Scottish Income Tax: rates and bands 2024 to 2025")
 const expectationsC = [
   {
     taxableAnnualIncome: 0,
@@ -222,8 +223,8 @@ const expectationsC = [
   },
   {
     taxableAnnualIncome: 15_000,
-    starterRateTax: 438.33,
-    basicRateTax: 24.6,
+    starterRateTax: 438.14, // 2,306 @ 19%
+    basicRateTax: 24.8, // 124 @ 20%
     intermediateRateTax: 0,
     higherRateTax: 0,
     advancedRateTax: 0,
@@ -231,8 +232,8 @@ const expectationsC = [
   },
   {
     taxableAnnualIncome: 17_500,
-    starterRateTax: 438.33,
-    basicRateTax: 524.6,
+    starterRateTax: 438.14,
+    basicRateTax: 524.8,
     intermediateRateTax: 0,
     higherRateTax: 0,
     advancedRateTax: 0,
@@ -240,8 +241,8 @@ const expectationsC = [
   },
   {
     taxableAnnualIncome: 20_000,
-    starterRateTax: 438.33,
-    basicRateTax: 1024.6000000000001,
+    starterRateTax: 438.14,
+    basicRateTax: 1024.8,
     intermediateRateTax: 0,
     higherRateTax: 0,
     advancedRateTax: 0,
@@ -249,8 +250,8 @@ const expectationsC = [
   },
   {
     taxableAnnualIncome: 22_500,
-    starterRateTax: 438.33,
-    basicRateTax: 1524.6000000000001,
+    starterRateTax: 438.14,
+    basicRateTax: 1524.8,
     intermediateRateTax: 0,
     higherRateTax: 0,
     advancedRateTax: 0,
@@ -258,67 +259,67 @@ const expectationsC = [
   },
   {
     taxableAnnualIncome: 50_000,
-    starterRateTax: 438.33,
-    basicRateTax: 2337,
-    intermediateRateTax: 3591.21,
-    higherRateTax: 2661.54,
+    starterRateTax: 438.14,
+    basicRateTax: 2337, // 11,685 @ 20%
+    intermediateRateTax: 3591.21, // 17,101 @ 21%
+    higherRateTax: 2661.96, // 6,338 @ 42%
     advancedRateTax: 0,
     topRateTax: 0,
   },
   {
     taxableAnnualIncome: 75_000,
-    starterRateTax: 438.33,
+    starterRateTax: 438.14,
     basicRateTax: 2337,
     intermediateRateTax: 3591.21,
-    higherRateTax: 13161.539999999999,
+    higherRateTax: 13161.96, // the full higher band: 31,338 @ 42%
     advancedRateTax: 0,
     topRateTax: 0,
   },
   {
     taxableAnnualIncome: 90_000,
-    starterRateTax: 438.33,
+    starterRateTax: 438.14,
     basicRateTax: 2337,
     intermediateRateTax: 3591.21,
     higherRateTax: 13161.96,
-    advancedRateTax: 6749.55,
+    advancedRateTax: 6750, // 15,000 @ 45%
     topRateTax: 0,
   },
   {
     taxableAnnualIncome: 110_000,
-    starterRateTax: 438.33,
+    starterRateTax: 438.14,
     basicRateTax: 2337,
     intermediateRateTax: 3591.21,
     higherRateTax: 13161.96,
-    advancedRateTax: 17999.55,
+    advancedRateTax: 18000, // PA 7,570; taxable 102,430; 40,000 @ 45%
     topRateTax: 0,
   },
   {
     taxableAnnualIncome: 125_000,
-    starterRateTax: 438.33,
+    starterRateTax: 438.14,
     basicRateTax: 2337,
     intermediateRateTax: 3591.21,
     higherRateTax: 13161.96,
-    advancedRateTax: 28124.55,
+    advancedRateTax: 28125, // PA 70; taxable 124,930; 62,500 @ 45%
     topRateTax: 0,
   },
   {
     taxableAnnualIncome: 150_000,
-    starterRateTax: 438.33,
+    starterRateTax: 438.14,
     basicRateTax: 2337,
     intermediateRateTax: 3591.21,
     higherRateTax: 13161.96,
-    advancedRateTax: 28219.05,
-    topRateTax: 11932.8,
+    advancedRateTax: 28219.5, // the full advanced band: 62,710 @ 45%
+    topRateTax: 11932.8, // 24,860 @ 48%
   },
   // See: https://www.bbc.co.uk/news/uk-scotland-67760641
   {
     taxableAnnualIncome: 200_000,
-    starterRateTax: 438.33,
+    starterRateTax: 438.14,
     basicRateTax: 2337,
     intermediateRateTax: 3591.21,
     higherRateTax: 13161.96,
-    advancedRateTax: 28219.05,
-    topRateTax: 35932.799999999996,
+    advancedRateTax: 28219.5,
+    topRateTax: 35932.8,
   },
 ];
 
@@ -340,7 +341,9 @@ describe("calculateIncomeTax (24/25) - Scotland", () => {
         taxableAnnualIncome,
         personalAllowance,
       });
-      expect(taxAmounts.breakdown).toEqual(rest);
+      (Object.keys(rest) as (keyof typeof rest)[]).forEach((band) => {
+        expect(taxAmounts.breakdown[band]).toBeCloseTo(rest[band], 2);
+      });
     });
   });
 });
@@ -561,7 +564,8 @@ describe("calculateIncomeTax - Cumulative PAYE Mode", () => {
         },
       });
 
-      expect(result.total).toBeCloseTo(37513.5, 1);
+      // PA 7,570 -> taxable 102,430: 537.13 + 2,418.80 + 3,395.91 + 13,161.96 + 40,000 @ 45% = 37,513.80
+      expect(result.total).toBeCloseTo(37513.8, 1);
       expect(result.incomeTaxType).toBe("Scotland");
     });
   });
@@ -655,7 +659,8 @@ describe("calculateIncomeTax - Cumulative PAYE Mode", () => {
       });
 
       expect(result.incomeTaxType).toBe("Scotland");
-      expect(result.total).toBeCloseTo(1767.43, 1);
+      // PA 12,570 / 12 = 1,047.50; taxable 8,952.50: 2,306 @ 19% = 438.14 + 6,646.50 @ 20% = 1,329.30
+      expect(result.total).toBeCloseTo(1767.44, 2);
 
       if (result.incomeTaxType === "Scotland") {
         expect(typeof result.breakdown.starterRateTax).toBe("number");
@@ -695,7 +700,70 @@ describe("calculateIncomeTax (26/27) - Scotland", () => {
 
   test("income at the top of the intermediate band", () => {
     const breakdown = calculate(43_662);
-    expect(breakdown.intermediateRateTax).toBeCloseTo(2_968, 0);
+    expect(breakdown.intermediateRateTax).toBeCloseTo(2_968.56, 2); // 14,136 @ 21%
     expect(breakdown.higherRateTax).toBe(0);
+  });
+
+  test("income £1 into each band is taxed at that band's rate", () => {
+    // starter 3,967 @ 19% = 753.73; basic 12,989 @ 20% = 2,597.80; intermediate 14,136 @ 21% = 2,968.56;
+    // higher 31,338 @ 42% = 13,161.96; advanced 62,710 @ 45% = 28,219.50
+    expect(calculate(16_538).basicRateTax).toBeCloseTo(0.2, 2);
+    expect(calculate(29_527).intermediateRateTax).toBeCloseTo(0.21, 2);
+    expect(calculate(43_663).higherRateTax).toBeCloseTo(0.42, 2);
+    expect(calculate(75_001).advancedRateTax).toBeCloseTo(0.45, 2);
+    const atTop = calculate(125_140); // PA fully tapered: taxable income 125,140
+    expect(atTop.advancedRateTax).toBeCloseTo(28_219.5, 2);
+    expect(atTop.topRateTax).toBe(0);
+    expect(calculate(125_141).topRateTax).toBeCloseTo(0.48, 2);
+  });
+
+  test("£58,000 less a 5% pension: 11,124.05", () => {
+    // taxable income 55,100 -> 42,530 after PA: 753.73 + 2,597.80 + 2,968.56 + 11,438 @ 42% = 4,803.96
+    const personalAllowance = calculatePersonalAllowance({
+      country: "Scotland",
+      taxYear: "2026/27",
+      taxableAnnualIncome: 55_100,
+    });
+    const result = calculateIncomeTax({
+      taxYear: "2026/27",
+      country: "Scotland",
+      taxableAnnualIncome: 55_100,
+      personalAllowance,
+    });
+    expect(result.breakdown).toMatchObject({
+      advancedRateTax: 0,
+      topRateTax: 0,
+    });
+    expect(result.breakdown.higherRateTax).toBeCloseTo(4_803.96, 2);
+    expect(result.total).toBeCloseTo(11_124.05, 2);
+  });
+});
+
+// Scotland, 2025/26 — starter to £15,397, basic to £27,491 (Scottish Rate Resolution 2025-26:
+// starter limit £2,827 and basic limit £14,921 of taxable income)
+describe("calculateIncomeTax (25/26) - Scotland", () => {
+  const calculate = (taxableAnnualIncome: number) => {
+    const personalAllowance = calculatePersonalAllowance({
+      country: "Scotland",
+      taxYear: "2025/26",
+      taxableAnnualIncome,
+    });
+    return calculateIncomeTax({
+      taxYear: "2025/26",
+      country: "Scotland",
+      taxableAnnualIncome,
+      personalAllowance,
+    }).breakdown;
+  };
+
+  test("band boundaries", () => {
+    expect(calculate(15_397).starterRateTax).toBeCloseTo(537.13, 2); // 2,827 @ 19%
+    expect(calculate(15_397).basicRateTax).toBe(0);
+    expect(calculate(27_491).basicRateTax).toBeCloseTo(2_418.8, 2); // 12,094 @ 20%
+    expect(calculate(27_491).intermediateRateTax).toBe(0);
+    expect(calculate(43_662).intermediateRateTax).toBeCloseTo(3_395.91, 2); // 16,171 @ 21%
+    expect(calculate(43_662).higherRateTax).toBe(0);
+    expect(calculate(75_000).higherRateTax).toBeCloseTo(13_161.96, 2); // 31,338 @ 42%
+    expect(calculate(75_000).advancedRateTax).toBe(0);
   });
 });
