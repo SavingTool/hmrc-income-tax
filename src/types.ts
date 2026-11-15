@@ -38,6 +38,22 @@ export interface CumulativePayeOptions {
 
 export type StudentLoanPlan = 1 | 2 | 4 | 5 | "postgrad";
 
+// Controls which Class 1 NI rates are used in tax years where rates changed part-way through
+// (2022/23 and 2023/24). Omit it to keep the library's default rates for each year.
+// - "blended": HMRC's whole-year rates (as published for company directors), which give the
+//   correct annual total for evenly-spread pay across the in-year changes.
+// - { date }: the rates in force on that date (a "YYYY-MM-DD" string or a Date), applied to the
+//   whole year. The date must fall within the tax year (6 April to 5 April).
+// For years without in-year changes, both options give the same result as the default.
+export type NIRateBasis = "blended" | { date: string | Date };
+
+// How often the employee is paid, for Class 1 NI. NI is worked out separately for each pay
+// period, and HMRC's weekly, monthly and annual thresholds aren't exact multiples of each other
+// (e.g. the primary threshold is £242/week, £1,048/month, £12,570/year), so the yearly total
+// depends slightly on pay frequency. Defaults to "weekly". Use "annual" for company directors
+// (annual earnings period). Assumes the same pay every period.
+export type PayFrequency = "weekly" | "monthly" | "annual";
+
 // Class 1 NI category letters.
 // See https://www.gov.uk/national-insurance-rates-letters/category-letters
 export type NICategory =
@@ -136,6 +152,7 @@ interface BasicTaxRates {
   PENSION_ANNUAL_ALLOWANCE: number;
   PENSION_MINIMUM_ANNUAL_ALLOWANCE: number;
   PENSION_ADJUSTED_LIMIT: number;
+  PENSION_THRESHOLD_INCOME_LIMIT: number;
 }
 
 export interface EnglishTaxRates extends BasicTaxRates {
@@ -153,6 +170,11 @@ export interface EnglishTaxRates extends BasicTaxRates {
   ADDITIONAL_RATE: number;
 }
 
+// Each *_BRACKET is the gross income (assuming the default personal allowance) above which that
+// band's rate applies, i.e. the upper limit of the band below. For example, 2026/27
+// BASIC_BRACKET is 16,537: the starter band covers the first £3,967 of taxable income
+// (16,537 − 12,570), and the basic rate applies above it. This matches HIGHER_BRACKET (50,270)
+// for England/NI/Wales. TOP_BRACKET (125,140) is compared directly against taxable income.
 export interface ScottishTaxRates extends BasicTaxRates {
   COUNTRY: "Scotland";
 

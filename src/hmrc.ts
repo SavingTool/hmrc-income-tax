@@ -21,12 +21,12 @@ const englandNiWalesTaxRates: Record<SupportedEnglishTaxYear, EnglishTaxRates> =
       ADDITIONAL_RATE: 0.45,
       PERSONAL_ALLOWANCE_DROPOFF: 100_000,
       // Student loan repayments
-      STUDENT_LOAN_PLAN_1_WEEKLY_THRESHOLD: 388,
-      STUDENT_LOAN_PLAN_2_WEEKLY_THRESHOLD: 524,
-      STUDENT_LOAN_PLAN_4_WEEKLY_THRESHOLD: 487.98,
-      STUDENT_LOAN_PLAN_5_WEEKLY_THRESHOLD: 480, // Note: this was only introduced in 2023/24, so technically isn't relevant to 22/23
+      STUDENT_LOAN_PLAN_1_WEEKLY_THRESHOLD: 20_195 / 52, // £20,195/year
+      STUDENT_LOAN_PLAN_2_WEEKLY_THRESHOLD: 27_295 / 52, // £27,295/year
+      STUDENT_LOAN_PLAN_4_WEEKLY_THRESHOLD: 25_375 / 52, // £25,375/year
+      STUDENT_LOAN_PLAN_5_WEEKLY_THRESHOLD: 25_000 / 52, // £25,000/year (Plan 5 repayments only start from April 2026)
       STUDENT_LOAN_REPAYMENT_AMOUNT: 0.09, // People on plans 1 or 2 repay 9% of the amount you earn over the threshold
-      STUDENT_LOAN_POSTGRAD_WEEKLY_THRESHOLD: 403.84,
+      STUDENT_LOAN_POSTGRAD_WEEKLY_THRESHOLD: 21_000 / 52, // £21,000/year
       STUDENT_LOAN_REPAYMENT_AMOUNT_POSTGRAD: 0.06, // People on postgrad plans repay 6% of the amount you earn over the threshold
       // Employee National Insurance
       NI_MIDDLE_RATE: 0.1325,
@@ -58,6 +58,7 @@ const englandNiWalesTaxRates: Record<SupportedEnglishTaxYear, EnglishTaxRates> =
       PENSION_ANNUAL_ALLOWANCE: 40_000,
       PENSION_MINIMUM_ANNUAL_ALLOWANCE: 4_000,
       PENSION_ADJUSTED_LIMIT: 240_000,
+      PENSION_THRESHOLD_INCOME_LIMIT: 200_000, // Taper only applies if threshold income exceeds this
     },
     "2023/24": {
       COUNTRY: "England/NI/Wales",
@@ -70,12 +71,12 @@ const englandNiWalesTaxRates: Record<SupportedEnglishTaxYear, EnglishTaxRates> =
       ADDITIONAL_RATE: 0.45,
       PERSONAL_ALLOWANCE_DROPOFF: 100_000,
       // Student loan repayments
-      STUDENT_LOAN_PLAN_1_WEEKLY_THRESHOLD: 423,
-      STUDENT_LOAN_PLAN_2_WEEKLY_THRESHOLD: 524,
-      STUDENT_LOAN_PLAN_4_WEEKLY_THRESHOLD: 532,
-      STUDENT_LOAN_PLAN_5_WEEKLY_THRESHOLD: 480,
+      STUDENT_LOAN_PLAN_1_WEEKLY_THRESHOLD: 22_015 / 52, // £22,015/year
+      STUDENT_LOAN_PLAN_2_WEEKLY_THRESHOLD: 27_295 / 52, // £27,295/year
+      STUDENT_LOAN_PLAN_4_WEEKLY_THRESHOLD: 27_660 / 52, // £27,660/year
+      STUDENT_LOAN_PLAN_5_WEEKLY_THRESHOLD: 25_000 / 52, // £25,000/year (Plan 5 repayments only start from April 2026)
       STUDENT_LOAN_REPAYMENT_AMOUNT: 0.09, // People on plans 1, 2, 4 + 5 repay 9% of the amount you earn over the threshold
-      STUDENT_LOAN_POSTGRAD_WEEKLY_THRESHOLD: 403,
+      STUDENT_LOAN_POSTGRAD_WEEKLY_THRESHOLD: 21_000 / 52, // £21,000/year
       STUDENT_LOAN_REPAYMENT_AMOUNT_POSTGRAD: 0.06, // People on postgrad plans repay 6% of the amount you earn over the threshold
       // Employee National Insurance
       NI_MIDDLE_RATE: 0.1, // Changed from 12% to 10% on 6th Jan 2024 (out of normal cycle)
@@ -106,6 +107,7 @@ const englandNiWalesTaxRates: Record<SupportedEnglishTaxYear, EnglishTaxRates> =
       PENSION_ANNUAL_ALLOWANCE: 60_000,
       PENSION_MINIMUM_ANNUAL_ALLOWANCE: 10_000,
       PENSION_ADJUSTED_LIMIT: 260_000,
+      PENSION_THRESHOLD_INCOME_LIMIT: 200_000, // Taper only applies if threshold income exceeds this
     },
     "2024/25": {
       COUNTRY: "England/NI/Wales",
@@ -118,12 +120,12 @@ const englandNiWalesTaxRates: Record<SupportedEnglishTaxYear, EnglishTaxRates> =
       ADDITIONAL_RATE: 0.45,
       PERSONAL_ALLOWANCE_DROPOFF: 100_000,
       // Student loan repayments
-      STUDENT_LOAN_PLAN_1_WEEKLY_THRESHOLD: 480.57,
-      STUDENT_LOAN_PLAN_2_WEEKLY_THRESHOLD: 524.9,
-      STUDENT_LOAN_PLAN_4_WEEKLY_THRESHOLD: 531.92,
-      STUDENT_LOAN_PLAN_5_WEEKLY_THRESHOLD: 480,
+      STUDENT_LOAN_PLAN_1_WEEKLY_THRESHOLD: 24_990 / 52, // £24,990/year
+      STUDENT_LOAN_PLAN_2_WEEKLY_THRESHOLD: 27_295 / 52, // £27,295/year
+      STUDENT_LOAN_PLAN_4_WEEKLY_THRESHOLD: 31_395 / 52, // £31,395/year
+      STUDENT_LOAN_PLAN_5_WEEKLY_THRESHOLD: 25_000 / 52, // £25,000/year (Plan 5 repayments only start from April 2026)
       STUDENT_LOAN_REPAYMENT_AMOUNT: 0.09, // People on plans 1, 2, 4 + 5 repay 9% of the amount you earn over the threshold
-      STUDENT_LOAN_POSTGRAD_WEEKLY_THRESHOLD: 403.84,
+      STUDENT_LOAN_POSTGRAD_WEEKLY_THRESHOLD: 21_000 / 52, // £21,000/year
       STUDENT_LOAN_REPAYMENT_AMOUNT_POSTGRAD: 0.06, // People on postgrad plans repay 6% of the amount you earn over the threshold
       // Employee National Insurance
       NI_MIDDLE_RATE: 0.08,
@@ -154,6 +156,7 @@ const englandNiWalesTaxRates: Record<SupportedEnglishTaxYear, EnglishTaxRates> =
       PENSION_ANNUAL_ALLOWANCE: 60_000,
       PENSION_MINIMUM_ANNUAL_ALLOWANCE: 10_000,
       PENSION_ADJUSTED_LIMIT: 260_000,
+      PENSION_THRESHOLD_INCOME_LIMIT: 200_000, // Taper only applies if threshold income exceeds this
     },
     "2025/26": {
       COUNTRY: "England/NI/Wales",
@@ -166,12 +169,12 @@ const englandNiWalesTaxRates: Record<SupportedEnglishTaxYear, EnglishTaxRates> =
       ADDITIONAL_RATE: 0.45,
       PERSONAL_ALLOWANCE_DROPOFF: 100_000,
       // Student loan repayments
-      STUDENT_LOAN_PLAN_1_WEEKLY_THRESHOLD: 501,
-      STUDENT_LOAN_PLAN_2_WEEKLY_THRESHOLD: 547,
-      STUDENT_LOAN_PLAN_4_WEEKLY_THRESHOLD: 629,
-      STUDENT_LOAN_PLAN_5_WEEKLY_THRESHOLD: 480,
+      STUDENT_LOAN_PLAN_1_WEEKLY_THRESHOLD: 26_065 / 52, // £26,065/year
+      STUDENT_LOAN_PLAN_2_WEEKLY_THRESHOLD: 28_470 / 52, // £28,470/year
+      STUDENT_LOAN_PLAN_4_WEEKLY_THRESHOLD: 32_745 / 52, // £32,745/year
+      STUDENT_LOAN_PLAN_5_WEEKLY_THRESHOLD: 25_000 / 52, // £25,000/year (Plan 5 repayments only start from April 2026)
       STUDENT_LOAN_REPAYMENT_AMOUNT: 0.09, // People on plans 1, 2, 4 + 5 repay 9% of the amount you earn over the threshold
-      STUDENT_LOAN_POSTGRAD_WEEKLY_THRESHOLD: 403,
+      STUDENT_LOAN_POSTGRAD_WEEKLY_THRESHOLD: 21_000 / 52, // £21,000/year
       STUDENT_LOAN_REPAYMENT_AMOUNT_POSTGRAD: 0.06, // People on postgrad plans repay 6% of the amount you earn over the threshold
       // Employee National Insurance
       NI_MIDDLE_RATE: 0.08,
@@ -203,6 +206,7 @@ const englandNiWalesTaxRates: Record<SupportedEnglishTaxYear, EnglishTaxRates> =
       PENSION_ANNUAL_ALLOWANCE: 60_000,
       PENSION_MINIMUM_ANNUAL_ALLOWANCE: 10_000,
       PENSION_ADJUSTED_LIMIT: 260_000,
+      PENSION_THRESHOLD_INCOME_LIMIT: 200_000, // Taper only applies if threshold income exceeds this
     },
     "2026/27": {
       COUNTRY: "England/NI/Wales",
@@ -254,6 +258,7 @@ const englandNiWalesTaxRates: Record<SupportedEnglishTaxYear, EnglishTaxRates> =
       PENSION_ANNUAL_ALLOWANCE: 60_000,
       PENSION_MINIMUM_ANNUAL_ALLOWANCE: 10_000,
       PENSION_ADJUSTED_LIMIT: 260_000,
+      PENSION_THRESHOLD_INCOME_LIMIT: 200_000, // Taper only applies if threshold income exceeds this
     },
   };
 
@@ -266,25 +271,25 @@ const scottishTaxRates: Record<SupportedScottishTaxYear, ScottishTaxRates> = {
     DEFAULT_PERSONAL_ALLOWANCE: 12_570,
 
     STARTER_RATE: 0.19,
-    BASIC_BRACKET: 14_877,
+    BASIC_BRACKET: 14_876, // starter band ends at £2,306 of taxable income
     BASIC_RATE: 0.2,
-    INTERMEDIATE_BRACKET: 26_562,
+    INTERMEDIATE_BRACKET: 26_561, // basic band ends at £13,991 of taxable income
     INTERMEDIATE_RATE: 0.21,
-    HIGHER_BRACKET: 43_663,
+    HIGHER_BRACKET: 43_662, // intermediate band ends at £31,092 of taxable income
     HIGHER_RATE: 0.42,
-    ADVANCED_BRACKET: 75_001,
+    ADVANCED_BRACKET: 75_000, // higher band ends at £62,430 of taxable income
     ADVANCED_RATE: 0.45,
     TOP_BRACKET: 125_140,
     TOP_RATE: 0.48,
 
     PERSONAL_ALLOWANCE_DROPOFF: 100_000,
     // Student loan repayments
-    STUDENT_LOAN_PLAN_1_WEEKLY_THRESHOLD: 480.57,
-    STUDENT_LOAN_PLAN_2_WEEKLY_THRESHOLD: 524.9,
-    STUDENT_LOAN_PLAN_4_WEEKLY_THRESHOLD: 531.92,
-    STUDENT_LOAN_PLAN_5_WEEKLY_THRESHOLD: 480,
+    STUDENT_LOAN_PLAN_1_WEEKLY_THRESHOLD: 24_990 / 52, // £24,990/year
+    STUDENT_LOAN_PLAN_2_WEEKLY_THRESHOLD: 27_295 / 52, // £27,295/year
+    STUDENT_LOAN_PLAN_4_WEEKLY_THRESHOLD: 31_395 / 52, // £31,395/year
+    STUDENT_LOAN_PLAN_5_WEEKLY_THRESHOLD: 25_000 / 52, // £25,000/year (Plan 5 repayments only start from April 2026)
     STUDENT_LOAN_REPAYMENT_AMOUNT: 0.09, // People on plans 1, 2, 4 + 5 repay 9% of the amount you earn over the threshold
-    STUDENT_LOAN_POSTGRAD_WEEKLY_THRESHOLD: 403.84,
+    STUDENT_LOAN_POSTGRAD_WEEKLY_THRESHOLD: 21_000 / 52, // £21,000/year
     STUDENT_LOAN_REPAYMENT_AMOUNT_POSTGRAD: 0.06, // People on postgrad plans repay 6% of the amount you earn over the threshold
     // Employee National Insurance
     NI_MIDDLE_RATE: 0.08,
@@ -315,6 +320,7 @@ const scottishTaxRates: Record<SupportedScottishTaxYear, ScottishTaxRates> = {
     PENSION_ANNUAL_ALLOWANCE: 60_000,
     PENSION_MINIMUM_ANNUAL_ALLOWANCE: 10_000,
     PENSION_ADJUSTED_LIMIT: 260_000,
+    PENSION_THRESHOLD_INCOME_LIMIT: 200_000, // Taper only applies if threshold income exceeds this
   },
   "2025/26": {
     COUNTRY: "Scotland",
@@ -323,25 +329,25 @@ const scottishTaxRates: Record<SupportedScottishTaxYear, ScottishTaxRates> = {
     DEFAULT_PERSONAL_ALLOWANCE: 12_570,
 
     STARTER_RATE: 0.19,
-    BASIC_BRACKET: 15_398,
+    BASIC_BRACKET: 15_397, // starter band ends at £2,827 of taxable income
     BASIC_RATE: 0.2,
-    INTERMEDIATE_BRACKET: 27_492,
+    INTERMEDIATE_BRACKET: 27_491, // basic band ends at £14,921 of taxable income
     INTERMEDIATE_RATE: 0.21,
-    HIGHER_BRACKET: 43_663,
+    HIGHER_BRACKET: 43_662, // intermediate band ends at £31,092 of taxable income
     HIGHER_RATE: 0.42,
-    ADVANCED_BRACKET: 75_001,
+    ADVANCED_BRACKET: 75_000, // higher band ends at £62,430 of taxable income
     ADVANCED_RATE: 0.45,
     TOP_BRACKET: 125_140,
     TOP_RATE: 0.48,
 
     PERSONAL_ALLOWANCE_DROPOFF: 100_000,
     // Student loan repayments
-    STUDENT_LOAN_PLAN_1_WEEKLY_THRESHOLD: 501,
-    STUDENT_LOAN_PLAN_2_WEEKLY_THRESHOLD: 547,
-    STUDENT_LOAN_PLAN_4_WEEKLY_THRESHOLD: 629,
-    STUDENT_LOAN_PLAN_5_WEEKLY_THRESHOLD: 480,
+    STUDENT_LOAN_PLAN_1_WEEKLY_THRESHOLD: 26_065 / 52, // £26,065/year
+    STUDENT_LOAN_PLAN_2_WEEKLY_THRESHOLD: 28_470 / 52, // £28,470/year
+    STUDENT_LOAN_PLAN_4_WEEKLY_THRESHOLD: 32_745 / 52, // £32,745/year
+    STUDENT_LOAN_PLAN_5_WEEKLY_THRESHOLD: 25_000 / 52, // £25,000/year (Plan 5 repayments only start from April 2026)
     STUDENT_LOAN_REPAYMENT_AMOUNT: 0.09, // People on plans 1, 2, 4 + 5 repay 9% of the amount you earn over the threshold
-    STUDENT_LOAN_POSTGRAD_WEEKLY_THRESHOLD: 403,
+    STUDENT_LOAN_POSTGRAD_WEEKLY_THRESHOLD: 21_000 / 52, // £21,000/year
     STUDENT_LOAN_REPAYMENT_AMOUNT_POSTGRAD: 0.06, // People on postgrad plans repay 6% of the amount you earn over the threshold
     // Employee National Insurance
     NI_MIDDLE_RATE: 0.08,
@@ -373,6 +379,7 @@ const scottishTaxRates: Record<SupportedScottishTaxYear, ScottishTaxRates> = {
     PENSION_ANNUAL_ALLOWANCE: 60_000,
     PENSION_MINIMUM_ANNUAL_ALLOWANCE: 10_000,
     PENSION_ADJUSTED_LIMIT: 260_000,
+    PENSION_THRESHOLD_INCOME_LIMIT: 200_000, // Taper only applies if threshold income exceeds this
   },
   "2026/27": {
     COUNTRY: "Scotland",
@@ -382,13 +389,13 @@ const scottishTaxRates: Record<SupportedScottishTaxYear, ScottishTaxRates> = {
     DEFAULT_PERSONAL_ALLOWANCE: 12_570,
 
     STARTER_RATE: 0.19,
-    BASIC_BRACKET: 16_538,
+    BASIC_BRACKET: 16_537, // starter band ends at £3,967 of taxable income
     BASIC_RATE: 0.2,
-    INTERMEDIATE_BRACKET: 29_527,
+    INTERMEDIATE_BRACKET: 29_526, // basic band ends at £16,956 of taxable income
     INTERMEDIATE_RATE: 0.21,
-    HIGHER_BRACKET: 43_663,
+    HIGHER_BRACKET: 43_662, // intermediate band ends at £31,092 of taxable income
     HIGHER_RATE: 0.42,
-    ADVANCED_BRACKET: 75_001,
+    ADVANCED_BRACKET: 75_000, // higher band ends at £62,430 of taxable income
     ADVANCED_RATE: 0.45,
     TOP_BRACKET: 125_140,
     TOP_RATE: 0.48,
@@ -433,6 +440,7 @@ const scottishTaxRates: Record<SupportedScottishTaxYear, ScottishTaxRates> = {
     PENSION_ANNUAL_ALLOWANCE: 60_000,
     PENSION_MINIMUM_ANNUAL_ALLOWANCE: 10_000,
     PENSION_ADJUSTED_LIMIT: 260_000,
+    PENSION_THRESHOLD_INCOME_LIMIT: 200_000, // Taper only applies if threshold income exceeds this
   },
 };
 

@@ -394,6 +394,226 @@ describe("calculateEmployerNationalInsurance — Category F (25/26)", () => {
   });
 });
 
+// ─── Class 1 — salary exactly at the upper earnings limit ────────────────────
+// Regression: a weekly salary of exactly £967 (£50,284/year) previously returned £0
+describe("Class 1 employee NI at exactly the upper earnings limit", () => {
+  const uelAnnual = 967 * 52; // £50,284
+
+  test.each([
+    { taxYear: "2022/23" as const, niCategory: "A" as const, rate: 0.1325 },
+    { taxYear: "2024/25" as const, niCategory: "A" as const, rate: 0.08 },
+    { taxYear: "2026/27" as const, niCategory: "A" as const, rate: 0.08 },
+    { taxYear: "2026/27" as const, niCategory: "B" as const, rate: 0.0185 },
+  ])(
+    "$taxYear category $niCategory charges the main rate up to the UEL",
+    ({ taxYear, niCategory, rate }) => {
+      expect(
+        calculateEmployeeNationalInsurance({
+          taxYear,
+          niCategory,
+          grossAnnualIncome: uelAnnual,
+        })
+      ).toBeCloseTo((uelAnnual - 242 * 52) * rate, 6);
+    }
+  );
+
+  test("category J (deferred) owes nothing at exactly the UEL", () => {
+    expect(
+      calculateEmployeeNationalInsurance({
+        taxYear: "2026/27",
+        niCategory: "J",
+        grossAnnualIncome: uelAnnual,
+      })
+    ).toBe(0);
+  });
+
+  test("result is continuous either side of the UEL", () => {
+    const at = (grossAnnualIncome: number) =>
+      calculateEmployeeNationalInsurance({
+        taxYear: "2026/27",
+        grossAnnualIncome,
+      });
+    expect(at(uelAnnual)).toBeGreaterThan(at(uelAnnual - 1));
+    expect(at(uelAnnual + 1)).toBeGreaterThan(at(uelAnnual));
+  });
+});
+
+// ─── Class 1 rateBasis (in-year rate changes) ────────────────────────────────
+// Rates from https://www.gov.uk/guidance/rates-and-thresholds-for-employers-2022-to-2023
+// and https://www.gov.uk/guidance/rates-and-thresholds-for-employers-2023-to-2024
+describe("Class 1 rateBasis", () => {
+  const employee = (
+    taxYear: "2022/23" | "2023/24" | "2025/26",
+    rateBasis?: Parameters<
+      typeof calculateEmployeeNationalInsurance
+    >[0]["rateBasis"],
+    grossAnnualIncome = 40_000,
+    niCategory: Parameters<
+      typeof calculateEmployeeNationalInsurance
+    >[0]["niCategory"] = "A"
+  ) =>
+    calculateEmployeeNationalInsurance({
+      taxYear,
+      grossAnnualIncome,
+      niCategory,
+      rateBasis,
+    });
+  const employer = (
+    taxYear: "2022/23" | "2023/24" | "2025/26",
+    rateBasis?: Parameters<
+      typeof calculateEmployerNationalInsurance
+    >[0]["rateBasis"],
+    grossAnnualIncome = 40_000,
+    niCategory: Parameters<
+      typeof calculateEmployerNationalInsurance
+    >[0]["niCategory"] = "A"
+  ) =>
+    calculateEmployerNationalInsurance({
+      taxYear,
+      grossAnnualIncome,
+      niCategory,
+      rateBasis,
+    });
+
+  describe("default (no rateBasis) is unchanged", () => {
+    test("2022/23 employee uses 13.25% above £242/week", () => {
+      expect(employee("2022/23")).toBeCloseTo((40_000 - 242 * 52) * 0.1325, 6);
+    });
+    test("2022/23 employer uses 13.8%", () => {
+      expect(employer("2022/23")).toBeCloseTo((40_000 - 175 * 52) * 0.138, 6);
+    });
+    test("2023/24 employee uses 10%", () => {
+      expect(employee("2023/24")).toBeCloseTo((40_000 - 242 * 52) * 0.1, 6);
+    });
+  });
+
+  describe("blended", () => {
+    test("2022/23 employee: 12.73% above £11,908/year", () => {
+      expect(employee("2022/23", "blended")).toBeCloseTo(
+        (40_000 - 11_908) * 0.1273,
+        6
+      );
+    });
+    test("2022/23 employee above UEL: 12.73% to UEL, 2.73% above", () => {
+      expect(employee("2022/23", "blended", 60_000)).toBeCloseTo(
+        (967 * 52 - 11_908) * 0.1273 + (60_000 - 967 * 52) * 0.0273,
+        6
+      );
+    });
+    test("2022/23 Cat B employee: 6.58%", () => {
+      expect(employee("2022/23", "blended", 40_000, "B")).toBeCloseTo(
+        (40_000 - 11_908) * 0.0658,
+        6
+      );
+    });
+    test("2022/23 employer: 14.53%", () => {
+      expect(employer("2022/23", "blended")).toBeCloseTo(
+        (40_000 - 175 * 52) * 0.1453,
+        6
+      );
+    });
+    test("2023/24 employee: 11.5%", () => {
+      expect(employee("2023/24", "blended")).toBeCloseTo(
+        (40_000 - 242 * 52) * 0.115,
+        6
+      );
+    });
+    test("2023/24 Cat B employee: 5.35%", () => {
+      expect(employee("2023/24", "blended", 40_000, "B")).toBeCloseTo(
+        (40_000 - 242 * 52) * 0.0535,
+        6
+      );
+    });
+    test("2023/24 blended equals 39 weeks at 12% plus 13 weeks at 10%", () => {
+      const before = employee("2023/24", { date: "2023-06-01" });
+      const after = employee("2023/24", { date: "2024-02-01" });
+      expect(employee("2023/24", "blended")).toBeCloseTo(
+        (before * 39 + after * 13) / 52,
+        6
+      );
+    });
+    test("2023/24 employer unchanged at 13.8%", () => {
+      expect(employer("2023/24", "blended")).toBeCloseTo(
+        employer("2023/24"),
+        6
+      );
+    });
+    test("category relief still applies (H: no employer NI below UEL)", () => {
+      expect(employer("2022/23", "blended", 40_000, "H")).toBe(0);
+    });
+    test("category exemption still applies (C: no employee NI)", () => {
+      expect(employee("2022/23", "blended", 40_000, "C")).toBe(0);
+    });
+  });
+
+  describe("date", () => {
+    test.each([
+      // [date, primary threshold £/week, Cat A rate, employer rate]
+      ["2022-04-06", 190, 0.1325, 0.1505],
+      ["2022-07-05", 190, 0.1325, 0.1505],
+      ["2022-07-06", 242, 0.1325, 0.1505],
+      ["2022-11-05", 242, 0.1325, 0.1505],
+      ["2022-11-06", 242, 0.12, 0.138],
+      ["2023-04-05", 242, 0.12, 0.138],
+    ])("2022/23 on %s", (date, pt, rate, employerRate) => {
+      expect(employee("2022/23", { date })).toBeCloseTo(
+        (40_000 - pt * 52) * rate,
+        6
+      );
+      expect(employer("2022/23", { date })).toBeCloseTo(
+        (40_000 - 175 * 52) * employerRate,
+        6
+      );
+    });
+
+    test.each([
+      ["2023-04-06", 0.12, 0.0585],
+      ["2024-01-05", 0.12, 0.0585],
+      ["2024-01-06", 0.1, 0.0385],
+      ["2024-04-05", 0.1, 0.0385],
+    ])("2023/24 on %s", (date, rateA, rateB) => {
+      expect(employee("2023/24", { date })).toBeCloseTo(
+        (40_000 - 242 * 52) * rateA,
+        6
+      );
+      expect(employee("2023/24", { date }, 40_000, "B")).toBeCloseTo(
+        (40_000 - 242 * 52) * rateB,
+        6
+      );
+    });
+
+    test("accepts a Date object", () => {
+      expect(employee("2023/24", { date: new Date(2023, 5, 1) })).toBeCloseTo(
+        employee("2023/24", { date: "2023-06-01" }),
+        6
+      );
+    });
+
+    test("throws for a date outside the tax year", () => {
+      expect(() => employee("2023/24", { date: "2024-04-06" })).toThrow(
+        "outside tax year 2023/24"
+      );
+      expect(() => employer("2022/23", { date: "2022-04-05" })).toThrow(
+        "outside tax year 2022/23"
+      );
+    });
+
+    test("throws for an invalid date string", () => {
+      expect(() => employee("2023/24", { date: "06/06/2023" })).toThrow(
+        "YYYY-MM-DD"
+      );
+    });
+  });
+
+  test("years without in-year changes give the default result", () => {
+    expect(employee("2025/26", "blended")).toBe(employee("2025/26"));
+    expect(employee("2025/26", { date: "2025-10-01" })).toBe(
+      employee("2025/26")
+    );
+    expect(employer("2025/26", "blended")).toBe(employer("2025/26"));
+  });
+});
+
 // ─── Class 2 ─────────────────────────────────────────────────────────────────
 describe("calculateClass2NationalInsurance", () => {
   test("2023/24 — profit above small profits threshold returns annual amount", () => {
@@ -415,13 +635,34 @@ describe("calculateClass2NationalInsurance", () => {
     ).toBe(0);
   });
 
-  test("2022/23 — profit above threshold: £3.15/week × 52 = £163.80", () => {
+  test("2022/23 — profit above lower profits limit (£11,908): £3.15/week × 52 = £163.80", () => {
     expect(
       calculateClass2NationalInsurance({
         taxYear: "2022/23",
-        grossAnnualProfit: 10_000,
+        grossAnnualProfit: 15_000,
       })
     ).toBeCloseTo(163.8, 1);
+  });
+
+  // Between the small profits threshold and lower profits limit, Class 2 is treated as paid
+  test.each([
+    { taxYear: "2022/23" as const, grossAnnualProfit: 10_000 },
+    { taxYear: "2022/23" as const, grossAnnualProfit: 11_908 },
+    { taxYear: "2023/24" as const, grossAnnualProfit: 10_000 },
+    { taxYear: "2023/24" as const, grossAnnualProfit: 12_570 },
+  ])(
+    "$taxYear — profit £$grossAnnualProfit (between SPT and LPL) is treated as paid: returns 0",
+    ({ taxYear, grossAnnualProfit }) => {
+      expect(
+        calculateClass2NationalInsurance({ taxYear, grossAnnualProfit })
+      ).toBe(0);
+    }
+  );
+
+  test("2023/24 — no profit given assumes liable", () => {
+    expect(
+      calculateClass2NationalInsurance({ taxYear: "2023/24" })
+    ).toBeCloseTo(179.4, 1);
   });
 
   test("2024/25 — always returns 0 (treated as paid automatically)", () => {
@@ -612,5 +853,160 @@ describe("calculateClass4NationalInsurance (22/23)", () => {
         grossAnnualProfit: 80_000,
       })
     ).toBeCloseTo(4544.3, 0);
+  });
+});
+
+// ─── Class 1 payFrequency ────────────────────────────────────────────────────
+// Thresholds from https://www.gov.uk/guidance/rates-and-thresholds-for-employers-2026-to-2027
+// (and the equivalent page for each earlier year)
+describe("Class 1 payFrequency", () => {
+  type EmployeeArgs = Parameters<typeof calculateEmployeeNationalInsurance>[0];
+  type EmployerArgs = Parameters<typeof calculateEmployerNationalInsurance>[0];
+  const employee = (args: Partial<EmployeeArgs>) =>
+    calculateEmployeeNationalInsurance({
+      taxYear: "2026/27",
+      grossAnnualIncome: 30_000,
+      ...args,
+    });
+  const employer = (args: Partial<EmployerArgs>) =>
+    calculateEmployerNationalInsurance({
+      taxYear: "2026/27",
+      grossAnnualIncome: 30_000,
+      ...args,
+    });
+
+  describe("employee", () => {
+    test.each([
+      // [frequency, salary, expected]
+      // Weekly: £242 / £967 per week
+      ["weekly", 30_000, (30_000 - 242 * 52) * 0.08],
+      // Monthly: £1,048 / £4,189 per month
+      ["monthly", 30_000, (30_000 - 1_048 * 12) * 0.08],
+      // Annual: £12,570 / £50,270 per year
+      ["annual", 30_000, (30_000 - 12_570) * 0.08],
+      ["weekly", 60_000, (967 - 242) * 52 * 0.08 + (60_000 - 967 * 52) * 0.02],
+      [
+        "monthly",
+        60_000,
+        (4_189 - 1_048) * 12 * 0.08 + (60_000 - 4_189 * 12) * 0.02,
+      ],
+      ["annual", 60_000, (50_270 - 12_570) * 0.08 + (60_000 - 50_270) * 0.02],
+    ] as const)("%s, £%d", (payFrequency, grossAnnualIncome, expected) => {
+      expect(employee({ payFrequency, grossAnnualIncome })).toBeCloseTo(
+        expected,
+        6
+      );
+    });
+
+    test("weekly is the default", () => {
+      expect(employee({})).toBe(employee({ payFrequency: "weekly" }));
+    });
+
+    test("annual: nothing due at exactly the primary threshold", () => {
+      expect(
+        employee({ payFrequency: "annual", grossAnnualIncome: 12_570 })
+      ).toBe(0);
+    });
+
+    test("annual: at exactly the upper earnings limit, only the main rate applies", () => {
+      expect(
+        employee({ payFrequency: "annual", grossAnnualIncome: 50_270 })
+      ).toBeCloseTo((50_270 - 12_570) * 0.08, 6);
+    });
+
+    test("monthly: category B uses the reduced rate", () => {
+      expect(
+        employee({ payFrequency: "monthly", niCategory: "B" })
+      ).toBeCloseTo((30_000 - 1_048 * 12) * 0.0185, 6);
+    });
+
+    test("same result for Scotland", () => {
+      expect(employee({ payFrequency: "monthly", country: "Scotland" })).toBe(
+        employee({ payFrequency: "monthly" })
+      );
+    });
+  });
+
+  describe("employer", () => {
+    test.each([
+      // Secondary threshold from April 2025: £96/week, £417/month, £5,000/year
+      ["weekly", "2026/27", (30_000 - 96 * 52) * 0.15],
+      ["monthly", "2026/27", (30_000 - 417 * 12) * 0.15],
+      ["annual", "2026/27", (30_000 - 5_000) * 0.15],
+      // Before April 2025: £175/week, £758/month, £9,100/year
+      ["weekly", "2024/25", (30_000 - 175 * 52) * 0.138],
+      ["monthly", "2024/25", (30_000 - 758 * 12) * 0.138],
+      ["annual", "2024/25", (30_000 - 9_100) * 0.138],
+    ] as const)("%s, %s", (payFrequency, taxYear, expected) => {
+      expect(employer({ payFrequency, taxYear })).toBeCloseTo(expected, 6);
+    });
+
+    test.each([
+      // Freeport: relief up to £481/week, £2,083/month, £25,000/year
+      ["F", "monthly", 30_000, (30_000 - 2_083 * 12) * 0.15],
+      ["F", "annual", 30_000, (30_000 - 25_000) * 0.15],
+      // Under 21: relief up to £4,189/month, £50,270/year
+      ["M", "monthly", 40_000, 0],
+      ["M", "annual", 60_000, (60_000 - 50_270) * 0.15],
+    ] as const)(
+      "category %s, %s, £%d",
+      (niCategory, payFrequency, grossAnnualIncome, expected) => {
+        expect(
+          employer({ niCategory, payFrequency, grossAnnualIncome })
+        ).toBeCloseTo(expected, 6);
+      }
+    );
+  });
+
+  describe("with rateBasis", () => {
+    test("2022/23, 1 May 2022, monthly uses the £823/month threshold", () => {
+      expect(
+        employee({
+          taxYear: "2022/23",
+          grossAnnualIncome: 40_000,
+          payFrequency: "monthly",
+          rateBasis: { date: "2022-05-01" },
+        })
+      ).toBeCloseTo((40_000 - 823 * 12) * 0.1325, 6);
+    });
+
+    test("2022/23, 1 May 2022, annual uses the £9,880/year threshold", () => {
+      expect(
+        employee({
+          taxYear: "2022/23",
+          grossAnnualIncome: 40_000,
+          payFrequency: "annual",
+          rateBasis: { date: "2022-05-01" },
+        })
+      ).toBeCloseTo((40_000 - 9_880) * 0.1325, 6);
+    });
+
+    test("2022/23 blended, annual uses £11,908 and 12.73%", () => {
+      expect(
+        employee({
+          taxYear: "2022/23",
+          grossAnnualIncome: 40_000,
+          payFrequency: "annual",
+          rateBasis: "blended",
+        })
+      ).toBeCloseTo((40_000 - 11_908) * 0.1273, 6);
+    });
+
+    test("2023/24 blended, monthly uses 11.5% above £1,048/month", () => {
+      expect(
+        employee({
+          taxYear: "2023/24",
+          grossAnnualIncome: 40_000,
+          payFrequency: "monthly",
+          rateBasis: "blended",
+        })
+      ).toBeCloseTo((40_000 - 1_048 * 12) * 0.115, 6);
+    });
+  });
+
+  test("throws for an unknown pay frequency", () => {
+    expect(() =>
+      employee({ payFrequency: "fortnightly" as unknown as "weekly" })
+    ).toThrow("payFrequency must be one of");
   });
 });

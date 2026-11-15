@@ -35,3 +35,39 @@ describe("calculatePersonalAllowance", () => {
     });
   });
 });
+
+// Income Tax Act 2007 s.35(3): a tapered allowance that isn't a whole number of pounds
+// is rounded up to the next £1.
+// https://www.legislation.gov.uk/ukpga/2007/3/section/35
+describe("calculatePersonalAllowance rounding", () => {
+  test.each([
+    { taxableAnnualIncome: 100_000, allowance: 12_570 },
+    { taxableAnnualIncome: 100_000.01, allowance: 12_570 },
+    { taxableAnnualIncome: 100_001, allowance: 12_570 },
+    { taxableAnnualIncome: 100_002, allowance: 12_569 },
+    { taxableAnnualIncome: 100_003, allowance: 12_569 },
+    { taxableAnnualIncome: 110_001, allowance: 7_570 },
+    { taxableAnnualIncome: 125_138, allowance: 1 },
+    { taxableAnnualIncome: 125_139, allowance: 1 },
+    { taxableAnnualIncome: 125_139.99, allowance: 1 },
+    { taxableAnnualIncome: 125_140, allowance: 0 },
+    { taxableAnnualIncome: 125_141, allowance: 0 },
+  ])(
+    "£$taxableAnnualIncome → £$allowance",
+    ({ taxableAnnualIncome, allowance }) => {
+      expect(
+        calculatePersonalAllowance({ taxYear: "2026/27", taxableAnnualIncome })
+      ).toBe(allowance);
+    }
+  );
+
+  test("float noise in a whole-pound income doesn't round the allowance up", () => {
+    // 102,414 − 0.00000000001 (e.g. from salary − pension arithmetic) → allowance £11,363
+    expect(
+      calculatePersonalAllowance({
+        taxYear: "2026/27",
+        taxableAnnualIncome: 102_413.99999999999,
+      })
+    ).toBe(11_363);
+  });
+});
