@@ -159,8 +159,29 @@ calculateEmployeeNationalInsurance({
   taxYear?: TaxYear,
   country?: Country,
   grossAnnualIncome: number, // gross PAYE employment income, before any non-salary-sacrifice pension deductions
-  niCategory?: NICategory    // defaults to "A"
+  niCategory?: NICategory,   // defaults to "A"
+  rateBasis?: NIRateBasis    // optional, see below
 }) => number;
+```
+
+#### Years with in-year rate changes (`rateBasis`)
+
+Class 1 rates changed part-way through 2022/23 (the primary threshold rose on 6 July 2022, and the Health and Social Care Levy uplift was reversed on 6 November 2022) and 2023/24 (employee rates were cut on 6 January 2024). By default, a single set of rates is used for each of those years. `rateBasis` lets you choose instead:
+
+- `"blended"`: HMRC's whole-year rates (as published for company directors). These give the correct annual total for pay spread evenly across the year, e.g. 11.5% for 2023/24 (39 weeks at 12% and 13 weeks at 10%).
+- `{ date: "YYYY-MM-DD" }` (or a `Date`): the rates in force on that date, applied to the whole year. The date must be within the tax year (6 April to 5 April), otherwise an error is thrown.
+
+For other tax years, both options give the same result as the default. `rateBasis` is accepted by both `calculateEmployeeNationalInsurance` and `calculateEmployerNationalInsurance`.
+
+```typescript
+calculateEmployeeNationalInsurance({ taxYear: "2023/24", grossAnnualIncome: 40_000 });
+// 2741.60 (default: 10% all year)
+
+calculateEmployeeNationalInsurance({ taxYear: "2023/24", grossAnnualIncome: 40_000, rateBasis: "blended" });
+// 3152.84 (11.5% whole-year rate)
+
+calculateEmployeeNationalInsurance({ taxYear: "2023/24", grossAnnualIncome: 40_000, rateBasis: { date: "2023-06-01" } });
+// 3289.92 (12%, the rate in force before 6 January 2024)
 ```
 
 Examples of common categories:
@@ -187,7 +208,8 @@ calculateEmployerNationalInsurance({
   taxYear?: TaxYear,
   country?: Country,
   grossAnnualIncome: number, // gross PAYE employment income, before any non-salary-sacrifice pension deductions
-  niCategory?: NICategory    // defaults to "A"
+  niCategory?: NICategory,   // defaults to "A"
+  rateBasis?: NIRateBasis    // optional: "blended" or { date }, see calculateEmployeeNationalInsurance
 }) => number;
 ```
 
@@ -195,12 +217,12 @@ calculateEmployerNationalInsurance({
 
 Returns the annual Class 2 NI liability for a self-employed individual.
 
-From 2024/25 onwards, Class 2 is treated as automatically paid for those with profits above the small profits threshold — so this returns `0` for 2024/25 and later. For 2022/23 and 2023/24, it returns the annual flat-rate amount for those above the threshold.
+From 2024/25 onwards, Class 2 is treated as automatically paid for those with profits above the small profits threshold — so this returns `0` for 2024/25 and later. For 2022/23 and 2023/24, it returns the annual flat-rate amount only for profits above the lower profits limit (£11,908 for 2022/23, £12,570 for 2023/24). Profits between the small profits threshold and the lower profits limit are treated as paid, so this returns `0`.
 
 ```typescript
 calculateClass2NationalInsurance({
   taxYear?: TaxYear,
-  grossAnnualProfit?: number // if omitted, assumes above the small profits threshold
+  grossAnnualProfit?: number // if omitted, assumes Class 2 is payable
 }) => number;
 ```
 
@@ -317,7 +339,7 @@ Notable rate fields available via `getHmrcRates`:
 ### `calculatePensionAnnualAllowance`
 
 Returns an object containing an annual allowance information for pension contributions.
-Note that pension tapering calculations are quite complex. You can also refer to the tests with various examples.
+Tapering only applies when threshold income is over £200,000 and adjusted income is over the adjusted income limit (£260,000 from 2023/24, £240,000 for 2022/23). Note that pension tapering calculations are quite complex. You can also refer to the tests with various examples.
 
 "Personally paid" pension contributions means you paid from your bank account direct to a pension i.e. not through work.
 

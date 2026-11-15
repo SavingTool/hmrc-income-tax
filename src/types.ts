@@ -38,6 +38,15 @@ export interface CumulativePayeOptions {
 
 export type StudentLoanPlan = 1 | 2 | 4 | 5 | "postgrad";
 
+// Controls which Class 1 NI rates are used in tax years where rates changed part-way through
+// (2022/23 and 2023/24). Omit it to keep the library's default rates for each year.
+// - "blended": HMRC's whole-year rates (as published for company directors), which give the
+//   correct annual total for evenly-spread pay across the in-year changes.
+// - { date }: the rates in force on that date (a "YYYY-MM-DD" string or a Date), applied to the
+//   whole year. The date must fall within the tax year (6 April to 5 April).
+// For years without in-year changes, both options give the same result as the default.
+export type NIRateBasis = "blended" | { date: string | Date };
+
 // Class 1 NI category letters.
 // See https://www.gov.uk/national-insurance-rates-letters/category-letters
 export type NICategory =
@@ -136,6 +145,7 @@ interface BasicTaxRates {
   PENSION_ANNUAL_ALLOWANCE: number;
   PENSION_MINIMUM_ANNUAL_ALLOWANCE: number;
   PENSION_ADJUSTED_LIMIT: number;
+  PENSION_THRESHOLD_INCOME_LIMIT: number;
 }
 
 export interface EnglishTaxRates extends BasicTaxRates {

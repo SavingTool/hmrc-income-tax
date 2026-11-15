@@ -53,6 +53,24 @@ describe("calculatePensionAnnualAllowance (24/25)", () => {
     });
   });
 
+  test("no taper when threshold income is £200k or less, even if adjusted income exceeds £260k", () => {
+    // Threshold income £200k (not over the limit); adjusted income £300k via employer contributions
+    const result = calculatePensionAnnualAllowance({
+      totalAnnualIncome: 200_000,
+      employeeDcPensionContributions: 0,
+      employerDcPensionContributions: 100_000,
+    });
+
+    expect(result).toEqual({
+      adjustedIncome: 300_000,
+      thresholdIncome: 200_000,
+      reduction: 0,
+      allowance: 60_000,
+      carryForward: 0,
+      availableAllowance: 60_000,
+    });
+  });
+
   test("AJ Bell Example 2", () => {
     const result = calculatePensionAnnualAllowance({
       totalAnnualIncome: 230_000,

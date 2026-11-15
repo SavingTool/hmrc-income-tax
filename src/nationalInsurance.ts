@@ -4,6 +4,7 @@ import type {
   TaxYear,
   Country,
   NICategory,
+  NIRateBasis,
   SupportedEnglishTaxYear,
 } from "./types";
 
@@ -40,8 +41,9 @@ type ExpandedNIRates = {
 
 const niRatesByYear: Record<SupportedEnglishTaxYear, ExpandedNIRates> = {
   // 2022/23: Health and Social Care Levy added 1.25 pp Apr–Nov 2022, then reversed.
-  // Cat B rate uses the post-November 2022 value (5.85%), consistent with Cat A using its
-  // post-July 2022 rate. Class 4 rates are HMRC's published blended annualised values.
+  // Cat B rate uses the post-November 2022 value (5.85%). Note: Cat A in hmrc.ts uses the
+  // pre-November rate (13.25%). Class 4 rates are HMRC's published blended annualised values.
+  // Class 2 is only payable above the lower profits limit (£11,908) — see SI 2022/232.
   "2022/23": {
     catBMiddleRate: 0.0585,
     freeportUpperSecondaryThreshold: 481, // £25,000/year
@@ -55,10 +57,10 @@ const niRatesByYear: Record<SupportedEnglishTaxYear, ExpandedNIRates> = {
     class4LowerProfitsLimit: 11_908,
     class4UpperProfitsLimit: 50_270,
   },
-  // 2023/24: Cat B and Class 4 main rates changed from 6 Jan 2024 (out of normal cycle).
-  // Cat B: 5.85% → 3.85%. Class 4 main: 9% → 8%.
-  // Library uses the pre-change rates here (5.85%/9%) since Class 4 is assessed annually
-  // and HMRC's own publications quote these as the 2023/24 rates.
+  // 2023/24: Class 1 Cat B employee rate changed 5.85% → 3.85% on 6 Jan 2024 (alongside
+  // Cat A 12% → 10%). The post-change rate is used, matching Cat A in hmrc.ts.
+  // Class 4 main rate was 9% for the whole of 2023/24 (it fell to 6% from 6 April 2024).
+  // Class 2 is only payable above the lower profits limit (£12,570) — see SI 2022/1329.
   "2023/24": {
     catBMiddleRate: 0.0385, // Changed from 5.85% to 3.85% on 6 Jan 2024
     freeportUpperSecondaryThreshold: 481, // £25,000/year
@@ -109,6 +111,168 @@ const niRatesByYear: Record<SupportedEnglishTaxYear, ExpandedNIRates> = {
     class4LowerProfitsLimit: 12_570,
     class4UpperProfitsLimit: 50_270,
   },
+};
+
+// ─── Class 1 in-year rate changes ────────────────────────────────────────────
+// Only used when a caller passes `rateBasis`. Without it, the per-year defaults in hmrc.ts
+// (and catBMiddleRate above) apply, so existing results are unchanged.
+// Sources:
+// https://www.gov.uk/guidance/rates-and-thresholds-for-employers-2022-to-2023
+// https://www.gov.uk/guidance/rates-and-thresholds-for-employers-2023-to-2024
+
+type Class1Rates = {
+  primaryThreshold: number; // weekly £
+  catAMiddleRate: number;
+  catAUpperRate: number;
+  catBMiddleRate: number;
+  employerRate: number;
+};
+
+type Class1RatePeriod = Partial<Class1Rates> & {
+  from: string; // inclusive, YYYY-MM-DD
+  to: string; // inclusive, YYYY-MM-DD
+};
+
+const class1InYearChanges: Partial<
+  Record<
+    SupportedEnglishTaxYear,
+    { blended: Partial<Class1Rates>; periods: Class1RatePeriod[] }
+  >
+> = {
+  "2022/23": {
+    // HMRC's whole-year directors' rates (annual earnings period, standard method)
+    blended: {
+      primaryThreshold: 11_908 / 52, // £11,908/year
+      catAMiddleRate: 0.1273,
+      catAUpperRate: 0.0273,
+      catBMiddleRate: 0.0658,
+      employerRate: 0.1453,
+    },
+    periods: [
+      {
+        // Health and Social Care Levy uplift (+1.25pp), lower primary threshold
+        from: "2022-04-06",
+        to: "2022-07-05",
+        primaryThreshold: 190,
+        catAMiddleRate: 0.1325,
+        catAUpperRate: 0.0325,
+        catBMiddleRate: 0.071,
+        employerRate: 0.1505,
+      },
+      {
+        // Primary threshold raised to £242/week from 6 July 2022
+        from: "2022-07-06",
+        to: "2022-11-05",
+        primaryThreshold: 242,
+        catAMiddleRate: 0.1325,
+        catAUpperRate: 0.0325,
+        catBMiddleRate: 0.071,
+        employerRate: 0.1505,
+      },
+      {
+        // Levy uplift reversed from 6 November 2022
+        from: "2022-11-06",
+        to: "2023-04-05",
+        primaryThreshold: 242,
+        catAMiddleRate: 0.12,
+        catAUpperRate: 0.02,
+        catBMiddleRate: 0.0585,
+        employerRate: 0.138,
+      },
+    ],
+  },
+  "2023/24": {
+    // HMRC's whole-year directors' rates (annual earnings period, standard method)
+    blended: {
+      catAMiddleRate: 0.115,
+      catAUpperRate: 0.02,
+      catBMiddleRate: 0.0535,
+    },
+    periods: [
+      {
+        from: "2023-04-06",
+        to: "2024-01-05",
+        catAMiddleRate: 0.12,
+        catAUpperRate: 0.02,
+        catBMiddleRate: 0.0585,
+      },
+      {
+        // Employee rates cut from 6 January 2024
+        from: "2024-01-06",
+        to: "2024-04-05",
+        catAMiddleRate: 0.1,
+        catAUpperRate: 0.02,
+        catBMiddleRate: 0.0385,
+      },
+    ],
+  },
+};
+
+const toIsoDate = (date: string | Date): string => {
+  if (date instanceof Date) {
+    if (isNaN(date.getTime())) {
+      throw new Error("rateBasis.date is not a valid date");
+    }
+    const pad = (n: number) => String(n).padStart(2, "0");
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
+      date.getDate()
+    )}`;
+  }
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || isNaN(Date.parse(date))) {
+    throw new Error(
+      `rateBasis.date must be a Date or a "YYYY-MM-DD" string (was: ${date})`
+    );
+  }
+  return date;
+};
+
+// Resolves the Class 1 rates to use for a tax year, honouring an optional `rateBasis`.
+const resolveClass1Rates = (
+  taxYear: TaxYear,
+  country: Country | undefined,
+  rateBasis: NIRateBasis | undefined
+) => {
+  const hmrcRates = getHmrcRates({ taxYear, country });
+  const niRates = getNIRatesForYear(taxYear);
+
+  const defaults: Class1Rates = {
+    primaryThreshold: hmrcRates.NI_MIDDLE_BRACKET,
+    catAMiddleRate: hmrcRates.NI_MIDDLE_RATE,
+    catAUpperRate: hmrcRates.NI_UPPER_RATE,
+    catBMiddleRate: niRates.catBMiddleRate,
+    employerRate: hmrcRates.EMPLOYER_NI_RATE,
+  };
+
+  const resolved = { ...defaults };
+  const changes = class1InYearChanges[taxYear as SupportedEnglishTaxYear];
+
+  if (rateBasis === "blended") {
+    Object.assign(resolved, changes?.blended);
+  } else if (rateBasis !== undefined) {
+    const date = toIsoDate(rateBasis.date);
+    const startYear = Number(taxYear.slice(0, 4));
+    const yearStart = `${startYear}-04-06`;
+    const yearEnd = `${startYear + 1}-04-05`;
+    if (date < yearStart || date > yearEnd) {
+      throw new Error(
+        `rateBasis.date ${date} is outside tax year ${taxYear} (${yearStart} to ${yearEnd})`
+      );
+    }
+    const period = changes?.periods.find(
+      (p) => date >= p.from && date <= p.to
+    );
+    if (period) {
+      const { from: _from, to: _to, ...rates } = period;
+      Object.assign(resolved, rates);
+    }
+  }
+
+  return {
+    ...resolved,
+    upperEarningsLimit: hmrcRates.NI_UPPER_BRACKET,
+    secondaryThreshold: hmrcRates.EMPLOYER_NI_SECONDARY_THRESHOLD,
+    niRates: { ...niRates, catBMiddleRate: resolved.catBMiddleRate },
+  };
 };
 
 // NI rates are UK-wide; Scottish tax years map to their English-year equivalent.
@@ -207,21 +371,27 @@ export const calculateEmployeeNationalInsurance = ({
   country,
   grossAnnualIncome,
   niCategory = "A",
+  rateBasis,
 }: {
   taxYear?: TaxYear;
   country?: Country;
   grossAnnualIncome: number;
   niCategory?: NICategory;
+  rateBasis?: NIRateBasis;
 }) => {
   const weeklySalary = grossAnnualIncome / 52;
-  const { NI_MIDDLE_RATE, NI_UPPER_RATE, NI_MIDDLE_BRACKET, NI_UPPER_BRACKET } =
-    getHmrcRates({ taxYear, country });
-  const niRates = getNIRatesForYear(taxYear ?? "2026/27");
+  const {
+    primaryThreshold: NI_MIDDLE_BRACKET,
+    upperEarningsLimit: NI_UPPER_BRACKET,
+    catAMiddleRate,
+    catAUpperRate,
+    niRates,
+  } = resolveClass1Rates(taxYear ?? "2026/27", country, rateBasis);
 
   const { middleRate, upperRate } = getEmployeeNIRates(
     niCategory,
-    NI_MIDDLE_RATE,
-    NI_UPPER_RATE,
+    catAMiddleRate,
+    catAUpperRate,
     niRates
   );
 
@@ -254,19 +424,21 @@ export const calculateEmployerNationalInsurance = ({
   country,
   grossAnnualIncome,
   niCategory = "A",
+  rateBasis,
 }: {
   taxYear?: TaxYear;
   country?: Country;
   grossAnnualIncome: number;
   niCategory?: NICategory;
+  rateBasis?: NIRateBasis;
 }) => {
   const weeklySalary = grossAnnualIncome / 52;
   const {
-    EMPLOYER_NI_RATE,
-    EMPLOYER_NI_SECONDARY_THRESHOLD,
-    NI_UPPER_BRACKET,
-  } = getHmrcRates({ taxYear, country });
-  const niRates = getNIRatesForYear(taxYear ?? "2026/27");
+    employerRate: EMPLOYER_NI_RATE,
+    secondaryThreshold: EMPLOYER_NI_SECONDARY_THRESHOLD,
+    upperEarningsLimit: NI_UPPER_BRACKET,
+    niRates,
+  } = resolveClass1Rates(taxYear ?? "2026/27", country, rateBasis);
 
   const effectiveThreshold = getEmployerEffectiveThreshold(
     niCategory,
@@ -292,7 +464,7 @@ export const calculateEmployerNationalInsurance = ({
 // Calculates Class 2 NI for self-employed individuals.
 // For 2024/25 onwards, Class 2 is treated as automatically paid (no actual payment due)
 // for those above the small profits threshold, so this returns 0.
-// For 2022/23 and 2023/24, returns the annual Class 2 amount if profit >= small profits threshold.
+// For 2022/23 and 2023/24, returns the annual Class 2 amount if profit > lower profits limit.
 // See https://www.gov.uk/self-employed-national-insurance-rates
 export const calculateClass2NationalInsurance = ({
   taxYear,
@@ -313,10 +485,15 @@ export const calculateClass2NationalInsurance = ({
     return 0;
   }
 
-  // For 2022/23 and 2023/24: payable if profit >= small profits threshold
-  const profit = grossAnnualProfit ?? niRates.class2SmallProfitsThreshold;
-  if (profit < niRates.class2SmallProfitsThreshold) {
-    return 0; // Below threshold: no Class 2 obligation (voluntary payment not modelled)
+  // For 2022/23 and 2023/24: Class 2 is only payable on profits above the lower profits
+  // limit (£11,908 for 2022/23, £12,570 for 2023/24). Profits from the small profits
+  // threshold up to the lower profits limit are treated as paid (no payment due).
+  // See SI 2022/232 and SI 2022/1329.
+  if (grossAnnualProfit === undefined) {
+    return niRates.class2WeeklyRate * 52; // No profit given: assume liable
+  }
+  if (grossAnnualProfit <= niRates.class4LowerProfitsLimit) {
+    return 0; // Below SPT: no obligation (voluntary payment not modelled). SPT–LPL: treated as paid.
   }
 
   return niRates.class2WeeklyRate * 52;

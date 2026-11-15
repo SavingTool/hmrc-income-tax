@@ -36,6 +36,7 @@ export const calculatePensionAnnualAllowance = ({
     PENSION_ANNUAL_ALLOWANCE, // 60k
     PENSION_MINIMUM_ANNUAL_ALLOWANCE, // 10k
     PENSION_ADJUSTED_LIMIT, // 260k
+    PENSION_THRESHOLD_INCOME_LIMIT, // 200k
   } = getHmrcRates({ taxYear });
 
   const pensionSavings =
@@ -55,7 +56,12 @@ export const calculatePensionAnnualAllowance = ({
     (retrospectivePensionPaymentsTaxRelief ?? 0) -
     (lumpSumDeathBenefits ?? 0);
 
-  const amountOver = adjustedIncome - PENSION_ADJUSTED_LIMIT;
+  // The taper only applies if threshold income is over the threshold income limit (£200k)
+  // AND adjusted income is over the adjusted income limit.
+  const amountOver =
+    thresholdIncome > PENSION_THRESHOLD_INCOME_LIMIT
+      ? adjustedIncome - PENSION_ADJUSTED_LIMIT
+      : 0;
 
   // Reduction is £1 per £2 over the limit
   // Also, reductions are rounded down to the nearest £1

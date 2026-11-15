@@ -1,224 +1,91 @@
 import { calculateStudentLoanRepayments } from "./studentLoan";
+import type { Country, StudentLoanPlan, TaxYear } from "./types";
+
+// Official annual thresholds, from HMRC "Rates and thresholds for employers" for each year:
+// https://www.gov.uk/guidance/rates-and-thresholds-for-employers-2022-to-2023 (and later years)
+// Plan 5 repayments only start from April 2026, but the £25,000 threshold is used throughout.
+const officialAnnualThresholds: Record<
+  TaxYear,
+  Record<StudentLoanPlan, number>
+> = {
+  "2022/23": { 1: 20_195, 2: 27_295, 4: 25_375, 5: 25_000, postgrad: 21_000 },
+  "2023/24": { 1: 22_015, 2: 27_295, 4: 27_660, 5: 25_000, postgrad: 21_000 },
+  "2024/25": { 1: 24_990, 2: 27_295, 4: 31_395, 5: 25_000, postgrad: 21_000 },
+  "2025/26": { 1: 26_065, 2: 28_470, 4: 32_745, 5: 25_000, postgrad: 21_000 },
+  "2026/27": { 1: 26_900, 2: 29_385, 4: 33_795, 5: 25_000, postgrad: 21_000 },
+};
+
+const scottishTaxYears: TaxYear[] = ["2024/25", "2025/26", "2026/27"];
+const plans: StudentLoanPlan[] = [1, 2, 4, 5, "postgrad"];
+const incomes = [15_000, 22_500, 25_000, 30_000, 40_000, 60_000, 125_000, 1_000_000];
+
+const expectedRepayment = (
+  grossAnnualIncome: number,
+  threshold: number,
+  plan: StudentLoanPlan
+) => {
+  const rate = plan === "postgrad" ? 0.06 : 0.09;
+  return Math.max(0, (grossAnnualIncome - threshold) * rate);
+};
 
 describe("calculateStudentLoanRepayments", () => {
-  const expectationsPlan1 = [
-    { grossAnnualIncome: 15_000, repayments: 0 },
-    { grossAnnualIncome: 17_500, repayments: 0 },
-    { grossAnnualIncome: 20_000, repayments: 0 },
-    { grossAnnualIncome: 22_500, repayments: 209.1599999999999 },
-    { grossAnnualIncome: 25_000, repayments: 434.16 },
-    { grossAnnualIncome: 50_000, repayments: 2684.16 },
-    { grossAnnualIncome: 55_000, repayments: 3134.1599999999994 },
-    { grossAnnualIncome: 60_000, repayments: 3584.1599999999994 },
-    { grossAnnualIncome: 75_000, repayments: 4934.16 },
-    { grossAnnualIncome: 90_000, repayments: 6284.16 },
-    { grossAnnualIncome: 110_000, repayments: 8084.159999999999 },
-    { grossAnnualIncome: 120_000, repayments: 8984.16 },
-    { grossAnnualIncome: 124_500, repayments: 9389.16 },
-    { grossAnnualIncome: 125_000, repayments: 9434.159999999998 },
-    { grossAnnualIncome: 130_000, repayments: 9884.16 },
-    { grossAnnualIncome: 145_000, repayments: 11234.16 },
-    { grossAnnualIncome: 160_000, repayments: 12584.160000000002 },
-    { grossAnnualIncome: 175_000, repayments: 13934.159999999998 },
-    { grossAnnualIncome: 200_000, repayments: 16184.160000000002 },
-    { grossAnnualIncome: 250_000, repayments: 20684.16 },
-    { grossAnnualIncome: 500_000, repayments: 43184.159999999996 },
-    { grossAnnualIncome: 1_000_000, repayments: 88184.15999999999 },
-  ];
-
-  describe("Plan 1 loans", () => {
-    expectationsPlan1.forEach((expectation) => {
-      const { grossAnnualIncome, repayments } = expectation;
-      test(grossAnnualIncome.toString(), () => {
-        expect(
-          calculateStudentLoanRepayments({
-            taxYear: "2022/23",
-            grossAnnualIncome,
-            studentLoanPlanNo: 1,
-          })
-        ).toEqual(repayments);
-      });
-    });
-  });
-
-  const expectationsPlan2 = [
-    { grossAnnualIncome: 15_000, repayments: 0 },
-    { grossAnnualIncome: 17_500, repayments: 0 },
-    { grossAnnualIncome: 20_000, repayments: 0 },
-    { grossAnnualIncome: 22_500, repayments: 0 },
-    { grossAnnualIncome: 25_000, repayments: 0 },
-    { grossAnnualIncome: 50_000, repayments: 2047.6799999999998 },
-    { grossAnnualIncome: 55_000, repayments: 2497.6799999999994 },
-    { grossAnnualIncome: 60_000, repayments: 2947.68 },
-    { grossAnnualIncome: 75_000, repayments: 4297.68 },
-    { grossAnnualIncome: 90_000, repayments: 5647.679999999999 },
-    { grossAnnualIncome: 110_000, repayments: 7447.6799999999985 },
-    { grossAnnualIncome: 120_000, repayments: 8347.68 },
-    { grossAnnualIncome: 124_500, repayments: 8752.679999999998 },
-    { grossAnnualIncome: 125_000, repayments: 8797.68 },
-    { grossAnnualIncome: 130_000, repayments: 9247.68 },
-    { grossAnnualIncome: 145_000, repayments: 10597.68 },
-    { grossAnnualIncome: 160_000, repayments: 11947.68 },
-    { grossAnnualIncome: 175_000, repayments: 13297.679999999998 },
-    { grossAnnualIncome: 200_000, repayments: 15547.68 },
-    { grossAnnualIncome: 250_000, repayments: 20047.679999999997 },
-    { grossAnnualIncome: 500_000, repayments: 42547.68 },
-    { grossAnnualIncome: 1_000_000, repayments: 87547.68 },
-  ];
-
-  describe("Plan 2 loans", () => {
-    expectationsPlan2.forEach((expectation) => {
-      const { grossAnnualIncome, repayments } = expectation;
-      test(grossAnnualIncome.toString(), () => {
-        expect(
-          calculateStudentLoanRepayments({
-            taxYear: "2022/23",
-            grossAnnualIncome,
-            studentLoanPlanNo: 2,
-          })
-        ).toEqual(repayments);
-      });
-    });
-  });
-
-  const expectationsPlan4 = [
-    { grossAnnualIncome: 15_000, repayments: 0 },
-    { grossAnnualIncome: 17_500, repayments: 0 },
-    { grossAnnualIncome: 20_000, repayments: 0 },
-    { grossAnnualIncome: 22_500, repayments: 0 },
-    { grossAnnualIncome: 25_000, repayments: 0 },
-    { grossAnnualIncome: 50_000, repayments: 2216.2536 },
-    { grossAnnualIncome: 55_000, repayments: 2666.2535999999996 },
-    { grossAnnualIncome: 60_000, repayments: 3116.2535999999996 },
-    { grossAnnualIncome: 75_000, repayments: 4466.2536 },
-    { grossAnnualIncome: 90_000, repayments: 5816.2536 },
-    { grossAnnualIncome: 110_000, repayments: 7616.253599999999 },
-    { grossAnnualIncome: 120_000, repayments: 8516.253599999998 },
-    { grossAnnualIncome: 124_500, repayments: 8921.2536 },
-    { grossAnnualIncome: 125_000, repayments: 8966.253599999998 },
-    { grossAnnualIncome: 130_000, repayments: 9416.2536 },
-    { grossAnnualIncome: 145_000, repayments: 10766.2536 },
-    { grossAnnualIncome: 160_000, repayments: 12116.2536 },
-    { grossAnnualIncome: 175_000, repayments: 13466.253599999998 },
-    { grossAnnualIncome: 200_000, repayments: 15716.253599999998 },
-    { grossAnnualIncome: 250_000, repayments: 20216.253599999996 },
-    { grossAnnualIncome: 500_000, repayments: 42716.253600000004 },
-    { grossAnnualIncome: 1_000_000, repayments: 87716.2536 },
-  ];
-
-  describe("Plan 4 loans", () => {
-    expectationsPlan4.forEach((expectation) => {
-      const { grossAnnualIncome, repayments } = expectation;
-      test(grossAnnualIncome.toString(), () => {
-        expect(
-          calculateStudentLoanRepayments({
-            taxYear: "2022/23",
-            grossAnnualIncome,
-            studentLoanPlanNo: 4,
-          })
-        ).toEqual(repayments);
-      });
-    });
-  });
-
-  const expectationsPlan5 = [
-    { grossAnnualIncome: 15_000, repayments: 0 },
-    { grossAnnualIncome: 17_500, repayments: 0 },
-    { grossAnnualIncome: 20_000, repayments: 0 },
-    { grossAnnualIncome: 22_500, repayments: 0 },
-    { grossAnnualIncome: 25_000, repayments: 3.6000000000000205 },
-    { grossAnnualIncome: 50_000, repayments: 2253.6 },
-    { grossAnnualIncome: 55_000, repayments: 2703.5999999999995 },
-    { grossAnnualIncome: 60_000, repayments: 3153.6 },
-    { grossAnnualIncome: 75_000, repayments: 4503.599999999999 },
-    { grossAnnualIncome: 90_000, repayments: 5853.599999999999 },
-    { grossAnnualIncome: 110_000, repayments: 7653.599999999999 },
-    { grossAnnualIncome: 120_000, repayments: 8553.6 },
-    { grossAnnualIncome: 124_500, repayments: 8958.599999999999 },
-    { grossAnnualIncome: 125_000, repayments: 9003.599999999999 },
-    { grossAnnualIncome: 130_000, repayments: 9453.599999999999 },
-    { grossAnnualIncome: 145_000, repayments: 10803.6 },
-    { grossAnnualIncome: 160_000, repayments: 12153.6 },
-    { grossAnnualIncome: 175_000, repayments: 13503.599999999999 },
-    { grossAnnualIncome: 200_000, repayments: 15753.599999999999 },
-    { grossAnnualIncome: 250_000, repayments: 20253.6 },
-    { grossAnnualIncome: 500_000, repayments: 42753.6 },
-    { grossAnnualIncome: 1_000_000, repayments: 87753.59999999999 },
-  ];
-
-  describe("Plan 5 loans", () => {
-    expectationsPlan5.forEach((expectation) => {
-      const { grossAnnualIncome, repayments } = expectation;
-      test(grossAnnualIncome.toString(), () => {
-        expect(
-          calculateStudentLoanRepayments({
-            taxYear: "2022/23",
-            grossAnnualIncome,
-            studentLoanPlanNo: 5,
-          })
-        ).toEqual(repayments);
-      });
-    });
-  });
-
-  const expectationsPostgrad = [
-    { grossAnnualIncome: 15_000, repayments: 0 },
-    { grossAnnualIncome: 17_500, repayments: 0 },
-    { grossAnnualIncome: 20_000, repayments: 0 },
-    { grossAnnualIncome: 22_500, repayments: 90.01920000000004 },
-    { grossAnnualIncome: 25_000, repayments: 240.0192000000001 },
-    { grossAnnualIncome: 50_000, repayments: 1740.0192 },
-    { grossAnnualIncome: 55_000, repayments: 2040.0192000000002 },
-    { grossAnnualIncome: 60_000, repayments: 2340.0192 },
-    { grossAnnualIncome: 75_000, repayments: 3240.0192 },
-    { grossAnnualIncome: 90_000, repayments: 4140.019200000001 },
-    { grossAnnualIncome: 110_000, repayments: 5340.0192 },
-    { grossAnnualIncome: 120_000, repayments: 5940.0192 },
-    { grossAnnualIncome: 124_500, repayments: 6210.0192 },
-    { grossAnnualIncome: 125_000, repayments: 6240.0192 },
-    { grossAnnualIncome: 130_000, repayments: 6540.019199999999 },
-    { grossAnnualIncome: 145_000, repayments: 7440.019199999999 },
-    { grossAnnualIncome: 160_000, repayments: 8340.019199999999 },
-    { grossAnnualIncome: 175_000, repayments: 9240.019199999999 },
-    { grossAnnualIncome: 200_000, repayments: 10740.019199999999 },
-    { grossAnnualIncome: 250_000, repayments: 13740.019199999999 },
-    { grossAnnualIncome: 500_000, repayments: 28740.0192 },
-    { grossAnnualIncome: 1_000_000, repayments: 58740.01919999999 },
-  ];
-
-  describe("Postgrad loans", () => {
-    expectationsPostgrad.forEach((expectation) => {
-      const { grossAnnualIncome, repayments } = expectation;
-      test(grossAnnualIncome.toString(), () => {
-        expect(
-          calculateStudentLoanRepayments({
-            taxYear: "2022/23",
-            grossAnnualIncome,
-            studentLoanPlanNo: "postgrad",
-          })
-        ).toEqual(repayments);
-      });
-    });
-  });
-
-  describe("2026/27 thresholds", () => {
-    test.each([
-      { grossAnnualIncome: 25_000, studentLoanPlanNo: 5 as const },
-      {
-        grossAnnualIncome: 21_000,
-        studentLoanPlanNo: "postgrad" as const,
-      },
-    ])(
-      "does not charge $studentLoanPlanNo repayments at the annual threshold",
-      ({ grossAnnualIncome, studentLoanPlanNo }) => {
-        expect(
-          calculateStudentLoanRepayments({
-            taxYear: "2026/27",
-            grossAnnualIncome,
-            studentLoanPlanNo,
-          })
-        ).toEqual(0);
-      }
+  const cases: Array<{
+    taxYear: TaxYear;
+    country: Country;
+    plan: StudentLoanPlan;
+    threshold: number;
+  }> = [];
+  (Object.keys(officialAnnualThresholds) as TaxYear[]).forEach((taxYear) => {
+    const countries: Country[] = scottishTaxYears.includes(taxYear)
+      ? ["England/NI/Wales", "Scotland"]
+      : ["England/NI/Wales"];
+    countries.forEach((country) =>
+      plans.forEach((plan) =>
+        cases.push({
+          taxYear,
+          country,
+          plan,
+          threshold: officialAnnualThresholds[taxYear][plan],
+        })
+      )
     );
+  });
+
+  describe.each(cases)(
+    "$taxYear $country plan $plan (threshold £$threshold)",
+    ({ taxYear, country, plan, threshold }) => {
+      test.each(incomes)("income £%d", (grossAnnualIncome) => {
+        expect(
+          calculateStudentLoanRepayments({
+            taxYear,
+            country,
+            grossAnnualIncome,
+            studentLoanPlanNo: plan,
+          })
+        ).toBeCloseTo(expectedRepayment(grossAnnualIncome, threshold, plan), 6);
+      });
+
+      test("nothing is repaid at exactly the threshold", () => {
+        expect(
+          calculateStudentLoanRepayments({
+            taxYear,
+            country,
+            grossAnnualIncome: threshold,
+            studentLoanPlanNo: plan,
+          })
+        ).toBeCloseTo(0, 6);
+      });
+    }
+  );
+
+  // Regression: 2024/25 Plan 4 previously used the 2023/24 threshold (£27,660) — see issue #60
+  test("2024/25 Plan 4 at £40,000 repays (40,000 − 31,395) × 9%", () => {
+    expect(
+      calculateStudentLoanRepayments({
+        taxYear: "2024/25",
+        grossAnnualIncome: 40_000,
+        studentLoanPlanNo: 4,
+      })
+    ).toBeCloseTo(774.45, 6);
   });
 });
