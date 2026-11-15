@@ -1,4 +1,5 @@
 import { getHmrcRates, isScottishTaxRates } from "./hmrc";
+import { taperPersonalAllowance } from "./allowanceTaper";
 
 import type {
   EnglishIncomeTax,
@@ -102,26 +103,17 @@ function calculateEnglishCumulativePayeTaxes({
     adjustedPersonalAllowance = personalAllowance;
     proRatedPersonalAllowance = (adjustedPersonalAllowance * monthNumber) / 12;
   } else {
-    // Calculate the correct personal allowance based on cumulative income (with tapering)
-    // £1 of personal allowance is reduced for every £2 of income over £100,000
-    let personalAllowanceDeduction =
-      cumulativeGrossIncome >= PERSONAL_ALLOWANCE_DROPOFF
-        ? (cumulativeGrossIncome - PERSONAL_ALLOWANCE_DROPOFF) / 2
-        : 0;
-
-    // Don't let the deduction go below zero
-    if (personalAllowanceDeduction < 0) {
-      personalAllowanceDeduction = 0;
-    }
-
-    adjustedPersonalAllowance = Math.max(
-      0,
-      DEFAULT_PERSONAL_ALLOWANCE - personalAllowanceDeduction
-    );
+    // Calculate the correct personal allowance based on cumulative income (with tapering,
+    // rounded up to a whole pound as in calculatePersonalAllowance)
+    adjustedPersonalAllowance = taperPersonalAllowance({
+      defaultPersonalAllowance: DEFAULT_PERSONAL_ALLOWANCE,
+      taperThreshold: PERSONAL_ALLOWANCE_DROPOFF,
+      income: cumulativeGrossIncome,
+    });
 
     // For cumulative PAYE, when PA is reduced due to high income,
     // use the full reduced annual PA in month 1, not pro-rated
-    if (personalAllowanceDeduction > 0) {
+    if (cumulativeGrossIncome > PERSONAL_ALLOWANCE_DROPOFF) {
       // High earner - use full reduced personal allowance
       proRatedPersonalAllowance = adjustedPersonalAllowance;
     } else {
@@ -226,26 +218,17 @@ function calculateScottishCumulativePayeTaxes({
     adjustedPersonalAllowance = personalAllowance;
     proRatedPersonalAllowance = (adjustedPersonalAllowance * monthNumber) / 12;
   } else {
-    // Calculate the correct personal allowance based on cumulative income (with tapering)
-    // £1 of personal allowance is reduced for every £2 of income over £100,000
-    let personalAllowanceDeduction =
-      cumulativeGrossIncome >= PERSONAL_ALLOWANCE_DROPOFF
-        ? (cumulativeGrossIncome - PERSONAL_ALLOWANCE_DROPOFF) / 2
-        : 0;
-
-    // Don't let the deduction go below zero
-    if (personalAllowanceDeduction < 0) {
-      personalAllowanceDeduction = 0;
-    }
-
-    adjustedPersonalAllowance = Math.max(
-      0,
-      DEFAULT_PERSONAL_ALLOWANCE - personalAllowanceDeduction
-    );
+    // Calculate the correct personal allowance based on cumulative income (with tapering,
+    // rounded up to a whole pound as in calculatePersonalAllowance)
+    adjustedPersonalAllowance = taperPersonalAllowance({
+      defaultPersonalAllowance: DEFAULT_PERSONAL_ALLOWANCE,
+      taperThreshold: PERSONAL_ALLOWANCE_DROPOFF,
+      income: cumulativeGrossIncome,
+    });
 
     // For cumulative PAYE, when PA is reduced due to high income,
     // use the full reduced annual PA in month 1, not pro-rated
-    if (personalAllowanceDeduction > 0) {
+    if (cumulativeGrossIncome > PERSONAL_ALLOWANCE_DROPOFF) {
       // High earner - use full reduced personal allowance
       proRatedPersonalAllowance = adjustedPersonalAllowance;
     } else {

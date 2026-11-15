@@ -161,10 +161,42 @@ calculateEmployeeNationalInsurance({
   taxYear?: TaxYear,
   country?: Country,
   grossAnnualIncome: number, // gross PAYE employment income, before any non-salary-sacrifice pension deductions
-  niCategory?: NICategory,   // defaults to "A"
-  rateBasis?: NIRateBasis    // optional, see below
+  niCategory?: NICategory,     // defaults to "A"
+  payFrequency?: PayFrequency, // "weekly" (default), "monthly" or "annual", see below
+  rateBasis?: NIRateBasis      // optional, see below
 }) => number;
 ```
+
+#### How often the employee is paid (`payFrequency`)
+
+NI is charged separately on each payslip, using thresholds for that pay period. HMRC publishes weekly, monthly and annual thresholds, but they are rounded, so they don't add up to exactly the same yearly figure:
+
+| Pay frequency | Primary threshold (2026/27) | Same thing per year |
+| ------------- | --------------------------- | ------------------- |
+| Weekly        | £242 a week                 | £12,584             |
+| Monthly       | £1,048 a month              | £12,576             |
+| Annual        | £12,570 a year              | £12,570             |
+
+So the same salary gives a slightly different yearly NI total depending on how often it's paid. The difference is small (at most about £1 a year), but if you want the exact figure, tell the library how the person is paid:
+
+| The person is...                                          | Use                         |
+| --------------------------------------------------------- | --------------------------- |
+| Paid weekly (or you're not sure)                          | `"weekly"` (the default)    |
+| Paid monthly (most UK employees)                          | `"monthly"`                 |
+| A company director, or you want HMRC's annual thresholds | `"annual"`                  |
+
+```typescript
+calculateEmployeeNationalInsurance({ grossAnnualIncome: 30_000 });
+// 1393.28 (weekly, the default)
+
+calculateEmployeeNationalInsurance({ grossAnnualIncome: 30_000, payFrequency: "monthly" });
+// 1393.92
+
+calculateEmployeeNationalInsurance({ grossAnnualIncome: 30_000, payFrequency: "annual" });
+// 1394.40
+```
+
+This assumes the person is paid the same amount every pay period. `payFrequency` also works with `calculateEmployerNationalInsurance` and can be combined with `rateBasis`.
 
 #### Years with in-year rate changes (`rateBasis`)
 
@@ -205,13 +237,16 @@ Pass gross PAYE employment income. Unlike income tax, NI is not reduced by non-s
 
 `niCategory` defaults to `"A"`. Several categories reduce the employer's liability: categories `H`, `M`, `V`, and `Z` attract 0% employer NI up to the upper earnings limit (£50,270/year), which is the relief for hiring apprentices under 25, employees under 21, and armed forces veterans. Freeport categories (`F`, `I`, `L`, `S`) and investment zone categories (`N`, `E`, `D`, `K`) attract 0% employer NI up to £25,000/year.
 
+Like employee NI, employer NI is worked out per pay period, so `payFrequency` makes a small difference here too. For example, from April 2025 the secondary threshold is £96 a week (£4,992 a year), £417 a month (£5,004 a year) or £5,000 a year.
+
 ```typescript
 calculateEmployerNationalInsurance({
   taxYear?: TaxYear,
   country?: Country,
   grossAnnualIncome: number, // gross PAYE employment income, before any non-salary-sacrifice pension deductions
-  niCategory?: NICategory,   // defaults to "A"
-  rateBasis?: NIRateBasis    // optional: "blended" or { date }, see calculateEmployeeNationalInsurance
+  niCategory?: NICategory,     // defaults to "A"
+  payFrequency?: PayFrequency, // "weekly" (default), "monthly" or "annual", see calculateEmployeeNationalInsurance
+  rateBasis?: NIRateBasis      // optional: "blended" or { date }, see calculateEmployeeNationalInsurance
 }) => number;
 ```
 

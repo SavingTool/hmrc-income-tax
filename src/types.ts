@@ -47,6 +47,13 @@ export type StudentLoanPlan = 1 | 2 | 4 | 5 | "postgrad";
 // For years without in-year changes, both options give the same result as the default.
 export type NIRateBasis = "blended" | { date: string | Date };
 
+// How often the employee is paid, for Class 1 NI. NI is worked out separately for each pay
+// period, and HMRC's weekly, monthly and annual thresholds aren't exact multiples of each other
+// (e.g. the primary threshold is £242/week, £1,048/month, £12,570/year), so the yearly total
+// depends slightly on pay frequency. Defaults to "weekly". Use "annual" for company directors
+// (annual earnings period). Assumes the same pay every period.
+export type PayFrequency = "weekly" | "monthly" | "annual";
+
 // Class 1 NI category letters.
 // See https://www.gov.uk/national-insurance-rates-letters/category-letters
 export type NICategory =

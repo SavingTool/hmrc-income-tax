@@ -855,3 +855,158 @@ describe("calculateClass4NationalInsurance (22/23)", () => {
     ).toBeCloseTo(4544.3, 0);
   });
 });
+
+// ─── Class 1 payFrequency ────────────────────────────────────────────────────
+// Thresholds from https://www.gov.uk/guidance/rates-and-thresholds-for-employers-2026-to-2027
+// (and the equivalent page for each earlier year)
+describe("Class 1 payFrequency", () => {
+  type EmployeeArgs = Parameters<typeof calculateEmployeeNationalInsurance>[0];
+  type EmployerArgs = Parameters<typeof calculateEmployerNationalInsurance>[0];
+  const employee = (args: Partial<EmployeeArgs>) =>
+    calculateEmployeeNationalInsurance({
+      taxYear: "2026/27",
+      grossAnnualIncome: 30_000,
+      ...args,
+    });
+  const employer = (args: Partial<EmployerArgs>) =>
+    calculateEmployerNationalInsurance({
+      taxYear: "2026/27",
+      grossAnnualIncome: 30_000,
+      ...args,
+    });
+
+  describe("employee", () => {
+    test.each([
+      // [frequency, salary, expected]
+      // Weekly: £242 / £967 per week
+      ["weekly", 30_000, (30_000 - 242 * 52) * 0.08],
+      // Monthly: £1,048 / £4,189 per month
+      ["monthly", 30_000, (30_000 - 1_048 * 12) * 0.08],
+      // Annual: £12,570 / £50,270 per year
+      ["annual", 30_000, (30_000 - 12_570) * 0.08],
+      ["weekly", 60_000, (967 - 242) * 52 * 0.08 + (60_000 - 967 * 52) * 0.02],
+      [
+        "monthly",
+        60_000,
+        (4_189 - 1_048) * 12 * 0.08 + (60_000 - 4_189 * 12) * 0.02,
+      ],
+      ["annual", 60_000, (50_270 - 12_570) * 0.08 + (60_000 - 50_270) * 0.02],
+    ] as const)("%s, £%d", (payFrequency, grossAnnualIncome, expected) => {
+      expect(employee({ payFrequency, grossAnnualIncome })).toBeCloseTo(
+        expected,
+        6
+      );
+    });
+
+    test("weekly is the default", () => {
+      expect(employee({})).toBe(employee({ payFrequency: "weekly" }));
+    });
+
+    test("annual: nothing due at exactly the primary threshold", () => {
+      expect(
+        employee({ payFrequency: "annual", grossAnnualIncome: 12_570 })
+      ).toBe(0);
+    });
+
+    test("annual: at exactly the upper earnings limit, only the main rate applies", () => {
+      expect(
+        employee({ payFrequency: "annual", grossAnnualIncome: 50_270 })
+      ).toBeCloseTo((50_270 - 12_570) * 0.08, 6);
+    });
+
+    test("monthly: category B uses the reduced rate", () => {
+      expect(
+        employee({ payFrequency: "monthly", niCategory: "B" })
+      ).toBeCloseTo((30_000 - 1_048 * 12) * 0.0185, 6);
+    });
+
+    test("same result for Scotland", () => {
+      expect(employee({ payFrequency: "monthly", country: "Scotland" })).toBe(
+        employee({ payFrequency: "monthly" })
+      );
+    });
+  });
+
+  describe("employer", () => {
+    test.each([
+      // Secondary threshold from April 2025: £96/week, £417/month, £5,000/year
+      ["weekly", "2026/27", (30_000 - 96 * 52) * 0.15],
+      ["monthly", "2026/27", (30_000 - 417 * 12) * 0.15],
+      ["annual", "2026/27", (30_000 - 5_000) * 0.15],
+      // Before April 2025: £175/week, £758/month, £9,100/year
+      ["weekly", "2024/25", (30_000 - 175 * 52) * 0.138],
+      ["monthly", "2024/25", (30_000 - 758 * 12) * 0.138],
+      ["annual", "2024/25", (30_000 - 9_100) * 0.138],
+    ] as const)("%s, %s", (payFrequency, taxYear, expected) => {
+      expect(employer({ payFrequency, taxYear })).toBeCloseTo(expected, 6);
+    });
+
+    test.each([
+      // Freeport: relief up to £481/week, £2,083/month, £25,000/year
+      ["F", "monthly", 30_000, (30_000 - 2_083 * 12) * 0.15],
+      ["F", "annual", 30_000, (30_000 - 25_000) * 0.15],
+      // Under 21: relief up to £4,189/month, £50,270/year
+      ["M", "monthly", 40_000, 0],
+      ["M", "annual", 60_000, (60_000 - 50_270) * 0.15],
+    ] as const)(
+      "category %s, %s, £%d",
+      (niCategory, payFrequency, grossAnnualIncome, expected) => {
+        expect(
+          employer({ niCategory, payFrequency, grossAnnualIncome })
+        ).toBeCloseTo(expected, 6);
+      }
+    );
+  });
+
+  describe("with rateBasis", () => {
+    test("2022/23, 1 May 2022, monthly uses the £823/month threshold", () => {
+      expect(
+        employee({
+          taxYear: "2022/23",
+          grossAnnualIncome: 40_000,
+          payFrequency: "monthly",
+          rateBasis: { date: "2022-05-01" },
+        })
+      ).toBeCloseTo((40_000 - 823 * 12) * 0.1325, 6);
+    });
+
+    test("2022/23, 1 May 2022, annual uses the £9,880/year threshold", () => {
+      expect(
+        employee({
+          taxYear: "2022/23",
+          grossAnnualIncome: 40_000,
+          payFrequency: "annual",
+          rateBasis: { date: "2022-05-01" },
+        })
+      ).toBeCloseTo((40_000 - 9_880) * 0.1325, 6);
+    });
+
+    test("2022/23 blended, annual uses £11,908 and 12.73%", () => {
+      expect(
+        employee({
+          taxYear: "2022/23",
+          grossAnnualIncome: 40_000,
+          payFrequency: "annual",
+          rateBasis: "blended",
+        })
+      ).toBeCloseTo((40_000 - 11_908) * 0.1273, 6);
+    });
+
+    test("2023/24 blended, monthly uses 11.5% above £1,048/month", () => {
+      expect(
+        employee({
+          taxYear: "2023/24",
+          grossAnnualIncome: 40_000,
+          payFrequency: "monthly",
+          rateBasis: "blended",
+        })
+      ).toBeCloseTo((40_000 - 1_048 * 12) * 0.115, 6);
+    });
+  });
+
+  test("throws for an unknown pay frequency", () => {
+    expect(() =>
+      employee({ payFrequency: "fortnightly" as unknown as "weekly" })
+    ).toThrow("payFrequency must be one of");
+  });
+});

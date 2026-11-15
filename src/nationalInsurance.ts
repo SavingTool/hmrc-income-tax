@@ -5,6 +5,7 @@ import type {
   Country,
   NICategory,
   NIRateBasis,
+  PayFrequency,
   SupportedEnglishTaxYear,
 } from "./types";
 
@@ -120,15 +121,18 @@ const niRatesByYear: Record<SupportedEnglishTaxYear, ExpandedNIRates> = {
 // https://www.gov.uk/guidance/rates-and-thresholds-for-employers-2022-to-2023
 // https://www.gov.uk/guidance/rates-and-thresholds-for-employers-2023-to-2024
 
-type Class1Rates = {
-  primaryThreshold: number; // weekly £
-  catAMiddleRate: number;
-  catAUpperRate: number;
-  catBMiddleRate: number;
-  employerRate: number;
+// A value for each pay frequency, as HMRC publishes them (they are not exact multiples).
+type ByPayFrequency = Record<PayFrequency, number>;
+
+type Class1RateOverrides = {
+  primaryThreshold?: ByPayFrequency;
+  catAMiddleRate?: number;
+  catAUpperRate?: number;
+  catBMiddleRate?: number;
+  employerRate?: number;
 };
 
-type Class1RatePeriod = Partial<Class1Rates> & {
+type Class1RatePeriod = Class1RateOverrides & {
   from: string; // inclusive, YYYY-MM-DD
   to: string; // inclusive, YYYY-MM-DD
 };
@@ -136,13 +140,19 @@ type Class1RatePeriod = Partial<Class1Rates> & {
 const class1InYearChanges: Partial<
   Record<
     SupportedEnglishTaxYear,
-    { blended: Partial<Class1Rates>; periods: Class1RatePeriod[] }
+    { blended: Class1RateOverrides; periods: Class1RatePeriod[] }
   >
 > = {
   "2022/23": {
-    // HMRC's whole-year directors' rates (annual earnings period, standard method)
+    // HMRC's whole-year directors' rates (annual earnings period, standard method).
+    // The £11,908 threshold is only published as an annual figure, so it is divided
+    // evenly for weekly and monthly pay.
     blended: {
-      primaryThreshold: 11_908 / 52, // £11,908/year
+      primaryThreshold: {
+        weekly: 11_908 / 52,
+        monthly: 11_908 / 12,
+        annual: 11_908,
+      },
       catAMiddleRate: 0.1273,
       catAUpperRate: 0.0273,
       catBMiddleRate: 0.0658,
@@ -153,17 +163,17 @@ const class1InYearChanges: Partial<
         // Health and Social Care Levy uplift (+1.25pp), lower primary threshold
         from: "2022-04-06",
         to: "2022-07-05",
-        primaryThreshold: 190,
+        primaryThreshold: { weekly: 190, monthly: 823, annual: 9_880 },
         catAMiddleRate: 0.1325,
         catAUpperRate: 0.0325,
         catBMiddleRate: 0.071,
         employerRate: 0.1505,
       },
       {
-        // Primary threshold raised to £242/week from 6 July 2022
+        // Primary threshold raised from 6 July 2022
         from: "2022-07-06",
         to: "2022-11-05",
-        primaryThreshold: 242,
+        primaryThreshold: { weekly: 242, monthly: 1_048, annual: 12_570 },
         catAMiddleRate: 0.1325,
         catAUpperRate: 0.0325,
         catBMiddleRate: 0.071,
@@ -173,7 +183,7 @@ const class1InYearChanges: Partial<
         // Levy uplift reversed from 6 November 2022
         from: "2022-11-06",
         to: "2023-04-05",
-        primaryThreshold: 242,
+        primaryThreshold: { weekly: 242, monthly: 1_048, annual: 12_570 },
         catAMiddleRate: 0.12,
         catAUpperRate: 0.02,
         catBMiddleRate: 0.0585,
@@ -208,6 +218,59 @@ const class1InYearChanges: Partial<
   },
 };
 
+// ─── Class 1 thresholds by pay frequency ─────────────────────────────────────
+// Weekly thresholds come from hmrc.ts and the table above (the library's default).
+// Monthly and annual figures, as HMRC publishes them, are only used when a caller passes
+// `payFrequency`. Sources: https://www.gov.uk/guidance/rates-and-thresholds-for-employers-2026-to-2027
+// (and the equivalent page for each earlier year).
+
+type Class1Thresholds = {
+  primaryThreshold: number;
+  upperEarningsLimit: number; // also the under-21, apprentice and veterans upper secondary thresholds
+  secondaryThreshold: number;
+  freeportUpperSecondaryThreshold: number;
+  investmentZoneUpperSecondaryThreshold: number;
+};
+
+const monthlyAndAnnualThresholds = (secondaryThreshold: {
+  monthly: number;
+  annual: number;
+}): Record<"monthly" | "annual", Class1Thresholds> => ({
+  monthly: {
+    primaryThreshold: 1_048,
+    upperEarningsLimit: 4_189,
+    secondaryThreshold: secondaryThreshold.monthly,
+    freeportUpperSecondaryThreshold: 2_083,
+    investmentZoneUpperSecondaryThreshold: 2_083,
+  },
+  annual: {
+    primaryThreshold: 12_570,
+    upperEarningsLimit: 50_270,
+    secondaryThreshold: secondaryThreshold.annual,
+    freeportUpperSecondaryThreshold: 25_000,
+    investmentZoneUpperSecondaryThreshold: 25_000,
+  },
+});
+
+const class1ThresholdsByYear: Record<
+  SupportedEnglishTaxYear,
+  Record<"monthly" | "annual", Class1Thresholds>
+> = {
+  // 2022/23: primary threshold shown is from 6 July 2022, matching the weekly default (£242)
+  "2022/23": monthlyAndAnnualThresholds({ monthly: 758, annual: 9_100 }),
+  "2023/24": monthlyAndAnnualThresholds({ monthly: 758, annual: 9_100 }),
+  "2024/25": monthlyAndAnnualThresholds({ monthly: 758, annual: 9_100 }),
+  // Secondary threshold lowered to £5,000/year from April 2025
+  "2025/26": monthlyAndAnnualThresholds({ monthly: 417, annual: 5_000 }),
+  "2026/27": monthlyAndAnnualThresholds({ monthly: 417, annual: 5_000 }),
+};
+
+const payPeriodsPerYear: ByPayFrequency = {
+  weekly: 52,
+  monthly: 12,
+  annual: 1,
+};
+
 const toIsoDate = (date: string | Date): string => {
   if (date instanceof Date) {
     if (isNaN(date.getTime())) {
@@ -226,28 +289,49 @@ const toIsoDate = (date: string | Date): string => {
   return date;
 };
 
-// Resolves the Class 1 rates to use for a tax year, honouring an optional `rateBasis`.
+// Resolves the Class 1 rates and per-pay-period thresholds to use for a tax year,
+// honouring the optional `rateBasis` and `payFrequency`.
 const resolveClass1Rates = (
   taxYear: TaxYear,
   country: Country | undefined,
-  rateBasis: NIRateBasis | undefined
+  rateBasis: NIRateBasis | undefined,
+  payFrequency: PayFrequency
 ) => {
+  if (!(payFrequency in payPeriodsPerYear)) {
+    throw new Error(
+      `payFrequency must be one of: "weekly", "monthly" or "annual" (was: ${payFrequency})`
+    );
+  }
+
   const hmrcRates = getHmrcRates({ taxYear, country });
   const niRates = getNIRatesForYear(taxYear);
+  const year = taxYear as SupportedEnglishTaxYear;
 
-  const defaults: Class1Rates = {
-    primaryThreshold: hmrcRates.NI_MIDDLE_BRACKET,
+  const thresholds: Class1Thresholds =
+    payFrequency === "weekly"
+      ? {
+          primaryThreshold: hmrcRates.NI_MIDDLE_BRACKET,
+          upperEarningsLimit: hmrcRates.NI_UPPER_BRACKET,
+          secondaryThreshold: hmrcRates.EMPLOYER_NI_SECONDARY_THRESHOLD,
+          freeportUpperSecondaryThreshold:
+            niRates.freeportUpperSecondaryThreshold,
+          investmentZoneUpperSecondaryThreshold:
+            niRates.investmentZoneUpperSecondaryThreshold,
+        }
+      : { ...class1ThresholdsByYear[year][payFrequency] };
+
+  const rates = {
     catAMiddleRate: hmrcRates.NI_MIDDLE_RATE,
     catAUpperRate: hmrcRates.NI_UPPER_RATE,
     catBMiddleRate: niRates.catBMiddleRate,
     employerRate: hmrcRates.EMPLOYER_NI_RATE,
   };
 
-  const resolved = { ...defaults };
-  const changes = class1InYearChanges[taxYear as SupportedEnglishTaxYear];
+  let overrides: Class1RateOverrides | undefined;
+  const changes = class1InYearChanges[year];
 
   if (rateBasis === "blended") {
-    Object.assign(resolved, changes?.blended);
+    overrides = changes?.blended;
   } else if (rateBasis !== undefined) {
     const date = toIsoDate(rateBasis.date);
     const startYear = Number(taxYear.slice(0, 4));
@@ -258,18 +342,24 @@ const resolveClass1Rates = (
         `rateBasis.date ${date} is outside tax year ${taxYear} (${yearStart} to ${yearEnd})`
       );
     }
-    const period = changes?.periods.find((p) => date >= p.from && date <= p.to);
-    if (period) {
-      const { from: _from, to: _to, ...rates } = period;
-      Object.assign(resolved, rates);
+    overrides = changes?.periods.find((p) => date >= p.from && date <= p.to);
+  }
+
+  if (overrides) {
+    const { primaryThreshold, ...rateOverrides } = overrides;
+    if (primaryThreshold) {
+      thresholds.primaryThreshold = primaryThreshold[payFrequency];
     }
+    rates.catAMiddleRate = rateOverrides.catAMiddleRate ?? rates.catAMiddleRate;
+    rates.catAUpperRate = rateOverrides.catAUpperRate ?? rates.catAUpperRate;
+    rates.catBMiddleRate = rateOverrides.catBMiddleRate ?? rates.catBMiddleRate;
+    rates.employerRate = rateOverrides.employerRate ?? rates.employerRate;
   }
 
   return {
-    ...resolved,
-    upperEarningsLimit: hmrcRates.NI_UPPER_BRACKET,
-    secondaryThreshold: hmrcRates.EMPLOYER_NI_SECONDARY_THRESHOLD,
-    niRates: { ...niRates, catBMiddleRate: resolved.catBMiddleRate },
+    ...rates,
+    ...thresholds,
+    periodsPerYear: payPeriodsPerYear[payFrequency],
   };
 };
 
@@ -289,7 +379,7 @@ const getEmployeeNIRates = (
   category: NICategory,
   catAMiddleRate: number,
   catAUpperRate: number,
-  niRates: ExpandedNIRates
+  catBMiddleRate: number
 ): { middleRate: number; upperRate: number } => {
   switch (category) {
     // A-equivalent: standard rates (apprentices, under-21s, veterans, freeport/IZ general)
@@ -304,7 +394,7 @@ const getEmployeeNIRates = (
     case "B":
     case "I":
     case "E":
-      return { middleRate: niRates.catBMiddleRate, upperRate: catAUpperRate };
+      return { middleRate: catBMiddleRate, upperRate: catAUpperRate };
     // C-equivalent: exempt (over State Pension age)
     case "C":
     case "S":
@@ -320,13 +410,11 @@ const getEmployeeNIRates = (
   }
 };
 
-// Returns the effective employer-side secondary threshold (weekly £) for a given category.
-// Employer NI is always: max(0, weeklySalary − effectiveThreshold) × rate × 52
+// Returns the effective employer-side threshold (per pay period, £) for a given category.
+// Employer NI is always: max(0, pay − effectiveThreshold) × rate, for each pay period.
 const getEmployerEffectiveThreshold = (
   category: NICategory,
-  standardThreshold: number,
-  upperEarningsLimit: number,
-  niRates: ExpandedNIRates
+  thresholds: Class1Thresholds
 ): number | null => {
   switch (category) {
     // Standard: full rate above secondary threshold
@@ -335,25 +423,25 @@ const getEmployerEffectiveThreshold = (
     case "C":
     case "J":
     case "X":
-      return standardThreshold;
+      return thresholds.secondaryThreshold;
     // Under-21, apprentices, veterans, under-21 deferring: employer relief up to UEL
     case "H":
     case "M":
     case "V":
     case "Z":
-      return upperEarningsLimit;
+      return thresholds.upperEarningsLimit;
     // Freeport: employer relief up to freeport upper secondary threshold
     case "F":
     case "I":
     case "L":
     case "S":
-      return niRates.freeportUpperSecondaryThreshold;
+      return thresholds.freeportUpperSecondaryThreshold;
     // Investment Zone: employer relief up to IZ upper secondary threshold
     case "N":
     case "E":
     case "D":
     case "K":
-      return niRates.investmentZoneUpperSecondaryThreshold;
+      return thresholds.investmentZoneUpperSecondaryThreshold;
   }
 };
 
@@ -363,86 +451,89 @@ const getEmployerEffectiveThreshold = (
 // Pass gross PAYE employment income — NI is not reduced by non-salary-sacrifice pension contributions.
 // Supports Class 1, all category letters. Defaults to Category A.
 // See https://www.gov.uk/national-insurance-rates-letters/category-letters
-// Uses the employee's weekly salary as a basis, as per the system, then re-converts into a year at the end.
+// NI is worked out per pay period: the annual income is split evenly into pay periods
+// (weekly by default, see `payFrequency`), each is charged using that period's thresholds,
+// and the results are added up for the year.
 export const calculateEmployeeNationalInsurance = ({
   taxYear,
   country,
   grossAnnualIncome,
   niCategory = "A",
   rateBasis,
+  payFrequency = "weekly",
 }: {
   taxYear?: TaxYear;
   country?: Country;
   grossAnnualIncome: number;
   niCategory?: NICategory;
   rateBasis?: NIRateBasis;
+  payFrequency?: PayFrequency;
 }) => {
-  const weeklySalary = grossAnnualIncome / 52;
   const {
-    primaryThreshold: NI_MIDDLE_BRACKET,
-    upperEarningsLimit: NI_UPPER_BRACKET,
+    primaryThreshold,
+    upperEarningsLimit,
     catAMiddleRate,
     catAUpperRate,
-    niRates,
-  } = resolveClass1Rates(taxYear ?? "2026/27", country, rateBasis);
+    catBMiddleRate,
+    periodsPerYear,
+  } = resolveClass1Rates(
+    taxYear ?? "2026/27",
+    country,
+    rateBasis,
+    payFrequency
+  );
 
   const { middleRate, upperRate } = getEmployeeNIRates(
     niCategory,
     catAMiddleRate,
     catAUpperRate,
-    niRates
+    catBMiddleRate
   );
 
-  const afterFreeSection = weeklySalary - NI_MIDDLE_BRACKET;
-  let middleBracket = 0;
-  let upperBracket = 0;
+  const pay = grossAnnualIncome / periodsPerYear;
 
-  if (weeklySalary > NI_UPPER_BRACKET) {
-    // 2 bands apply
-    const upperSection = weeklySalary - NI_UPPER_BRACKET;
-    const middleSection = weeklySalary - NI_MIDDLE_BRACKET - upperSection;
-    upperBracket = upperSection * upperRate;
-    middleBracket = middleSection * middleRate;
-  }
+  // Pay between the primary threshold and the upper earnings limit (inclusive), then above it
+  const middleSection = Math.max(
+    0,
+    Math.min(pay, upperEarningsLimit) - primaryThreshold
+  );
+  const upperSection = Math.max(0, pay - upperEarningsLimit);
 
-  if (weeklySalary <= NI_UPPER_BRACKET && weeklySalary > NI_MIDDLE_BRACKET) {
-    middleBracket = afterFreeSection * middleRate;
-  }
-
-  return (middleBracket + upperBracket) * 52;
+  return (
+    (middleSection * middleRate + upperSection * upperRate) * periodsPerYear
+  );
 };
 
 // Calculates employer national insurance contributions based on an employee's gross employment income.
 // Pass gross PAYE employment income — NI is not reduced by non-salary-sacrifice pension contributions.
 // Supports Class 1, all category letters. Defaults to Category A.
 // See https://www.gov.uk/national-insurance-rates-letters/category-letters
-// Uses the employee's weekly salary as a basis, as per the system, then re-converts into a year at the end.
+// Worked out per pay period, like calculateEmployeeNationalInsurance (weekly by default).
 export const calculateEmployerNationalInsurance = ({
   taxYear,
   country,
   grossAnnualIncome,
   niCategory = "A",
   rateBasis,
+  payFrequency = "weekly",
 }: {
   taxYear?: TaxYear;
   country?: Country;
   grossAnnualIncome: number;
   niCategory?: NICategory;
   rateBasis?: NIRateBasis;
+  payFrequency?: PayFrequency;
 }) => {
-  const weeklySalary = grossAnnualIncome / 52;
-  const {
-    employerRate: EMPLOYER_NI_RATE,
-    secondaryThreshold: EMPLOYER_NI_SECONDARY_THRESHOLD,
-    upperEarningsLimit: NI_UPPER_BRACKET,
-    niRates,
-  } = resolveClass1Rates(taxYear ?? "2026/27", country, rateBasis);
+  const { employerRate, periodsPerYear, ...thresholds } = resolveClass1Rates(
+    taxYear ?? "2026/27",
+    country,
+    rateBasis,
+    payFrequency
+  );
 
   const effectiveThreshold = getEmployerEffectiveThreshold(
     niCategory,
-    EMPLOYER_NI_SECONDARY_THRESHOLD,
-    NI_UPPER_BRACKET,
-    niRates
+    thresholds
   );
 
   // Category X: exempt from employer NI entirely
@@ -450,11 +541,13 @@ export const calculateEmployerNationalInsurance = ({
     return 0;
   }
 
-  if (weeklySalary <= effectiveThreshold) {
+  const pay = grossAnnualIncome / periodsPerYear;
+
+  if (pay <= effectiveThreshold) {
     return 0;
   }
 
-  return (weeklySalary - effectiveThreshold) * EMPLOYER_NI_RATE * 52;
+  return (pay - effectiveThreshold) * employerRate * periodsPerYear;
 };
 
 // ─── Exported Class 2 function ────────────────────────────────────────────────

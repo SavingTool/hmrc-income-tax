@@ -741,3 +741,33 @@ describe("Scottish band limits", () => {
     });
   });
 });
+
+// The cumulative PAYE taper rounds the allowance up to a whole pound, like
+// calculatePersonalAllowance (Income Tax Act 2007 s.35(3))
+describe("Cumulative PAYE allowance rounding", () => {
+  test("£100,001 cumulative keeps the full £12,570 allowance", () => {
+    const result = calculateIncomeTax({
+      taxYear: "2026/27",
+      cumulativePaye: {
+        monthNumber: 1,
+        cumulativeGrossIncome: 100_001,
+        cumulativeTaxPaid: 0,
+      },
+    });
+    // Taxable £87,431: £37,700 at 20% + £49,731 at 40%
+    expect(result.total).toBeCloseTo(7_540 + 19_892.4, 2);
+  });
+
+  test("£125,139 cumulative keeps a £1 allowance", () => {
+    const result = calculateIncomeTax({
+      taxYear: "2026/27",
+      cumulativePaye: {
+        monthNumber: 1,
+        cumulativeGrossIncome: 125_139,
+        cumulativeTaxPaid: 0,
+      },
+    });
+    // Taxable £125,138: £37,700 at 20% + £87,438 at 40%
+    expect(result.total).toBeCloseTo(7_540 + 34_975.2, 2);
+  });
+});
