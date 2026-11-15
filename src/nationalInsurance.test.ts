@@ -400,9 +400,13 @@ describe("calculateEmployerNationalInsurance — Category F (25/26)", () => {
 describe("Class 1 rateBasis", () => {
   const employee = (
     taxYear: "2022/23" | "2023/24" | "2025/26",
-    rateBasis?: Parameters<typeof calculateEmployeeNationalInsurance>[0]["rateBasis"],
+    rateBasis?: Parameters<
+      typeof calculateEmployeeNationalInsurance
+    >[0]["rateBasis"],
     grossAnnualIncome = 40_000,
-    niCategory: Parameters<typeof calculateEmployeeNationalInsurance>[0]["niCategory"] = "A"
+    niCategory: Parameters<
+      typeof calculateEmployeeNationalInsurance
+    >[0]["niCategory"] = "A"
   ) =>
     calculateEmployeeNationalInsurance({
       taxYear,
@@ -412,9 +416,13 @@ describe("Class 1 rateBasis", () => {
     });
   const employer = (
     taxYear: "2022/23" | "2023/24" | "2025/26",
-    rateBasis?: Parameters<typeof calculateEmployerNationalInsurance>[0]["rateBasis"],
+    rateBasis?: Parameters<
+      typeof calculateEmployerNationalInsurance
+    >[0]["rateBasis"],
     grossAnnualIncome = 40_000,
-    niCategory: Parameters<typeof calculateEmployerNationalInsurance>[0]["niCategory"] = "A"
+    niCategory: Parameters<
+      typeof calculateEmployerNationalInsurance
+    >[0]["niCategory"] = "A"
   ) =>
     calculateEmployerNationalInsurance({
       taxYear,
@@ -481,7 +489,10 @@ describe("Class 1 rateBasis", () => {
       );
     });
     test("2023/24 employer unchanged at 13.8%", () => {
-      expect(employer("2023/24", "blended")).toBeCloseTo(employer("2023/24"), 6);
+      expect(employer("2023/24", "blended")).toBeCloseTo(
+        employer("2023/24"),
+        6
+      );
     });
     test("category relief still applies (H: no employer NI below UEL)", () => {
       expect(employer("2022/23", "blended", 40_000, "H")).toBe(0);
@@ -552,7 +563,9 @@ describe("Class 1 rateBasis", () => {
 
   test("years without in-year changes give the default result", () => {
     expect(employee("2025/26", "blended")).toBe(employee("2025/26"));
-    expect(employee("2025/26", { date: "2025-10-01" })).toBe(employee("2025/26"));
+    expect(employee("2025/26", { date: "2025-10-01" })).toBe(
+      employee("2025/26")
+    );
     expect(employer("2025/26", "blended")).toBe(employer("2025/26"));
   });
 });

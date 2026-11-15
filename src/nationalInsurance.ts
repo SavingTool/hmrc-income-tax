@@ -258,9 +258,7 @@ const resolveClass1Rates = (
         `rateBasis.date ${date} is outside tax year ${taxYear} (${yearStart} to ${yearEnd})`
       );
     }
-    const period = changes?.periods.find(
-      (p) => date >= p.from && date <= p.to
-    );
+    const period = changes?.periods.find((p) => date >= p.from && date <= p.to);
     if (period) {
       const { from: _from, to: _to, ...rates } = period;
       Object.assign(resolved, rates);

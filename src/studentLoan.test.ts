@@ -17,7 +17,9 @@ const officialAnnualThresholds: Record<
 
 const scottishTaxYears: TaxYear[] = ["2024/25", "2025/26", "2026/27"];
 const plans: StudentLoanPlan[] = [1, 2, 4, 5, "postgrad"];
-const incomes = [15_000, 22_500, 25_000, 30_000, 40_000, 60_000, 125_000, 1_000_000];
+const incomes = [
+  15_000, 22_500, 25_000, 30_000, 40_000, 60_000, 125_000, 1_000_000,
+];
 
 const expectedRepayment = (
   grossAnnualIncome: number,
