@@ -52,6 +52,8 @@ Note that `taxYear` is an optional input to select which tax year rates should b
 
 Calculates an individual's personal allowance for a tax year, single amount.
 
+Above £100,000 the allowance is reduced by £1 for every £2 of income, and a result that isn't a whole number of pounds is rounded up to the next £1 ([Income Tax Act 2007 s.35(3)](https://www.legislation.gov.uk/ukpga/2007/3/section/35)). For example, £100,001 keeps the full £12,570.
+
 ```typescript
 calculatePersonalAllowance({
   taxYear?: TaxYear,

@@ -30,5 +30,14 @@ export const calculatePersonalAllowance = ({
 
   const sum = DEFAULT_PERSONAL_ALLOWANCE - personalAllowanceDeduction;
 
-  return sum < 0 ? 0 : sum;
+  if (sum <= 0) {
+    return 0;
+  }
+
+  // A tapered allowance that isn't a whole number of pounds is rounded up to the next £1
+  // (Income Tax Act 2007 s.35(3)), e.g. £100,001 of income keeps £12,570, not £12,569.50.
+  // See https://www.legislation.gov.uk/ukpga/2007/3/section/35
+  // The small tolerance stops float noise in the input (e.g. 102,413.99999999999 from
+  // salary − pension arithmetic) pushing a whole-pound allowance up to the next pound.
+  return Math.ceil(sum - 1e-7);
 };

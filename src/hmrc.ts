@@ -271,13 +271,13 @@ const scottishTaxRates: Record<SupportedScottishTaxYear, ScottishTaxRates> = {
     DEFAULT_PERSONAL_ALLOWANCE: 12_570,
 
     STARTER_RATE: 0.19,
-    BASIC_BRACKET: 14_877,
+    BASIC_BRACKET: 14_876, // starter band ends at £2,306 of taxable income
     BASIC_RATE: 0.2,
-    INTERMEDIATE_BRACKET: 26_562,
+    INTERMEDIATE_BRACKET: 26_561, // basic band ends at £13,991 of taxable income
     INTERMEDIATE_RATE: 0.21,
-    HIGHER_BRACKET: 43_663,
+    HIGHER_BRACKET: 43_662, // intermediate band ends at £31,092 of taxable income
     HIGHER_RATE: 0.42,
-    ADVANCED_BRACKET: 75_001,
+    ADVANCED_BRACKET: 75_000, // higher band ends at £62,430 of taxable income
     ADVANCED_RATE: 0.45,
     TOP_BRACKET: 125_140,
     TOP_RATE: 0.48,
@@ -329,13 +329,13 @@ const scottishTaxRates: Record<SupportedScottishTaxYear, ScottishTaxRates> = {
     DEFAULT_PERSONAL_ALLOWANCE: 12_570,
 
     STARTER_RATE: 0.19,
-    BASIC_BRACKET: 15_398,
+    BASIC_BRACKET: 15_397, // starter band ends at £2,827 of taxable income
     BASIC_RATE: 0.2,
-    INTERMEDIATE_BRACKET: 27_492,
+    INTERMEDIATE_BRACKET: 27_491, // basic band ends at £14,921 of taxable income
     INTERMEDIATE_RATE: 0.21,
-    HIGHER_BRACKET: 43_663,
+    HIGHER_BRACKET: 43_662, // intermediate band ends at £31,092 of taxable income
     HIGHER_RATE: 0.42,
-    ADVANCED_BRACKET: 75_001,
+    ADVANCED_BRACKET: 75_000, // higher band ends at £62,430 of taxable income
     ADVANCED_RATE: 0.45,
     TOP_BRACKET: 125_140,
     TOP_RATE: 0.48,
@@ -389,13 +389,13 @@ const scottishTaxRates: Record<SupportedScottishTaxYear, ScottishTaxRates> = {
     DEFAULT_PERSONAL_ALLOWANCE: 12_570,
 
     STARTER_RATE: 0.19,
-    BASIC_BRACKET: 16_538,
+    BASIC_BRACKET: 16_537, // starter band ends at £3,967 of taxable income
     BASIC_RATE: 0.2,
-    INTERMEDIATE_BRACKET: 29_527,
+    INTERMEDIATE_BRACKET: 29_526, // basic band ends at £16,956 of taxable income
     INTERMEDIATE_RATE: 0.21,
-    HIGHER_BRACKET: 43_663,
+    HIGHER_BRACKET: 43_662, // intermediate band ends at £31,092 of taxable income
     HIGHER_RATE: 0.42,
-    ADVANCED_BRACKET: 75_001,
+    ADVANCED_BRACKET: 75_000, // higher band ends at £62,430 of taxable income
     ADVANCED_RATE: 0.45,
     TOP_BRACKET: 125_140,
     TOP_RATE: 0.48,

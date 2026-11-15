@@ -201,6 +201,9 @@ describe("calculateIncomeTax (26/27)", () => {
 });
 
 // Scotland, 2024/25
+// Expected values are computed from the published 2024/25 band limits on taxable income:
+// starter to £2,306, basic to £13,991, intermediate to £31,092, higher to £62,430,
+// advanced to £125,140, top above. See https://www.gov.uk/guidance/rates-and-thresholds-for-employers-2024-to-2025
 const expectationsC = [
   {
     taxableAnnualIncome: 0,
@@ -222,8 +225,8 @@ const expectationsC = [
   },
   {
     taxableAnnualIncome: 15_000,
-    starterRateTax: 438.33,
-    basicRateTax: 24.6,
+    starterRateTax: 438.14,
+    basicRateTax: 24.8,
     intermediateRateTax: 0,
     higherRateTax: 0,
     advancedRateTax: 0,
@@ -231,8 +234,8 @@ const expectationsC = [
   },
   {
     taxableAnnualIncome: 17_500,
-    starterRateTax: 438.33,
-    basicRateTax: 524.6,
+    starterRateTax: 438.14,
+    basicRateTax: 524.8,
     intermediateRateTax: 0,
     higherRateTax: 0,
     advancedRateTax: 0,
@@ -240,8 +243,8 @@ const expectationsC = [
   },
   {
     taxableAnnualIncome: 20_000,
-    starterRateTax: 438.33,
-    basicRateTax: 1024.6000000000001,
+    starterRateTax: 438.14,
+    basicRateTax: 1024.8,
     intermediateRateTax: 0,
     higherRateTax: 0,
     advancedRateTax: 0,
@@ -249,8 +252,8 @@ const expectationsC = [
   },
   {
     taxableAnnualIncome: 22_500,
-    starterRateTax: 438.33,
-    basicRateTax: 1524.6000000000001,
+    starterRateTax: 438.14,
+    basicRateTax: 1524.8,
     intermediateRateTax: 0,
     higherRateTax: 0,
     advancedRateTax: 0,
@@ -258,67 +261,66 @@ const expectationsC = [
   },
   {
     taxableAnnualIncome: 50_000,
-    starterRateTax: 438.33,
+    starterRateTax: 438.14,
     basicRateTax: 2337,
     intermediateRateTax: 3591.21,
-    higherRateTax: 2661.54,
+    higherRateTax: 2661.96,
     advancedRateTax: 0,
     topRateTax: 0,
   },
   {
     taxableAnnualIncome: 75_000,
-    starterRateTax: 438.33,
+    starterRateTax: 438.14,
     basicRateTax: 2337,
     intermediateRateTax: 3591.21,
-    higherRateTax: 13161.539999999999,
+    higherRateTax: 13161.96,
     advancedRateTax: 0,
     topRateTax: 0,
   },
   {
     taxableAnnualIncome: 90_000,
-    starterRateTax: 438.33,
+    starterRateTax: 438.14,
     basicRateTax: 2337,
     intermediateRateTax: 3591.21,
     higherRateTax: 13161.96,
-    advancedRateTax: 6749.55,
+    advancedRateTax: 6750,
     topRateTax: 0,
   },
   {
     taxableAnnualIncome: 110_000,
-    starterRateTax: 438.33,
+    starterRateTax: 438.14,
     basicRateTax: 2337,
     intermediateRateTax: 3591.21,
     higherRateTax: 13161.96,
-    advancedRateTax: 17999.55,
+    advancedRateTax: 18000,
     topRateTax: 0,
   },
   {
     taxableAnnualIncome: 125_000,
-    starterRateTax: 438.33,
+    starterRateTax: 438.14,
     basicRateTax: 2337,
     intermediateRateTax: 3591.21,
     higherRateTax: 13161.96,
-    advancedRateTax: 28124.55,
+    advancedRateTax: 28125,
     topRateTax: 0,
   },
   {
     taxableAnnualIncome: 150_000,
-    starterRateTax: 438.33,
+    starterRateTax: 438.14,
     basicRateTax: 2337,
     intermediateRateTax: 3591.21,
     higherRateTax: 13161.96,
-    advancedRateTax: 28219.05,
+    advancedRateTax: 28219.5,
     topRateTax: 11932.8,
   },
-  // See: https://www.bbc.co.uk/news/uk-scotland-67760641
   {
     taxableAnnualIncome: 200_000,
-    starterRateTax: 438.33,
+    starterRateTax: 438.14,
     basicRateTax: 2337,
     intermediateRateTax: 3591.21,
     higherRateTax: 13161.96,
-    advancedRateTax: 28219.05,
-    topRateTax: 35932.799999999996,
+    advancedRateTax: 28219.5,
+    topRateTax: 35932.8,
   },
 ];
 
@@ -340,7 +342,11 @@ describe("calculateIncomeTax (24/25) - Scotland", () => {
         taxableAnnualIncome,
         personalAllowance,
       });
-      expect(taxAmounts.breakdown).toEqual(rest);
+      Object.entries(rest).forEach(([band, amount]) => {
+        expect(
+          taxAmounts.breakdown[band as keyof typeof taxAmounts.breakdown]
+        ).toBeCloseTo(amount, 2);
+      });
     });
   });
 });
@@ -561,7 +567,8 @@ describe("calculateIncomeTax - Cumulative PAYE Mode", () => {
         },
       });
 
-      expect(result.total).toBeCloseTo(37513.5, 1);
+      // Taxable £102,430 at 2025/26 Scottish limits (2,827 / 14,921 / 31,092 / 62,430)
+      expect(result.total).toBeCloseTo(37513.8, 2);
       expect(result.incomeTaxType).toBe("Scotland");
     });
   });
@@ -682,20 +689,55 @@ describe("calculateIncomeTax (26/27) - Scotland", () => {
 
   test("income at the top of the starter band", () => {
     const breakdown = calculate(16_537);
-    expect(breakdown.starterRateTax).toBeCloseTo(754, 0);
+    expect(breakdown.starterRateTax).toBeCloseTo(753.73, 2); // 3,967 × 19%
     expect(breakdown.basicRateTax).toBe(0);
   });
 
   test("income at the top of the basic band", () => {
     const breakdown = calculate(29_526);
-    expect(breakdown.starterRateTax).toBeCloseTo(754, 0);
-    expect(breakdown.basicRateTax).toBeCloseTo(2_598, 0);
+    expect(breakdown.starterRateTax).toBeCloseTo(753.73, 2);
+    expect(breakdown.basicRateTax).toBeCloseTo(2_597.8, 2); // 12,989 × 20%
     expect(breakdown.intermediateRateTax).toBe(0);
   });
 
   test("income at the top of the intermediate band", () => {
     const breakdown = calculate(43_662);
-    expect(breakdown.intermediateRateTax).toBeCloseTo(2_968, 0);
+    expect(breakdown.intermediateRateTax).toBeCloseTo(2_968.56, 2); // 14,136 × 21%
     expect(breakdown.higherRateTax).toBe(0);
+  });
+});
+
+// Scottish band limits for every year, checked against the published limits on taxable income
+// (GOV.UK "Rates and thresholds for employers" for each year)
+describe("Scottish band limits", () => {
+  const limits = {
+    "2024/25": [2_306, 13_991, 31_092, 62_430],
+    "2025/26": [2_827, 14_921, 31_092, 62_430],
+    "2026/27": [3_967, 16_956, 31_092, 62_430],
+  } as const;
+  const bandKeys = [
+    "starterRateTax",
+    "basicRateTax",
+    "intermediateRateTax",
+    "higherRateTax",
+    "advancedRateTax",
+  ] as const;
+
+  (Object.keys(limits) as Array<keyof typeof limits>).forEach((taxYear) => {
+    limits[taxYear].forEach((limit, i) => {
+      test(`${taxYear}: ${bandKeys[i]} ends at £${limit} of taxable income`, () => {
+        const at = (taxable: number) =>
+          calculateIncomeTax({
+            taxYear,
+            country: "Scotland",
+            taxableAnnualIncome: taxable + 12_570,
+            personalAllowance: 12_570,
+          }).breakdown;
+        // At the limit, nothing is taxed in the next band yet...
+        expect(at(limit)[bandKeys[i + 1]]).toBe(0);
+        // ...and £1 above it is taxed in the next band
+        expect(at(limit + 1)[bandKeys[i + 1]]).toBeGreaterThan(0);
+      });
+    });
   });
 });

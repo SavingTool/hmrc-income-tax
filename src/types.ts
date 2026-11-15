@@ -163,6 +163,11 @@ export interface EnglishTaxRates extends BasicTaxRates {
   ADDITIONAL_RATE: number;
 }
 
+// Each *_BRACKET is the gross income (assuming the default personal allowance) above which that
+// band's rate applies, i.e. the upper limit of the band below. For example, 2026/27
+// BASIC_BRACKET is 16,537: the starter band covers the first £3,967 of taxable income
+// (16,537 − 12,570), and the basic rate applies above it. This matches HIGHER_BRACKET (50,270)
+// for England/NI/Wales. TOP_BRACKET (125,140) is compared directly against taxable income.
 export interface ScottishTaxRates extends BasicTaxRates {
   COUNTRY: "Scotland";
 
