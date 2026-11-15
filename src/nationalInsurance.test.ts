@@ -394,6 +394,50 @@ describe("calculateEmployerNationalInsurance — Category F (25/26)", () => {
   });
 });
 
+// ─── Class 1 — salary exactly at the upper earnings limit ────────────────────
+// Regression: a weekly salary of exactly £967 (£50,284/year) previously returned £0
+describe("Class 1 employee NI at exactly the upper earnings limit", () => {
+  const uelAnnual = 967 * 52; // £50,284
+
+  test.each([
+    { taxYear: "2022/23" as const, niCategory: "A" as const, rate: 0.1325 },
+    { taxYear: "2024/25" as const, niCategory: "A" as const, rate: 0.08 },
+    { taxYear: "2026/27" as const, niCategory: "A" as const, rate: 0.08 },
+    { taxYear: "2026/27" as const, niCategory: "B" as const, rate: 0.0185 },
+  ])(
+    "$taxYear category $niCategory charges the main rate up to the UEL",
+    ({ taxYear, niCategory, rate }) => {
+      expect(
+        calculateEmployeeNationalInsurance({
+          taxYear,
+          niCategory,
+          grossAnnualIncome: uelAnnual,
+        })
+      ).toBeCloseTo((uelAnnual - 242 * 52) * rate, 6);
+    }
+  );
+
+  test("category J (deferred) owes nothing at exactly the UEL", () => {
+    expect(
+      calculateEmployeeNationalInsurance({
+        taxYear: "2026/27",
+        niCategory: "J",
+        grossAnnualIncome: uelAnnual,
+      })
+    ).toBe(0);
+  });
+
+  test("result is continuous either side of the UEL", () => {
+    const at = (grossAnnualIncome: number) =>
+      calculateEmployeeNationalInsurance({
+        taxYear: "2026/27",
+        grossAnnualIncome,
+      });
+    expect(at(uelAnnual)).toBeGreaterThan(at(uelAnnual - 1));
+    expect(at(uelAnnual + 1)).toBeGreaterThan(at(uelAnnual));
+  });
+});
+
 // ─── Class 1 rateBasis (in-year rate changes) ────────────────────────────────
 // Rates from https://www.gov.uk/guidance/rates-and-thresholds-for-employers-2022-to-2023
 // and https://www.gov.uk/guidance/rates-and-thresholds-for-employers-2023-to-2024

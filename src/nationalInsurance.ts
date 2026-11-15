@@ -405,7 +405,7 @@ export const calculateEmployeeNationalInsurance = ({
     middleBracket = middleSection * middleRate;
   }
 
-  if (weeklySalary < NI_UPPER_BRACKET && weeklySalary > NI_MIDDLE_BRACKET) {
+  if (weeklySalary <= NI_UPPER_BRACKET && weeklySalary > NI_MIDDLE_BRACKET) {
     middleBracket = afterFreeSection * middleRate;
   }
 
