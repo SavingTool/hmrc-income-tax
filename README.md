@@ -310,7 +310,7 @@ calculateApprenticeshipLevy({
 
 Calculates dividend tax on dividend income stacked on top of other income. Dividend tax rates and band thresholds are UK-wide (not devolved), so this function does not accept a `country` parameter.
 
-The personal allowance is applied to non-dividend income first. Any unused allowance then applies to dividend income. The dividend allowance is tax-free but still occupies band space, which can push dividends above it into a higher rate band.
+The personal allowance is applied to non-dividend income first. Any unused allowance then applies to dividend income. The dividend allowance is tax-free but still occupies band space, which can push dividends above it into a higher rate band. Bands are applied to taxable income (after the personal allowance), so the basic rate band remains £37,700 wide even when the personal allowance is tapered above £100,000.
 
 ```typescript
 calculateDividendTax({
