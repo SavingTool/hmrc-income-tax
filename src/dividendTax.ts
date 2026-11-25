@@ -13,6 +13,9 @@ import type { TaxYear, EnglishTaxRates, DividendTax } from "./types";
 // applies to dividend income. The dividend allowance (e.g. £500 for 2024/25+) is tax-free but
 // still occupies band space, which affects the rate on dividends above it.
 //
+// Bands are positioned in taxable-income terms (income after the personal allowance), so the
+// basic rate band is always £37,700 wide even when the personal allowance is tapered.
+//
 // See https://www.gov.uk/tax-on-dividends
 export const calculateDividendTax = ({
   taxYear,
@@ -28,6 +31,7 @@ export const calculateDividendTax = ({
   // Dividend bands use UK (not Scottish) thresholds, so always use English rates.
   const rates = getHmrcRates({ taxYear }) as EnglishTaxRates;
   const {
+    DEFAULT_PERSONAL_ALLOWANCE,
     HIGHER_BRACKET,
     ADDITIONAL_BRACKET,
     DIVIDEND_ALLOWANCE,
@@ -55,15 +59,18 @@ export const calculateDividendTax = ({
   let additionalRateDividendTax = 0;
 
   if (taxableDividends > 0) {
-    // Band position (in total income terms) where taxable dividends begin:
-    // after non-dividend income (or the PA boundary, whichever is higher) plus the dividend allowance.
+    // Band position (in taxable income terms, i.e. after the personal allowance) where taxable
+    // dividends begin: after taxable non-dividend income plus the dividend allowance.
     const bandPositionStart =
-      Math.max(nonDividendTaxableIncome, pa) + dividendAllowanceUsed;
+      Math.max(0, nonDividendTaxableIncome - pa) + dividendAllowanceUsed;
+    // The basic rate band is a fixed width of taxable income (e.g. £37,700), regardless of any
+    // personal allowance taper. The additional rate threshold is also in taxable income terms.
+    const basicBandLimit = HIGHER_BRACKET - DEFAULT_PERSONAL_ALLOWANCE;
     let remaining = taxableDividends;
     let position = bandPositionStart;
 
-    if (position < HIGHER_BRACKET) {
-      const inBasicBand = Math.min(remaining, HIGHER_BRACKET - position);
+    if (position < basicBandLimit) {
+      const inBasicBand = Math.min(remaining, basicBandLimit - position);
       basicRateDividendTax = inBasicBand * DIVIDEND_BASIC_RATE;
       remaining -= inBasicBand;
       position += inBasicBand;
